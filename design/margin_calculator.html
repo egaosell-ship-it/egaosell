@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>마진 계산기 - SellerSuite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "outline": "#737686",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "outline-variant": "#c3c6d7",
+                      "primary": "#004ac6",
+                      "on-secondary-container": "#54647a",
+                      "surface-variant": "#e0e3e5",
+                      "secondary": "#505f76",
+                      "primary-container": "#2563eb",
+                      "tertiary-fixed-dim": "#ffb596",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "secondary-container": "#d0e1fb",
+                      "surface": "#f7f9fb",
+                      "tertiary-fixed": "#ffdbcd",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-surface-variant": "#434655",
+                      "on-surface": "#191c1e",
+                      "surface-bright": "#f7f9fb",
+                      "secondary-fixed": "#d3e4fe",
+                      "error": "#ba1a1a",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b4c5ff",
+                      "surface-dim": "#d8dadc",
+                      "tertiary-container": "#bc4800",
+                      "on-tertiary-fixed": "#360f00",
+                      "on-tertiary-fixed-variant": "#7d2d00",
+                      "surface-container-high": "#e6e8ea",
+                      "background": "#f7f9fb",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eceef0",
+                      "surface-container-low": "#f2f4f6",
+                      "on-primary-fixed": "#00174b",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-secondary-fixed": "#0b1c30",
+                      "surface-tint": "#0053db",
+                      "primary-fixed": "#dbe1ff",
+                      "on-primary-container": "#eeefff",
+                      "inverse-surface": "#2d3133",
+                      "on-background": "#191c1e",
+                      "on-tertiary-container": "#ffede6",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "tertiary": "#943700"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "sm": "16px",
+                      "lg": "32px",
+                      "xs": "8px",
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "xl": "48px",
+                      "max-width": "1440px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "kpi-value": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                      "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                      "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                      "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "kpi-value": ["36px", { "lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                      "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                      "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline docked full-width top-0 h-16 w-full relative z-40">
+<div class="flex justify-between items-center w-full px-md max-w-max-width mx-auto h-full">
+<div class="flex items-center gap-lg">
+<div class="text-headline-md font-headline-md font-bold text-primary dark:text-primary tracking-tight">
+                    SellerSuite
+                </div>
+<nav class="hidden md:flex items-end h-full gap-gutter pt-xs">
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 text-label-md font-label-md pt-5" href="#">Dashboard</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 text-label-md font-label-md pt-5" href="#">Orders</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 text-label-md font-label-md pt-5" href="#">Products</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 text-label-md font-label-md pt-5" href="#">Crawling</a>
+<a class="text-primary dark:text-primary font-bold border-b-2 border-primary pb-[18px] text-label-md font-label-md pt-5" href="#">Margins</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 text-label-md font-label-md pt-5" href="#">Board</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-secondary hover:text-primary transition-colors duration-200 active:scale-95 transition-transform duration-150 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-xs"></div>
+<button class="text-label-md font-label-md text-secondary hover:text-primary transition-colors duration-200 active:scale-95 transition-transform duration-150 hidden md:block">
+                    My Account
+                </button>
+<button class="text-label-md font-label-md bg-surface-container-low border border-outline-variant text-on-surface px-sm py-1.5 rounded hover:bg-surface-container-high transition-colors duration-200 active:scale-95 transition-transform duration-150 ml-xs">
+                    Sign Out
+                </button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-outline-variant ml-xs" data-alt="A small, professional user avatar placeholder. The image features a clean, minimalist design with a soft blue background and dark blue text, consistent with a modern SaaS platform's profile section. The lighting is flat and digital." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD41XG5dqtknEo92XjgoASEDk-l_KPiyEbsPWQ87Py9wkVd8llc1NUoqKOzsxB7LAaFzkvr8GcteWhTH8hptVeyYO-k1vcxV4KO7zeKXItCrmDtoGo_3wEN-JwvxQLYQ_hBJ694_symWd84WFu3OxQapIxDBVhMKhD9oeJUa7puLrcZ83eJ3cddPk05JkUrTg6F1SsD1i7L_3gEKB9JvLHVB9_365P3g4fz9G1dBRC-60NqXJzlwBz9eiJ1aOGmJ5tV_AVpnSS7nYY"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-gutter py-lg">
+<div class="mb-gutter">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">마진 계산기</h1>
+<p class="text-body-md font-body-md text-secondary mt-xs">상품의 판매가와 각종 비용을 입력하여 정확한 순마진을 시뮬레이션 하세요.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Panel: Interactive Inputs -->
+<div class="lg:col-span-4 flex flex-col gap-sm">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<div class="flex items-center gap-2 mb-sm border-b border-outline-variant pb-xs">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">calculate</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">비용 입력</h2>
+</div>
+<div class="space-y-sm mt-sm">
+<!-- Input Group -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1" for="input-sell">판매가 (Revenue)</label>
+<div class="relative">
+<input class="w-full h-10 border border-outline-variant rounded bg-surface-container-lowest px-sm text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all pr-8 text-right" id="input-sell" placeholder="0" type="number" value="35000"/>
+<span class="absolute right-sm top-1/2 -translate-y-1/2 text-body-md font-body-md text-secondary">원</span>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1" for="input-supply">공급가 (COGS)</label>
+<div class="relative">
+<input class="w-full h-10 border border-outline-variant rounded bg-surface-container-lowest px-sm text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all pr-8 text-right" id="input-supply" placeholder="0" type="number" value="15000"/>
+<span class="absolute right-sm top-1/2 -translate-y-1/2 text-body-md font-body-md text-secondary">원</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1" for="input-fee">마켓 수수료</label>
+<div class="relative">
+<input class="w-full h-10 border border-outline-variant rounded bg-surface-container-lowest px-sm text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all pr-8 text-right" id="input-fee" placeholder="0" step="0.1" type="number" value="11.5"/>
+<span class="absolute right-sm top-1/2 -translate-y-1/2 text-body-md font-body-md text-secondary">%</span>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1" for="input-shipping">배송비</label>
+<div class="relative">
+<input class="w-full h-10 border border-outline-variant rounded bg-surface-container-lowest px-sm text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all pr-8 text-right" id="input-shipping" placeholder="0" type="number" value="3000"/>
+<span class="absolute right-sm top-1/2 -translate-y-1/2 text-body-md font-body-md text-secondary">원</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-1" for="input-other">기타 비용 (포장, 인건비 등)</label>
+<div class="relative">
+<input class="w-full h-10 border border-outline-variant rounded bg-surface-container-lowest px-sm text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all pr-8 text-right" id="input-other" placeholder="0" type="number" value="500"/>
+<span class="absolute right-sm top-1/2 -translate-y-1/2 text-body-md font-body-md text-secondary">원</span>
+</div>
+</div>
+</div>
+<div class="mt-md pt-sm border-t border-outline-variant flex justify-end gap-sm">
+<button class="px-sm py-1.5 rounded border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors" onclick="resetCalculator()">
+                            초기화
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Panel: KPI & Breakdown Table -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Net Margin KPI -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md border-b-2 border-b-primary-container flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.02)] relative overflow-hidden">
+<div class="absolute top-0 right-0 p-sm opacity-10">
+<span class="material-symbols-outlined text-display-lg">payments</span>
+</div>
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-xs">예상 순마진 (Net Margin)</span>
+<div class="text-kpi-value font-kpi-value text-on-surface tracking-tight" id="kpi-net">₩12,475</div>
+<div class="mt-auto pt-sm">
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-1 rounded inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span> 판매 1건당 수익
+                            </span>
+</div>
+</div>
+<!-- Margin Rate KPI -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md border-b-2 border-b-primary flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.02)] relative overflow-hidden">
+<div class="absolute top-0 right-0 p-sm opacity-10">
+<span class="material-symbols-outlined text-display-lg">monitoring</span>
+</div>
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-xs">마진율 (Margin Rate)</span>
+<div class="text-kpi-value font-kpi-value text-primary tracking-tight" id="kpi-rate">35.64%</div>
+<div class="mt-auto pt-sm">
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-1 rounded inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">target</span> 목표수익률 대비 양호
+                            </span>
+</div>
+</div>
+</div>
+<!-- Detailed Breakdown Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-bright flex items-center justify-between">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">상세 비용 구조 (Breakdown)</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[600px]">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-md py-sm text-label-sm font-label-sm text-secondary font-semibold uppercase w-1/3">항목</th>
+<th class="px-md py-sm text-label-sm font-label-sm text-secondary font-semibold uppercase text-right">금액</th>
+<th class="px-md py-sm text-label-sm font-label-sm text-secondary font-semibold uppercase text-right w-1/4">비율 (%)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<!-- Revenue Row -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-md py-sm text-body-sm font-body-sm text-on-surface font-medium flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+                                        판매가 (Revenue)
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-on-surface text-right font-medium" id="td-sell">₩35,000</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-secondary text-right">100.0%</td>
+</tr>
+<!-- Costs Rows -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-secondary">
+<td class="px-md py-sm text-body-sm font-body-sm pl-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">remove</span>
+                                        공급가
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-supply">- ₩15,000</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-supply-rate">42.8%</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-secondary">
+<td class="px-md py-sm text-body-sm font-body-sm pl-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">remove</span>
+                                        마켓 수수료
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-fee">- ₩4,025</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-fee-rate">11.5%</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-secondary">
+<td class="px-md py-sm text-body-sm font-body-sm pl-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">remove</span>
+                                        배송비
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-shipping">- ₩3,000</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-shipping-rate">8.6%</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group text-secondary">
+<td class="px-md py-sm text-body-sm font-body-sm pl-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">remove</span>
+                                        기타 비용
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-other">- ₩500</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-right" id="td-other-rate">1.4%</td>
+</tr>
+<!-- Summary Row -->
+<tr class="bg-surface border-t-2 border-outline-variant">
+<td class="px-md py-sm text-body-sm font-body-sm text-on-surface font-semibold">
+                                        총 비용 (Total Costs)
+                                    </td>
+<td class="px-md py-sm text-body-sm font-body-sm text-on-surface font-semibold text-right" id="td-total-cost">₩22,525</td>
+<td class="px-md py-sm text-body-sm font-body-sm text-secondary font-semibold text-right" id="td-total-cost-rate">64.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface dark:bg-surface-container-lowest full-width py-xl border-t border-outline-variant dark:border-outline mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-start w-full px-md max-w-max-width mx-auto gap-lg">
+<div>
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-on-surface mb-xs">
+                    SellerSuite
+                </div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-surface-variant">
+                    © 2024 SellerSuite Inc. All rights reserved.
+                </p>
+</div>
+<nav class="flex flex-col md:flex-row gap-lg">
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Contact Us</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Documentation</a>
+</nav>
+</div>
+</footer>
+<!-- Interactive Script -->
+<script>
+        function updateCalculator() {
+            // Get inputs
+            const sell = parseFloat(document.getElementById('input-sell').value) || 0;
+            const supply = parseFloat(document.getElementById('input-supply').value) || 0;
+            const feeRate = parseFloat(document.getElementById('input-fee').value) || 0;
+            const shipping = parseFloat(document.getElementById('input-shipping').value) || 0;
+            const other = parseFloat(document.getElementById('input-other').value) || 0;
+
+            // Calculate
+            const feeAmount = sell * (feeRate / 100);
+            const totalCost = supply + feeAmount + shipping + other;
+            const netMargin = sell - totalCost;
+            const marginRate = sell > 0 ? (netMargin / sell) * 100 : 0;
+
+            // Formatters
+            const krw = new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 });
+            
+            // Update KPIs
+            document.getElementById('kpi-net').textContent = krw.format(netMargin);
+            document.getElementById('kpi-rate').textContent = marginRate.toFixed(2) + '%';
+            
+            const kpiRateEl = document.getElementById('kpi-rate');
+            if (marginRate < 0) {
+                kpiRateEl.classList.remove('text-primary');
+                kpiRateEl.classList.add('text-error');
+            } else {
+                kpiRateEl.classList.add('text-primary');
+                kpiRateEl.classList.remove('text-error');
+            }
+
+            // Update Table Absolute Values
+            document.getElementById('td-sell').textContent = krw.format(sell);
+            document.getElementById('td-supply').textContent = '- ' + krw.format(supply);
+            document.getElementById('td-fee').textContent = '- ' + krw.format(feeAmount);
+            document.getElementById('td-shipping').textContent = '- ' + krw.format(shipping);
+            document.getElementById('td-other').textContent = '- ' + krw.format(other);
+            document.getElementById('td-total-cost').textContent = krw.format(totalCost);
+
+            // Update Table Percentages
+            const calcRate = (val) => sell > 0 ? ((val / sell) * 100).toFixed(1) + '%' : '0.0%';
+            
+            document.getElementById('td-supply-rate').textContent = calcRate(supply);
+            document.getElementById('td-fee-rate').textContent = feeRate.toFixed(1) + '%';
+            document.getElementById('td-shipping-rate').textContent = calcRate(shipping);
+            document.getElementById('td-other-rate').textContent = calcRate(other);
+            document.getElementById('td-total-cost-rate').textContent = calcRate(totalCost);
+        }
+
+        function resetCalculator() {
+            document.getElementById('input-sell').value = '';
+            document.getElementById('input-supply').value = '';
+            document.getElementById('input-fee').value = '';
+            document.getElementById('input-shipping').value = '';
+            document.getElementById('input-other').value = '';
+            updateCalculator();
+        }
+
+        // Attach event listeners to all inputs
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', updateCalculator);
+        });
+
+        // Initial calculation on load
+        updateCalculator();
+    </script>
+</body></html>

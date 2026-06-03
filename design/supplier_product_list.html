@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SellerSuite - 공급사 상품 목록</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config Injection -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "outline": "#737686",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "outline-variant": "#c3c6d7",
+                      "primary": "#004ac6",
+                      "on-secondary-container": "#54647a",
+                      "surface-variant": "#e0e3e5",
+                      "secondary": "#505f76",
+                      "primary-container": "#2563eb",
+                      "tertiary-fixed-dim": "#ffb596",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "secondary-container": "#d0e1fb",
+                      "surface": "#f7f9fb",
+                      "tertiary-fixed": "#ffdbcd",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-surface-variant": "#434655",
+                      "on-surface": "#191c1e",
+                      "surface-bright": "#f7f9fb",
+                      "secondary-fixed": "#d3e4fe",
+                      "error": "#ba1a1a",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b4c5ff",
+                      "surface-dim": "#d8dadc",
+                      "tertiary-container": "#bc4800",
+                      "on-tertiary-fixed": "#360f00",
+                      "on-tertiary-fixed-variant": "#7d2d00",
+                      "surface-container-high": "#e6e8ea",
+                      "background": "#f7f9fb",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eceef0",
+                      "surface-container-low": "#f2f4f6",
+                      "on-primary-fixed": "#00174b",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-secondary-fixed": "#0b1c30",
+                      "surface-tint": "#0053db",
+                      "primary-fixed": "#dbe1ff",
+                      "on-primary-container": "#eeefff",
+                      "inverse-surface": "#2d3133",
+                      "on-background": "#191c1e",
+                      "on-tertiary-container": "#ffede6",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "tertiary": "#943700"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "sm": "16px",
+                      "lg": "32px",
+                      "xs": "8px",
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "xl": "48px",
+                      "max-width": "1440px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "kpi-value": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "kpi-value": ["36px", {"lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for data tables to maintain clean look */
+        .table-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .table-scrollbar::-webkit-scrollbar-track {
+            background: #f7f9fb; 
+        }
+        .table-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #c3c6d7; 
+            border-radius: 4px;
+        }
+        .table-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #737686; 
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface-container-lowest border-b border-outline-variant w-full fixed top-0 z-50 h-16">
+<div class="flex justify-between items-center w-full px-md max-w-max-width mx-auto h-full">
+<!-- Brand & Search -->
+<div class="flex items-center gap-lg h-full">
+<a class="text-headline-md font-headline-md font-bold text-primary active:scale-95 transition-transform duration-150" href="#">SellerSuite</a>
+<!-- Search Bar (on_left) -->
+<div class="hidden md:flex items-center bg-surface-container-low rounded px-sm py-xs border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary w-64 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs" style="font-size: 18px;">search</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm font-body-sm w-full outline-none placeholder:text-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-end h-full gap-lg">
+<!-- Dashboard (Inactive) -->
+<a class="text-secondary font-medium pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-5 text-label-md font-label-md" href="#">Dashboard</a>
+<!-- Orders (Inactive) -->
+<a class="text-secondary font-medium pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-5 text-label-md font-label-md" href="#">Orders</a>
+<!-- Products (Active - Direct Match) -->
+<a class="text-primary font-bold border-b-2 border-primary pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-[22px] text-label-md font-label-md" href="#">Products</a>
+<!-- Crawling (Inactive) -->
+<a class="text-secondary font-medium pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-5 text-label-md font-label-md" href="#">Crawling</a>
+<!-- Margins (Inactive) -->
+<a class="text-secondary font-medium pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-5 text-label-md font-label-md" href="#">Margins</a>
+<!-- Board (Inactive) -->
+<a class="text-secondary font-medium pb-5 hover:text-primary transition-colors duration-200 flex items-center h-full pt-5 text-label-md font-label-md" href="#">Board</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors px-xs py-xs">My Account</button>
+<button class="text-label-md font-label-md bg-surface-container-lowest border border-outline-variant text-on-surface rounded px-sm py-xs hover:bg-surface-container transition-colors h-[32px] flex items-center">Sign Out</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[88px] pb-xl px-md max-w-max-width mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-md gap-sm">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">공급사 상품 목록</h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-base">제휴된 도매처의 상품을 검색하고 내 쇼핑몰로 수집합니다.</p>
+</div>
+<div class="flex gap-xs">
+<button class="h-[36px] px-sm bg-surface-container-lowest border border-outline-variant rounded text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+                    엑셀 다운로드
+                </button>
+<button class="h-[36px] px-sm bg-primary-container text-on-primary rounded text-label-md font-label-md hover:bg-primary transition-colors flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined" style="font-size: 16px;">library_add</span>
+                    선택 상품 수집
+                </button>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-sm mb-md flex flex-col lg:flex-row gap-sm lg:items-end shadow-sm">
+<div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-sm">
+<!-- Search Input -->
+<div class="flex flex-col gap-base">
+<label class="text-label-sm font-label-sm text-on-surface-variant">검색어</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-xs top-1/2 -translate-y-1/2 text-outline" style="font-size: 18px;">search</span>
+<input class="w-full h-[36px] pl-[32px] pr-xs border border-outline-variant rounded text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="상품명, 코드 입력" type="text"/>
+</div>
+</div>
+<!-- Supplier Select -->
+<div class="flex flex-col gap-base">
+<label class="text-label-sm font-label-sm text-on-surface-variant">공급사 선택</label>
+<select class="w-full h-[36px] px-xs border border-outline-variant rounded text-body-sm font-body-sm bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option value="">전체 공급사</option>
+<option value="s1">도매매</option>
+<option value="s2">오너클랜</option>
+<option value="s3">온채널</option>
+</select>
+</div>
+<!-- Category Select -->
+<div class="flex flex-col gap-base">
+<label class="text-label-sm font-label-sm text-on-surface-variant">카테고리</label>
+<select class="w-full h-[36px] px-xs border border-outline-variant rounded text-body-sm font-body-sm bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option value="">전체 카테고리</option>
+<option value="c1">생활/건강</option>
+<option value="c2">가전/디지털</option>
+<option value="c3">패션/의류</option>
+</select>
+</div>
+<!-- Price Range -->
+<div class="flex flex-col gap-base">
+<label class="text-label-sm font-label-sm text-on-surface-variant">공급가 범위 (원)</label>
+<div class="flex items-center gap-xs">
+<input class="w-full h-[36px] px-xs border border-outline-variant rounded text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none text-right" placeholder="최소" type="number"/>
+<span class="text-on-surface-variant">-</span>
+<input class="w-full h-[36px] px-xs border border-outline-variant rounded text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none text-right" placeholder="최대" type="number"/>
+</div>
+</div>
+</div>
+<!-- Filter Actions -->
+<div class="flex gap-xs mt-sm lg:mt-0">
+<button class="h-[36px] px-sm bg-surface-container border border-outline-variant rounded text-label-md font-label-md text-on-surface hover:bg-surface-container-high transition-colors">초기화</button>
+<button class="h-[36px] px-md bg-on-surface text-surface-container-lowest rounded text-label-md font-label-md hover:opacity-90 transition-opacity">검색 적용</button>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<div class="overflow-x-auto table-scrollbar">
+<table class="w-full text-left border-collapse min-w-[1000px]">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-sm py-sm w-[48px] text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase whitespace-nowrap">이미지</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase w-1/4">상품명</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase">공급사</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase text-right">공급가</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase text-right">권장 판매가</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase text-right">예상 마진</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase text-right">마진율</th>
+<th class="px-sm py-sm text-label-sm font-label-sm text-on-surface-variant uppercase text-center">액션</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[56px] group">
+<td class="px-sm py-xs text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="px-sm py-xs">
+<div class="w-10 h-10 rounded border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 20px;">image</span>
+</div>
+</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface font-medium truncate max-w-[250px]" title="프리미엄 극세사 차량용 세차타월 3종 세트">
+                                프리미엄 극세사 차량용 세차타월 3종 세트
+                            </td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface-variant">도매매</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right font-medium">₩4,500</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">₩9,900</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-primary text-right font-medium">₩5,400</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">54.5%</span>
+</td>
+<td class="px-sm py-xs text-center">
+<button class="text-primary hover:text-primary-container p-1 rounded hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_box</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[56px] group">
+<td class="px-sm py-xs text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="px-sm py-xs">
+<div class="w-10 h-10 rounded border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 20px;">image</span>
+</div>
+</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface font-medium truncate max-w-[250px]" title="무선 고속충전 탁상용 선풍기 화이트">
+                                무선 고속충전 탁상용 선풍기 화이트
+                            </td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface-variant">오너클랜</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right font-medium">₩12,000</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">₩25,000</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-primary text-right font-medium">₩13,000</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">52.0%</span>
+</td>
+<td class="px-sm py-xs text-center">
+<button class="text-primary hover:text-primary-container p-1 rounded hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_box</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[56px] group">
+<td class="px-sm py-xs text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="px-sm py-xs">
+<div class="w-10 h-10 rounded border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 20px;">image</span>
+</div>
+</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface font-medium truncate max-w-[250px]" title="스테인리스 캠핑용 머그컵 500ml">
+                                스테인리스 캠핑용 머그컵 500ml
+                            </td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface-variant">온채널</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right font-medium">₩3,200</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">₩7,500</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-primary text-right font-medium">₩4,300</td>
+<td class="px-sm py-xs text-body-sm font-body-sm text-on-surface text-right">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">57.3%</span>
+</td>
+<td class="px-sm py-xs text-center">
+<button class="text-primary hover:text-primary-container p-1 rounded hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_box</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="border-t border-outline-variant bg-surface-container-lowest px-sm py-sm flex items-center justify-between">
+<div class="text-body-sm font-body-sm text-on-surface-variant">
+                    Showing 1 to 10 of 2,450 entries
+                </div>
+<div class="flex items-center gap-base">
+<button class="h-8 w-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+</button>
+<button class="h-8 w-8 flex items-center justify-center rounded bg-primary text-on-primary text-label-md font-label-md">1</button>
+<button class="h-8 w-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container transition-colors text-label-md font-label-md">2</button>
+<button class="h-8 w-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container transition-colors text-label-md font-label-md">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="h-8 w-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface border-t border-outline-variant full-width py-xl mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-start w-full px-md max-w-max-width mx-auto gap-lg">
+<!-- Brand & Copyright -->
+<div class="flex flex-col gap-xs">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">SellerSuite</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">© 2024 SellerSuite Inc. All rights reserved.</span>
+</div>
+<!-- Links -->
+<nav class="flex gap-lg flex-wrap">
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Contact Us</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Documentation</a>
+</nav>
+</div>
+</footer>
+</body></html>

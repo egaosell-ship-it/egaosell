@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>상품 수집 - SellerSuite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#737686",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "on-secondary-container": "#54647a",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#505f76",
+                        "primary-container": "#2563eb",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-container": "#d0e1fb",
+                        "surface": "#f7f9fb",
+                        "tertiary-fixed": "#ffdbcd",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-surface-variant": "#434655",
+                        "on-surface": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-container": "#bc4800",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-container-high": "#e6e8ea",
+                        "background": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-tint": "#0053db",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-container": "#eeefff",
+                        "inverse-surface": "#2d3133",
+                        "on-background": "#191c1e",
+                        "on-tertiary-container": "#ffede6",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary": "#943700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "16px",
+                        "lg": "32px",
+                        "xs": "8px",
+                        "base": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xl": "48px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "kpi-value": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "kpi-value": ["36px", { "lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest docked full-width top-0 h-16 border-b border-outline-variant dark:border-outline flat no shadows shrink-0">
+<div class="flex justify-between items-center w-full px-md max-w-max-width mx-auto h-full">
+<div class="flex items-center gap-lg h-full">
+<a class="text-headline-md font-headline-md font-bold text-primary dark:text-primary" href="#">SellerSuite</a>
+<nav class="hidden md:flex items-center gap-md h-full">
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 mt-5 text-label-md font-label-md" href="#">Dashboard</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 mt-5 text-label-md font-label-md" href="#">Orders</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 mt-5 text-label-md font-label-md" href="#">Products</a>
+<a aria-current="page" class="text-primary dark:text-primary font-bold border-b-2 border-primary pb-5 mt-5 text-label-md font-label-md" href="#">Crawling</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 mt-5 text-label-md font-label-md" href="#">Margins</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 mt-5 text-label-md font-label-md" href="#">Board</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="h-[36px] w-64 pl-8 pr-3 border border-outline-variant rounded bg-surface-container-lowest text-body-sm focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 focus:outline-none transition-all placeholder:text-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+<a class="text-label-md font-label-md text-on-surface hover:text-primary transition-colors" href="#">My Account</a>
+<button class="h-[36px] px-sm bg-primary-container text-on-primary rounded text-label-md font-label-md hover:bg-primary transition-colors active:scale-95 duration-150">Sign Out</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-md py-lg flex flex-col gap-lg">
+<!-- Page Header & API Status -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-sm border-b border-outline-variant pb-sm">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">상품 수집 (Crawling)</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-xs">타 마켓플레이스의 상품 정보를 빠르고 정확하게 가져옵니다.</p>
+</div>
+<div class="flex items-center gap-sm">
+<!-- API Status Indicators -->
+<div class="flex items-center gap-xs px-3 py-1.5 border border-outline-variant rounded bg-surface-container-lowest">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-label-md font-label-md text-on-surface">쿠팡 API : 정상</span>
+</div>
+<div class="flex items-center gap-xs px-3 py-1.5 border border-outline-variant rounded bg-surface-container-lowest">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-label-md font-label-md text-on-surface">네이버 API : 정상</span>
+</div>
+</div>
+</div>
+<!-- Crawling Input Area (Bento-style focused card) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-sm">새로운 상품 수집</h2>
+<div class="flex flex-col md:flex-row gap-sm items-start md:items-end">
+<div class="flex-1 w-full flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface-variant">대상 URL 또는 마켓플레이스 검색어 입력</label>
+<input class="h-[40px] w-full px-3 border border-outline-variant rounded bg-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 focus:outline-none transition-all text-body-md" placeholder="https://..." type="text"/>
+</div>
+<div class="w-full md:w-auto flex gap-xs">
+<select class="h-[40px] border border-outline-variant rounded bg-surface text-body-md focus:border-primary-container focus:outline-none">
+<option>전체 마켓</option>
+<option>쿠팡</option>
+<option>네이버 스마트스토어</option>
+</select>
+<button class="h-[40px] px-md bg-primary-container text-on-primary rounded text-label-md font-label-md hover:bg-primary transition-colors flex items-center gap-xs shrink-0 whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">manage_search</span>
+                        수집 시작
+                    </button>
+</div>
+</div>
+<div class="mt-xs">
+<span class="text-label-sm font-label-sm text-secondary">* 수집 시 각 마켓플레이스의 정책을 준수해 주세요.</span>
+</div>
+</div>
+<!-- Results Grid -->
+<div class="flex flex-col gap-sm">
+<div class="flex justify-between items-center">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">수집 결과 (최근)</h3>
+<button class="text-label-md font-label-md text-primary-container hover:text-primary transition-colors">모두 보기</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-md">
+<!-- Result Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col group hover:border-primary-container transition-colors">
+<div class="h-40 bg-surface-container flex items-center justify-center relative overflow-hidden">
+<img alt="Nike Red Running Shoe" class="object-cover w-full h-full" data-alt="A highly detailed close-up of a vibrant red Nike running shoe displayed on a clean, modern white studio background. The lighting is bright and even, casting subtle soft shadows to emphasize the shoe's sleek design and texture. The aesthetic is clean, professional, and e-commerce ready, fitting seamlessly into a high-end corporate SaaS platform design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzeaVFxeys22n8NgiDHqFp6MbwtTDyoPGi8PQ9JkyjWuYGtFMae5IxiIZbn7zx8gi5oE_MPmHIa8QcMLnPC9urBZAxtTYcwMKRiNb-4hNO2bOyiE4iq6bSb3l662jjl8u6KxP3qPqNV0KOetuQyRRc8Q6JBXahL_oLjXirUZtFzrU6owgsb7XOSJdaLMb9dwzqj_GqiAezhXzYNI3gTctZnBP8VKaRM4sxU1iYk914jMzSefEoh6h_bU6JE26BXKgG4tSgkHghtNc"/>
+<div class="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-label-sm font-label-sm backdrop-blur-sm">쿠팡</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow border-t border-outline-variant">
+<div class="text-label-sm font-label-sm text-on-surface-variant line-clamp-1">카테고리 &gt; 스포츠/레저</div>
+<h4 class="text-body-md font-body-md text-on-surface font-semibold line-clamp-2" title="나이키 에어 줌 페가수스 39 레드 남성 런닝화">나이키 에어 줌 페가수스 39 레드 남성 런닝화</h4>
+<div class="mt-auto pt-2 flex justify-between items-end">
+<span class="text-headline-sm font-headline-sm text-on-surface">₩119,000</span>
+</div>
+<button class="mt-2 w-full h-[32px] border border-outline-variant bg-surface text-on-surface rounded text-label-md font-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                            수집하기
+                        </button>
+</div>
+</div>
+<!-- Result Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col group hover:border-primary-container transition-colors">
+<div class="h-40 bg-surface-container flex items-center justify-center relative overflow-hidden">
+<img alt="White Smartwatch" class="object-cover w-full h-full" data-alt="A minimalist white smartwatch with a clean digital face, floating slightly above a pristine white surface. The lighting is soft and high-key, creating a modern, tech-focused light-mode aesthetic. The composition is simple and data-focused, ideal for a professional e-commerce product listing display." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjwLIpPpGaHyZLRsRKtgu_dMMOpgwMmZi48dEfwAfWzb4I7rIvYZ83SaVjaVc7YFNivp4KwAhNpadQc--a2pvTDbpsTF2vlwaYrRpOgc5FMPJ2qo3dq0OlrStR5A0J6FbujKhVL3wf4X1mD7Ah4LUiaocTpiKye6rrqiVxnpLi2DfiZPWT7_qPbEoUFltL_wcHLoMnPkzNFPu0W7ADI2Ov1r7zJcvR86DXxIpWS4qkOWEaujjRIQvOYqqx49hpOClDQB7TvX0iPws"/>
+<div class="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-label-sm font-label-sm backdrop-blur-sm">네이버</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow border-t border-outline-variant">
+<div class="text-label-sm font-label-sm text-on-surface-variant line-clamp-1">카테고리 &gt; 디지털/가전</div>
+<h4 class="text-body-md font-body-md text-on-surface font-semibold line-clamp-2" title="애플워치 SE 2세대 알루미늄 케이스 40mm 스타라이트">애플워치 SE 2세대 알루미늄 케이스 40mm 스타라이트</h4>
+<div class="mt-auto pt-2 flex justify-between items-end">
+<span class="text-headline-sm font-headline-sm text-on-surface">₩359,000</span>
+</div>
+<button class="mt-2 w-full h-[32px] border border-outline-variant bg-surface text-on-surface rounded text-label-md font-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                            수집하기
+                        </button>
+</div>
+</div>
+<!-- Result Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col group hover:border-primary-container transition-colors">
+<div class="h-40 bg-surface-container flex items-center justify-center relative overflow-hidden">
+<img alt="Black Headphones" class="object-cover w-full h-full" data-alt="Premium black over-ear wireless headphones resting gently on a highly reflective polished white table. Studio lighting highlights the matte texture of the earcups against the sleek, modern background. The image maintains a pristine, data-dense corporate SaaS visual tone, focusing entirely on product clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuJUBNvPBo0-7mKcC_y6ygXqctuDsT8wtY551Ijmhv76M0JIs3Vwisdpd11SreEjwENUGtlNOCqDdBmg-x69b0GHdIUaJzOdW_U9cFhrxFqoPi51dhFlKW_mcPnMJp0Ua7RCvRZ0BNaIzUgapMhRbfIjd2YyXi_lKh84NexdIITOO55b8rMTXT0YNrtGR2izt1d-XfLvTnZFgRWamRFgvwnBQSj1--ibNnFgSNOcVvMHkjX5D_GOX2SmDx3HNkvegfslWpo-pbEdE"/>
+<div class="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-label-sm font-label-sm backdrop-blur-sm">쿠팡</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow border-t border-outline-variant">
+<div class="text-label-sm font-label-sm text-on-surface-variant line-clamp-1">카테고리 &gt; 음향기기</div>
+<h4 class="text-body-md font-body-md text-on-surface font-semibold line-clamp-2" title="소니 WH-1000XM5 무선 노이즈캔슬링 헤드폰 블랙">소니 WH-1000XM5 무선 노이즈캔슬링 헤드폰 블랙</h4>
+<div class="mt-auto pt-2 flex justify-between items-end">
+<span class="text-headline-sm font-headline-sm text-on-surface">₩429,000</span>
+</div>
+<button class="mt-2 w-full h-[32px] border border-outline-variant bg-surface text-on-surface rounded text-label-md font-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                            수집하기
+                        </button>
+</div>
+</div>
+<!-- Result Card 4 (Placeholder style) -->
+<div class="bg-surface-container border border-outline-variant border-dashed rounded-lg flex flex-col items-center justify-center p-md min-h-[300px] text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">add_box</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface font-medium">더 많은 상품 수집하기</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">URL을 입력하여 데이터를 가져오세요.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-surface-container-lowest full-width py-xl border-t border-outline-variant dark:border-outline flat no shadows mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-start w-full px-md max-w-max-width mx-auto gap-lg">
+<div>
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-on-surface mb-xs">SellerSuite</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">© 2024 SellerSuite Inc. All rights reserved.</p>
+</div>
+<div class="flex gap-md flex-wrap">
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Contact Us</a>
+<a class="text-label-md font-label-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Documentation</a>
+</div>
+</div>
+</footer>
+</body></html>

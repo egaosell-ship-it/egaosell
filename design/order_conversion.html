@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>주문 변환 - SellerSuite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#737686",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "on-secondary-container": "#54647a",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#505f76",
+                        "primary-container": "#2563eb",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-container": "#d0e1fb",
+                        "surface": "#f7f9fb",
+                        "tertiary-fixed": "#ffdbcd",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-surface-variant": "#434655",
+                        "on-surface": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-container": "#bc4800",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-container-high": "#e6e8ea",
+                        "background": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-tint": "#0053db",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-container": "#eeefff",
+                        "inverse-surface": "#2d3133",
+                        "on-background": "#191c1e",
+                        "on-tertiary-container": "#ffede6",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary": "#943700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "16px",
+                        "lg": "32px",
+                        "xs": "8px",
+                        "base": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xl": "48px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "kpi-value": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "kpi-value": ["36px", { "lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f7f9fb; }
+        .table-container { scrollbar-width: thin; scrollbar-color: #c3c6d7 transparent; }
+        .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: transparent; }
+        .table-container::-webkit-scrollbar-thumb { background-color: #c3c6d7; border-radius: 20px; }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased bg-background">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest docked full-width top-0 h-16 border-b border-outline-variant dark:border-outline flat no shadows sticky z-50">
+<div class="flex justify-between items-center w-full px-md max-w-max-width mx-auto h-full">
+<div class="flex items-center gap-lg h-full">
+<div class="text-headline-md font-headline-md font-bold text-primary dark:text-primary tracking-tight">SellerSuite</div>
+<!-- Search Bar (on_left as per JSON) -->
+<div class="relative hidden md:block w-64 ml-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
+<input class="w-full h-8 pl-10 pr-3 rounded border border-outline-variant bg-surface-container-lowest text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all" placeholder="Search orders..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-md h-full items-end">
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Dashboard</a>
+<a class="text-primary dark:text-primary font-bold border-b-2 border-primary pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Orders</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Products</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Crawling</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Margins</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-medium pb-5 hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 active:scale-95 text-label-md font-label-md flex items-end" href="#">Board</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-label-md font-label-md text-on-surface hover:text-primary transition-colors h-8 px-3 rounded border border-outline-variant bg-surface-container-lowest">My Account</button>
+<button class="text-label-md font-label-md text-on-primary bg-primary-container hover:bg-primary transition-colors h-8 px-4 rounded border border-transparent shadow-sm">Sign Out</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-md py-lg flex flex-col gap-lg">
+<!-- Header Area -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-sm border-b border-outline-variant pb-sm">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">주문 데이터 변환</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">오픈마켓(쿠팡, 네이버) 주문서를 택배사 양식으로 자동 변환합니다.</p>
+</div>
+<div class="flex gap-xs">
+<button class="flex items-center gap-2 h-[36px] px-4 rounded border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                    변환 내역
+                </button>
+</div>
+</div>
+<!-- Two Column Layout for Action Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Upload Zone -->
+<div class="col-span-1 lg:col-span-2 bg-surface-container-lowest rounded-lg border border-outline-variant p-md flex flex-col justify-center items-center gap-sm border-dashed hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer min-h-[200px]">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-primary text-[28px]">upload_file</span>
+</div>
+<div class="text-center">
+<p class="text-body-md font-body-md font-medium text-on-surface">클릭하여 파일 선택 또는 여기로 드래그</p>
+<p class="text-label-md font-label-md text-on-surface-variant mt-1">지원 포맷: .xlsx, .xls, .csv (최대 50MB)</p>
+</div>
+</div>
+<!-- Conversion Settings -->
+<div class="col-span-1 bg-surface-container-lowest rounded-lg border border-outline-variant p-md flex flex-col gap-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface border-b border-outline-variant pb-2 mb-2">변환 설정</h2>
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">대상 택배사</label>
+<div class="relative">
+<select class="w-full h-[36px] pl-3 pr-8 rounded border border-outline-variant bg-surface-container-lowest text-body-sm appearance-none focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10">
+<option>CJ대한통운 (표준)</option>
+<option>우체국택배 (국내)</option>
+<option>롯데택배 (일반)</option>
+<option>로젠택배</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline-variant text-[20px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-2">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">원본 마켓 형식 (선택사항)</label>
+<div class="relative">
+<select class="w-full h-[36px] pl-3 pr-8 rounded border border-outline-variant bg-surface-container-lowest text-body-sm appearance-none focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10">
+<option>자동 감지</option>
+<option>쿠팡 (Coupang)</option>
+<option>네이버 스마트스토어</option>
+<option>11번가</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline-variant text-[20px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="mt-auto pt-sm">
+<button class="w-full h-[36px] rounded bg-primary-container text-on-primary text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">transform</span>
+                        택배 양식으로 변환
+                    </button>
+</div>
+</div>
+</div>
+<!-- Data Preview Section -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant flex flex-col overflow-hidden">
+<div class="p-sm border-b border-outline-variant flex justify-between items-center bg-[#F8FAFC]">
+<div class="flex items-center gap-xs">
+<h3 class="text-label-md font-label-md text-on-surface font-semibold">데이터 미리보기</h3>
+<span class="bg-surface-container-low text-on-surface-variant px-2 py-0.5 rounded text-[10px] font-medium border border-outline-variant">총 156건</span>
+</div>
+<button class="h-[32px] px-3 rounded border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-label-md flex items-center gap-1 hover:bg-surface-container-low transition-colors opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                    엑셀 다운로드
+                </button>
+</div>
+<div class="table-container overflow-x-auto w-full max-h-[400px]">
+<table class="w-full text-left border-collapse whitespace-nowrap">
+<thead class="sticky top-0 bg-[#F8FAFC] z-10 shadow-[0_1px_0_0_#E2E8F0]">
+<tr>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">주문번호</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">마켓</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">수취인명</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">연락처</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">우편번호</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">주소</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">상품명</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant text-right">수량</th>
+<th class="px-sm py-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold border-b border-outline-variant">배송메시지</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-body-sm text-on-surface divide-y divide-outline-variant/50">
+<!-- Empty State (initially shown before upload) -->
+<tr>
+<td class="px-sm py-xl text-center text-on-surface-variant" colspan="9">
+<span class="material-symbols-outlined text-[32px] text-outline-variant mb-2 block">table_rows</span>
+                                파일을 업로드하면 원본 데이터가 여기에 표시됩니다.
+                            </td>
+</tr>
+<!-- Sample Row 1 (Hidden by default, used for structural example) -->
+<tr class="hover:bg-[#F1F5F9] transition-colors hidden">
+<td class="px-sm py-2">CP-20231024-001</td>
+<td class="px-sm py-2"><span class="px-1.5 py-0.5 rounded-sm bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-medium">쿠팡</span></td>
+<td class="px-sm py-2">홍길동</td>
+<td class="px-sm py-2">010-1234-5678</td>
+<td class="px-sm py-2">06234</td>
+<td class="px-sm py-2 truncate max-w-[200px]" title="서울특별시 강남구 테헤란로 123, 4층">서울특별시 강남구 테헤란로 123...</td>
+<td class="px-sm py-2 truncate max-w-[200px]" title="고급 무선 마우스 로지텍 G Pro X Superlight">고급 무선 마우스 로지텍 G P...</td>
+<td class="px-sm py-2 text-right">1</td>
+<td class="px-sm py-2 truncate max-w-[150px]" title="문 앞에 두고 가주세요">문 앞에 두고 가주세요</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</body></html>

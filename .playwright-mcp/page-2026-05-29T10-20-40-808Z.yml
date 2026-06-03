@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: dataset
+        - generic [ref=e7]: egaoSell
+      - paragraph [ref=e8]: 이커머스 관리를 위한 최적의 솔루션
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - button "로그인" [ref=e11] [cursor=pointer]
+        - button "회원가입" [ref=e12] [cursor=pointer]
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - generic [ref=e16]: 이메일 주소
+            - textbox "이메일 주소" [ref=e17]:
+              - /placeholder: name@company.com
+          - generic [ref=e18]:
+            - generic [ref=e19]:
+              - generic [ref=e20]: 비밀번호
+              - link "비밀번호 찾기" [ref=e21] [cursor=pointer]:
+                - /url: "#"
+            - textbox "비밀번호" [ref=e22]:
+              - /placeholder: ••••••••
+          - button "로그인" [ref=e23]
+        - generic [ref=e26]: 또는
+        - generic [ref=e28]:
+          - button "account_circle Google 계정으로 계속" [ref=e29]:
+            - generic [ref=e30]: account_circle
+            - text: Google 계정으로 계속
+          - button "Kakao로 계속" [ref=e31]: Kakao로 계속
+          - button "Naver로 계속" [ref=e33]: Naver로 계속
+    - generic [ref=e35]:
+      - link "이용약관" [ref=e36] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=e37]: •
+      - link "개인정보처리방침" [ref=e38] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=e39]: •
+      - link "고객지원" [ref=e40] [cursor=pointer]:
+        - /url: "#"
+  - button "Open Next.js Dev Tools" [ref=e46] [cursor=pointer]:
+    - img [ref=e47]
+  - alert [ref=e50]

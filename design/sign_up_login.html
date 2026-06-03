@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>로그인 - SellerSuite</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#737686",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "outline-variant": "#c3c6d7",
+                        "primary": "#004ac6",
+                        "on-secondary-container": "#54647a",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#505f76",
+                        "primary-container": "#2563eb",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-container": "#d0e1fb",
+                        "surface": "#f7f9fb",
+                        "tertiary-fixed": "#ffdbcd",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-surface-variant": "#434655",
+                        "on-surface": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-container": "#bc4800",
+                        "on-tertiary-fixed": "#360f00",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-container-high": "#e6e8ea",
+                        "background": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-tint": "#0053db",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-container": "#eeefff",
+                        "inverse-surface": "#2d3133",
+                        "on-background": "#191c1e",
+                        "on-tertiary-container": "#ffede6",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary": "#943700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "16px",
+                        "lg": "32px",
+                        "xs": "8px",
+                        "base": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xl": "48px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "kpi-value": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "kpi-value": ["36px", { "lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom glow for input focus state */
+        .input-focus-ring:focus {
+            outline: none;
+            border-color: #2563eb; /* primary-container */
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center antialiased text-on-background selection:bg-primary/20">
+<!-- Main Container -->
+<main class="w-full max-w-[400px] px-margin-mobile md:px-0">
+<!-- Brand Header (Outside Card for SaaS feel) -->
+<div class="flex flex-col items-center justify-center mb-lg">
+<div class="flex items-center gap-2 mb-sm">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">dataset</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">SellerSuite</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary text-center" id="page-subtitle">이커머스 관리를 위한 최적의 솔루션</p>
+</div>
+<!-- Card Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+<!-- Toggle Tabs -->
+<div class="flex border-b border-outline-variant bg-surface-container-low/50">
+<button class="flex-1 py-3 text-center font-label-md text-label-md transition-colors bg-surface-container-lowest border-b-2 border-primary text-primary" id="tab-login" onclick="toggleView('login')">
+                    로그인
+                </button>
+<button class="flex-1 py-3 text-center font-label-md text-label-md transition-colors text-secondary hover:text-on-surface border-b-2 border-transparent" id="tab-signup" onclick="toggleView('signup')">
+                    회원가입
+                </button>
+</div>
+<div class="p-md md:p-lg">
+<!-- FORM -->
+<form class="flex flex-col gap-sm" id="auth-form" onsubmit="event.preventDefault();">
+<!-- Name Field (Only visible on Sign Up) -->
+<div class="hidden flex-col gap-base" id="field-name">
+<label class="font-label-md text-label-md text-on-surface-variant" for="name">이름</label>
+<input class="w-full h-[36px] px-sm bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm text-on-surface input-focus-ring transition-all placeholder:text-outline" id="name" placeholder="홍길동" type="text"/>
+</div>
+<!-- Email Field -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface-variant" for="email">이메일 주소</label>
+<input class="w-full h-[36px] px-sm bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm text-on-surface input-focus-ring transition-all placeholder:text-outline" id="email" placeholder="name@company.com" required="" type="email"/>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-base">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface-variant" for="password">비밀번호</label>
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-variant transition-colors" href="#" id="link-forgot-password">비밀번호 찾기</a>
+</div>
+<input class="w-full h-[36px] px-sm bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm text-on-surface input-focus-ring transition-all placeholder:text-outline" id="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full h-[36px] mt-2 bg-primary-container text-on-primary font-label-md text-label-md rounded flex items-center justify-center hover:bg-surface-tint transition-colors" id="btn-submit" type="submit">
+                        로그인
+                    </button>
+</form>
+<!-- Divider -->
+<div class="flex items-center my-md">
+<div class="flex-grow border-t border-outline-variant"></div>
+<span class="px-sm font-label-sm text-label-sm text-secondary uppercase tracking-widest">또는</span>
+<div class="flex-grow border-t border-outline-variant"></div>
+</div>
+<!-- Social Logins (Secondary Buttons) -->
+<div class="flex flex-col gap-xs">
+<button class="w-full h-[36px] bg-surface-container-lowest border border-outline-variant text-on-surface rounded font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+                        Google 계정으로 계속
+                    </button>
+<!-- Kakao (Stylized subtly to match SaaS theme, not full vibrant yellow) -->
+<button class="w-full h-[36px] bg-surface-container-lowest border border-outline-variant text-on-surface rounded font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
+<div class="w-3 h-3 rounded-full bg-[#FEE500]"></div>
+                        Kakao로 계속
+                    </button>
+<!-- Naver -->
+<button class="w-full h-[36px] bg-surface-container-lowest border border-outline-variant text-on-surface rounded font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
+<div class="w-3 h-3 rounded-full bg-[#03C75A]"></div>
+                        Naver로 계속
+                    </button>
+</div>
+</div>
+</div>
+<!-- Bottom Minimal Links -->
+<div class="mt-lg flex justify-center gap-sm font-label-sm text-label-sm text-secondary">
+<a class="hover:text-primary transition-colors" href="#">이용약관</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">개인정보처리방침</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">고객지원</a>
+</div>
+</main>
+<!-- Simple Interaction Script -->
+<script>
+        function toggleView(view) {
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+            const fieldName = document.getElementById('field-name');
+            const linkForgotPw = document.getElementById('link-forgot-password');
+            const btnSubmit = document.getElementById('btn-submit');
+            const subtitle = document.getElementById('page-subtitle');
+
+            // Reset tabs
+            tabLogin.className = "flex-1 py-3 text-center font-label-md text-label-md transition-colors text-secondary hover:text-on-surface border-b-2 border-transparent cursor-pointer";
+            tabSignup.className = "flex-1 py-3 text-center font-label-md text-label-md transition-colors text-secondary hover:text-on-surface border-b-2 border-transparent cursor-pointer";
+
+            if (view === 'login') {
+                tabLogin.className = "flex-1 py-3 text-center font-label-md text-label-md transition-colors bg-surface-container-lowest border-b-2 border-primary text-primary";
+                fieldName.style.display = 'none';
+                linkForgotPw.style.display = 'block';
+                btnSubmit.textContent = '로그인';
+                subtitle.textContent = '이커머스 관리를 위한 최적의 솔루션';
+            } else {
+                tabSignup.className = "flex-1 py-3 text-center font-label-md text-label-md transition-colors bg-surface-container-lowest border-b-2 border-primary text-primary";
+                fieldName.style.display = 'flex';
+                linkForgotPw.style.display = 'none';
+                btnSubmit.textContent = '계정 생성하기';
+                subtitle.textContent = '새로운 계정을 만들어 비즈니스를 확장하세요';
+            }
+        }
+    </script>
+</body></html>
