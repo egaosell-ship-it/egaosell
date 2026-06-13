@@ -141,7 +141,7 @@ function MemoItem({
       </div>
       
       <textarea
-        className="text-xs text-on-surface bg-transparent resize-none outline-none border border-transparent focus:border-outline-variant rounded p-1 h-20 w-full"
+        className="text-xs text-on-surface bg-transparent resize-none outline-none border border-transparent focus:border-outline-variant rounded p-1 h-[120px] w-full"
         placeholder="내용을 입력하세요..."
         value={memo.content}
         onChange={(e) => onUpdateContent(memo.id, e.target.value)}
