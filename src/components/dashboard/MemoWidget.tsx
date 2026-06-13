@@ -107,7 +107,11 @@ function MemoItem({
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded p-2 flex flex-col gap-1.5 relative group shadow-sm hover:shadow-md transition-shadow">
       <button 
-        onClick={() => onDelete(memo.id)}
+        onClick={() => {
+          if (window.confirm("정말로 이 메모장을 삭제하시겠습니까?")) {
+            onDelete(memo.id);
+          }
+        }}
         className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity text-secondary hover:text-error"
         title="삭제"
       >
