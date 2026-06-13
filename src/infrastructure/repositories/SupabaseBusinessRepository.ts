@@ -57,4 +57,44 @@ export class SupabaseBusinessRepository implements IBusinessRepository {
       })
     );
   }
+
+  async update(business: Business): Promise<void> {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("businesses")
+      .update({
+        is_main: business.isMain,
+        company_name: business.companyName,
+        business_id: business.businessId,
+        ceo_name: business.ceoName,
+        phone: business.phone,
+        address: business.address,
+        reg_number: business.regNumber,
+        mail_order_number: business.mailOrderNumber,
+        updated_at: business.updatedAt?.toISOString() || new Date().toISOString(),
+      })
+      .eq("id", business.id)
+      .eq("user_id", business.userId);
+
+    if (error) {
+      console.error("Failed to update business:", error);
+      throw new Error("사업자 데이터 수정에 실패했습니다.");
+    }
+  }
+
+  async delete(id: string, userId: string): Promise<void> {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("businesses")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Failed to delete business:", error);
+      throw new Error("사업자 데이터 삭제에 실패했습니다.");
+    }
+  }
 }

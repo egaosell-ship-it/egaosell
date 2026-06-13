@@ -4,6 +4,8 @@ import { GetBusinessesUseCase } from '@/core/application/use-cases/business/GetB
 import { Business } from '@/core/domain/entities/Business';
 import AddBusinessModal from './AddBusinessModal';
 
+import BusinessActionButtons from './BusinessActionButtons';
+
 export default async function BusinessInfoTab() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -48,7 +50,10 @@ export default async function BusinessInfoTab() {
               businesses.map((biz, index) => (
                 <tr key={biz.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
                   <td className="px-4 py-3">{index + 1}</td>
-                  <td className="px-4 py-3">{biz.businessId}</td>
+                  <td className="px-4 py-3">
+                    {biz.businessId}
+                    {biz.isMain && <span className="text-primary ml-1">(★)</span>}
+                  </td>
                   <td className="px-4 py-3 font-medium">{biz.companyName}</td>
                   <td className="px-4 py-3">{biz.ceoName}</td>
                   <td className="px-4 py-3 truncate max-w-[200px]" title={biz.address || undefined}>{biz.address}</td>
@@ -56,8 +61,7 @@ export default async function BusinessInfoTab() {
                   <td className="px-4 py-3">{biz.regNumber}</td>
                   <td className="px-4 py-3">{biz.mailOrderNumber}</td>
                   <td className="px-4 py-3 text-center">
-                    <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2">수정</button>
-                    <button className="text-error hover:text-error/80 text-xs font-medium">삭제</button>
+                    <BusinessActionButtons business={biz} />
                   </td>
                 </tr>
               ))
