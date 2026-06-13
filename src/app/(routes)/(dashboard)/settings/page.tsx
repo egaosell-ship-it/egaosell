@@ -3,6 +3,7 @@ import BusinessInfoTab from './_components/BusinessInfoTab';
 import BrandListTab from './_components/BrandListTab';
 import PlatformMarginTab from './_components/PlatformMarginTab';
 import CoupangApiTab from './_components/CoupangApiTab';
+import OwnedStoresTab from './_components/OwnedStoresTab';
 
 interface SettingsPageProps {
   searchParams: Promise<{ tab?: string }>;
@@ -16,6 +17,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     { id: 'business', name: '사업자정보관리' },
     { id: 'brands', name: '브랜드리스트' },
     { id: 'margins', name: '플랫폼마진세팅' },
+    { id: 'owned-stores', name: '보유스토어' },
     { id: 'coupang-api', name: '쿠팡API' },
   ];
 
@@ -52,6 +54,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         {currentTab === 'business' && <BusinessInfoTab />}
         {currentTab === 'brands' && <BrandListTab />}
         {currentTab === 'margins' && <PlatformMarginTab />}
+        {currentTab === 'owned-stores' && <OwnedStoresTab />}
         {currentTab === 'coupang-api' && <CoupangApiTab />}
       </div>
     </div>
