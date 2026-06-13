@@ -4,11 +4,12 @@ import BrandListTab from './_components/BrandListTab';
 import PlatformMarginTab from './_components/PlatformMarginTab';
 
 interface SettingsPageProps {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }
 
-export default function SettingsPage({ searchParams }: SettingsPageProps) {
-  const currentTab = searchParams.tab || 'business';
+export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+  const resolvedParams = await searchParams;
+  const currentTab = resolvedParams.tab || 'business';
 
   const tabs = [
     { id: 'business', name: '사업자정보관리' },
