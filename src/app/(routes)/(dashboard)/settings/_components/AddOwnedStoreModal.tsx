@@ -106,6 +106,16 @@ export default function AddOwnedStoreModal({ businesses, margins }: Props) {
               <input type="url" name="storeUrl" required className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="https://example.com" />
             </div>
 
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">송장홍보문구1</label>
+              <input type="text" name="invoicePromo1" className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="송장홍보문구1을 입력하세요" />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">송장홍보문구2</label>
+              <input type="text" name="invoicePromo2" className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="송장홍보문구2를 입력하세요" />
+            </div>
+
           </div>
 
           {/* Footer */}

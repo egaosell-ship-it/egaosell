@@ -19,6 +19,8 @@ export class CreateOwnedStoreUseCase {
       loginId: dto.loginId,
       siteName: dto.siteName,
       storeUrl: dto.storeUrl,
+      invoicePromo1: dto.invoicePromo1,
+      invoicePromo2: dto.invoicePromo2,
     });
 
     await this.repository.create(store);

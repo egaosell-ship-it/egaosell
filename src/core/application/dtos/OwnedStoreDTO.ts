@@ -4,6 +4,8 @@ export interface CreateOwnedStoreDTO {
   loginId: string;
   siteName: string;
   storeUrl: string;
+  invoicePromo1?: string;
+  invoicePromo2?: string;
 }
 
 export interface UpdateOwnedStoreDTO {
@@ -13,4 +15,6 @@ export interface UpdateOwnedStoreDTO {
   loginId: string;
   siteName: string;
   storeUrl: string;
+  invoicePromo1?: string;
+  invoicePromo2?: string;
 }

@@ -22,7 +22,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   ];
 
   return (
-    <div className="flex-1 flex flex-col p-4 md:p-6 w-full max-w-7xl mx-auto h-full overflow-hidden">
+    <div className="flex-1 flex flex-col p-4 md:p-6 w-full h-full overflow-hidden">
       <div className="mb-6 flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-on-surface flex items-center gap-2">
           <span className="text-[24px]">⚙️</span>

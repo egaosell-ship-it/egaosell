@@ -23,6 +23,8 @@ export async function createOwnedStoreAction(prevState: unknown, formData: FormD
       loginId: formData.get("loginId") as string,
       siteName: formData.get("siteName") as string,
       storeUrl: formData.get("storeUrl") as string,
+      invoicePromo1: formData.get("invoicePromo1") as string,
+      invoicePromo2: formData.get("invoicePromo2") as string,
     };
 
     const repository = new SupabaseOwnedStoreRepository();
@@ -54,6 +56,8 @@ export async function updateOwnedStoreAction(prevState: unknown, formData: FormD
       loginId: formData.get("loginId") as string,
       siteName: formData.get("siteName") as string,
       storeUrl: formData.get("storeUrl") as string,
+      invoicePromo1: formData.get("invoicePromo1") as string,
+      invoicePromo2: formData.get("invoicePromo2") as string,
     };
 
     const repository = new SupabaseOwnedStoreRepository();

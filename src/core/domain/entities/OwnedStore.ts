@@ -6,6 +6,8 @@ export interface OwnedStoreProps {
   loginId: string;
   siteName: string;
   storeUrl: string;
+  invoicePromo1?: string;
+  invoicePromo2?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,6 +18,8 @@ export class OwnedStore {
   private constructor(props: OwnedStoreProps) {
     this.props = {
       ...props,
+      invoicePromo1: props.invoicePromo1 || "",
+      invoicePromo2: props.invoicePromo2 || "",
       createdAt: props.createdAt || new Date(),
       updatedAt: props.updatedAt || new Date(),
     };
@@ -51,6 +55,14 @@ export class OwnedStore {
 
   get storeUrl(): string {
     return this.props.storeUrl;
+  }
+
+  get invoicePromo1(): string {
+    return this.props.invoicePromo1 || "";
+  }
+
+  get invoicePromo2(): string {
+    return this.props.invoicePromo2 || "";
   }
 
   get createdAt(): Date | undefined {

@@ -13,6 +13,8 @@ export class SupabaseOwnedStoreRepository implements IOwnedStoreRepository {
       login_id: store.loginId,
       site_name: store.siteName,
       store_url: store.storeUrl,
+      invoice_promo_1: store.invoicePromo1,
+      invoice_promo_2: store.invoicePromo2,
     });
 
     if (error) {
@@ -41,6 +43,8 @@ export class SupabaseOwnedStoreRepository implements IOwnedStoreRepository {
         loginId: row.login_id,
         siteName: row.site_name,
         storeUrl: row.store_url,
+        invoicePromo1: row.invoice_promo_1,
+        invoicePromo2: row.invoice_promo_2,
         createdAt: new Date(row.created_at),
         updatedAt: new Date(row.updated_at),
       })
@@ -59,6 +63,8 @@ export class SupabaseOwnedStoreRepository implements IOwnedStoreRepository {
         login_id: store.loginId,
         site_name: store.siteName,
         store_url: store.storeUrl,
+        invoice_promo_1: store.invoicePromo1,
+        invoice_promo_2: store.invoicePromo2,
         updated_at: new Date().toISOString(),
       })
       .eq("id", store.id)
