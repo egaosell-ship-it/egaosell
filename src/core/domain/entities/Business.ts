@@ -37,6 +37,10 @@ export class Business {
     return new Business(props);
   }
 
+  toPlainObj(): BusinessProps {
+    return { ...this.props };
+  }
+
   // Getters
   get id(): string | undefined {
     return this.props.id;

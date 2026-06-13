@@ -61,7 +61,7 @@ export default async function BusinessInfoTab() {
                   <td className="px-4 py-3">{biz.regNumber}</td>
                   <td className="px-4 py-3">{biz.mailOrderNumber}</td>
                   <td className="px-4 py-3 text-center">
-                    <BusinessActionButtons business={biz} />
+                    <BusinessActionButtons business={biz.toPlainObj()} />
                   </td>
                 </tr>
               ))

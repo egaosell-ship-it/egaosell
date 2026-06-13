@@ -3,10 +3,10 @@
 import { useState, useEffect, useActionState } from "react";
 import { createPortal } from "react-dom";
 import { updateBusinessAction } from "@/app/actions/business.actions";
-import { Business } from "@/core/domain/entities/Business";
+import { BusinessProps } from "@/core/domain/entities/Business";
 
 interface Props {
-  business: Business;
+  business: BusinessProps;
   onClose: () => void;
 }
 

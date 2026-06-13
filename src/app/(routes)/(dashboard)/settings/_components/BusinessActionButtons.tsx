@@ -2,11 +2,11 @@
 
 import { useTransition, useState } from "react";
 import { deleteBusinessAction } from "@/app/actions/business.actions";
-import { Business } from "@/core/domain/entities/Business";
+import { BusinessProps } from "@/core/domain/entities/Business";
 import EditBusinessModal from "./EditBusinessModal";
 
 interface Props {
-  business: Business;
+  business: BusinessProps;
 }
 
 export default function BusinessActionButtons({ business }: Props) {
