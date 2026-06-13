@@ -65,6 +65,14 @@ export default function AddPlatformMarginModal({ businesses }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">구분컬러</label>
+              <div className="flex items-center gap-2">
+                <input type="color" name="colorCode" defaultValue="#E2E8F0" className="w-10 h-10 border-0 p-0 rounded cursor-pointer bg-transparent" />
+                <span className="text-xs text-on-surface-variant">플랫폼을 구분할 색상을 선택하세요</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">수수료 (%)</label>
               <input type="number" step="0.01" name="commissionRate" required className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="예: 10.5" />
             </div>

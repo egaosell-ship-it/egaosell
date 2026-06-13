@@ -3,6 +3,7 @@ export interface PlatformMarginProps {
   userId: string;
   businessId: string;
   platformName: string;
+  colorCode: string;
   commissionRate: number;
   shippingFee: number;
   otherCosts: number;
@@ -56,6 +57,9 @@ export class PlatformMargin {
   }
   get platformName(): string {
     return this.props.platformName;
+  }
+  get colorCode(): string {
+    return this.props.colorCode;
   }
   get commissionRate(): number {
     return this.props.commissionRate;

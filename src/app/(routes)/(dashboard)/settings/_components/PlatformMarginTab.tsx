@@ -63,7 +63,15 @@ export default async function PlatformMarginTab() {
                   <tr key={plat.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3 font-medium">{companyName}</td>
-                    <td className="px-4 py-3">{plat.platformName}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full border border-outline-variant shrink-0" 
+                          style={{ backgroundColor: plat.colorCode || '#E2E8F0' }}
+                        />
+                        <span>{plat.platformName}</span>
+                      </div>
+                    </td>
                     <td className="px-4 py-3">{plat.commissionRate}%</td>
                     <td className="px-4 py-3">{plat.shippingFee.toLocaleString()}원</td>
                     <td className="px-4 py-3">{plat.otherCosts.toLocaleString()}원</td>

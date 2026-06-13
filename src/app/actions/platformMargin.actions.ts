@@ -18,6 +18,7 @@ export async function createPlatformMarginAction(prevState: unknown, formData: F
     const dto: CreatePlatformMarginDTO = {
       businessId: formData.get("businessId") as string,
       platformName: formData.get("platformName") as string,
+      colorCode: (formData.get("colorCode") as string) || "#E2E8F0",
       commissionRate: Number(formData.get("commissionRate") || 0),
       shippingFee: Number(formData.get("shippingFee") || 0),
       otherCosts: Number(formData.get("otherCosts") || 0),

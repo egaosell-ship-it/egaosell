@@ -10,6 +10,7 @@ export class SupabasePlatformMarginRepository implements IPlatformMarginReposito
       user_id: margin.userId,
       business_id: margin.businessId,
       platform_name: margin.platformName,
+      color_code: margin.colorCode,
       commission_rate: margin.commissionRate,
       shipping_fee: margin.shippingFee,
       other_costs: margin.otherCosts,
@@ -38,6 +39,7 @@ export class SupabasePlatformMarginRepository implements IPlatformMarginReposito
         userId: row.user_id,
         businessId: row.business_id,
         platformName: row.platform_name,
+        colorCode: row.color_code,
         commissionRate: Number(row.commission_rate),
         shippingFee: Number(row.shipping_fee),
         otherCosts: Number(row.other_costs),
@@ -56,6 +58,7 @@ export class SupabasePlatformMarginRepository implements IPlatformMarginReposito
       .update({
         business_id: margin.businessId,
         platform_name: margin.platformName,
+        color_code: margin.colorCode,
         commission_rate: margin.commissionRate,
         shipping_fee: margin.shippingFee,
         other_costs: margin.otherCosts,
