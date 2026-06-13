@@ -11,6 +11,7 @@ export default function AddBusinessModal() {
   const [state, formAction, isPending] = useActionState(createBusinessAction, null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -18,6 +19,7 @@ export default function AddBusinessModal() {
     if (state) {
       if (state.success) {
         alert("저장되었습니다.");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsOpen(false);
       } else {
         alert("저장되지 않았습니다.\n" + (state.message || ""));

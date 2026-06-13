@@ -6,7 +6,7 @@ import { SupabaseBusinessRepository } from "@/infrastructure/repositories/Supaba
 import { createClient } from "@/infrastructure/config/supabase/server";
 import { CreateBusinessDTO } from "@/core/application/dtos/BusinessDTO";
 
-export async function createBusinessAction(prevState: any, formData: FormData) {
+export async function createBusinessAction(prevState: unknown, formData: FormData) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -34,8 +34,8 @@ export async function createBusinessAction(prevState: any, formData: FormData) {
     revalidatePath("/settings"); // Refresh settings page data if needed
 
     return { success: true, message: "저장되었습니다." };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("CreateBusiness error:", error);
-    return { success: false, message: error.message || "저장되지 않았습니다." };
+    return { success: false, message: (error as Error).message || "저장되지 않았습니다." };
   }
 }
