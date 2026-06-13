@@ -54,13 +54,15 @@ export default async function OwnedStoresTab() {
               <th className="px-4 py-3 whitespace-nowrap">로그인아이디</th>
               <th className="px-4 py-3 whitespace-nowrap">사이트명</th>
               <th className="px-4 py-3 whitespace-nowrap">스토어URL</th>
+              <th className="px-4 py-3 whitespace-nowrap">홍보문구1</th>
+              <th className="px-4 py-3 whitespace-nowrap">홍보문구2</th>
               <th className="px-4 py-3 whitespace-nowrap text-center">관리</th>
             </tr>
           </thead>
           <tbody>
             {stores.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-on-surface-variant">
+                <td colSpan={9} className="px-4 py-8 text-center text-on-surface-variant">
                   등록된 보유스토어가 없습니다.
                 </td>
               </tr>
@@ -76,10 +78,16 @@ export default async function OwnedStoresTab() {
                     <td className="px-4 py-3">{store.platformName}</td>
                     <td className="px-4 py-3">{store.loginId}</td>
                     <td className="px-4 py-3">{store.siteName}</td>
-                    <td className="px-4 py-3 text-primary hover:underline max-w-[200px] truncate">
+                    <td className="px-4 py-3 text-primary hover:underline max-w-[150px] truncate">
                       <a href={store.storeUrl} target="_blank" rel="noopener noreferrer">
                         {store.storeUrl}
                       </a>
+                    </td>
+                    <td className="px-4 py-3 text-on-surface-variant max-w-[150px] truncate" title={store.invoicePromo1}>
+                      {store.invoicePromo1 || "-"}
+                    </td>
+                    <td className="px-4 py-3 text-on-surface-variant max-w-[150px] truncate" title={store.invoicePromo2}>
+                      {store.invoicePromo2 || "-"}
                     </td>
                     <td className="px-4 py-3 text-center whitespace-nowrap">
                       <EditOwnedStoreModal businesses={plainBusinesses} margins={plainMargins} store={store.toPlainObj()} />
