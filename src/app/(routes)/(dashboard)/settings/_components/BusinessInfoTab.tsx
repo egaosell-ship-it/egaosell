@@ -1,19 +1,19 @@
+import { createClient } from '@/infrastructure/config/supabase/server';
+import { SupabaseBusinessRepository } from '@/infrastructure/repositories/SupabaseBusinessRepository';
+import { GetBusinessesUseCase } from '@/core/application/use-cases/business/GetBusinessesUseCase';
+import { Business } from '@/core/domain/entities/Business';
 import AddBusinessModal from './AddBusinessModal';
 
-export default function BusinessInfoTab() {
-  // Mock Data
-  const mockBusinesses = [
-    {
-      id: 1,
-      businessId: 'biz_001',
-      companyName: '(주)이가오셀',
-      ceoName: '홍길동',
-      address: '서울특별시 강남구 테헤란로 123',
-      phone: '02-1234-5678',
-      regNumber: '123-45-67890',
-      mailOrderNumber: '제2026-서울강남-1234호',
-    },
-  ];
+export default async function BusinessInfoTab() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let businesses: Business[] = [];
+  if (user) {
+    const repository = new SupabaseBusinessRepository();
+    const useCase = new GetBusinessesUseCase(repository);
+    businesses = await useCase.execute(user.id);
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,20 +38,20 @@ export default function BusinessInfoTab() {
             </tr>
           </thead>
           <tbody>
-            {mockBusinesses.length === 0 ? (
+            {businesses.length === 0 ? (
               <tr>
                 <td colSpan={9} className="px-4 py-8 text-center text-on-surface-variant">
                   등록된 사업자 정보가 없습니다.
                 </td>
               </tr>
             ) : (
-              mockBusinesses.map((biz, index) => (
+              businesses.map((biz, index) => (
                 <tr key={biz.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
                   <td className="px-4 py-3">{index + 1}</td>
                   <td className="px-4 py-3">{biz.businessId}</td>
                   <td className="px-4 py-3 font-medium">{biz.companyName}</td>
                   <td className="px-4 py-3">{biz.ceoName}</td>
-                  <td className="px-4 py-3 truncate max-w-[200px]" title={biz.address}>{biz.address}</td>
+                  <td className="px-4 py-3 truncate max-w-[200px]" title={biz.address || undefined}>{biz.address}</td>
                   <td className="px-4 py-3">{biz.phone}</td>
                   <td className="px-4 py-3">{biz.regNumber}</td>
                   <td className="px-4 py-3">{biz.mailOrderNumber}</td>
