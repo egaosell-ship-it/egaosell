@@ -43,7 +43,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
     const storeRepo = new SupabaseOwnedStoreRepository();
     const getStoresUseCase = new GetOwnedStoresUseCase(storeRepo);
     const allStores = await getStoresUseCase.execute(user.id);
-    ownedStores = allStores.filter(s => s.businessId === businessId);
+    ownedStores = allStores.filter(s => s.businessId === businessId).reverse(); // 역순
 
     const businessRepo = new SupabaseBusinessRepository();
     const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
