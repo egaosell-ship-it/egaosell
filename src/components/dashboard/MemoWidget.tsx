@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/common/Button";
 
 interface Memo {
@@ -11,6 +11,25 @@ interface Memo {
 
 export function MemoWidget() {
   const [memos, setMemos] = useState<Memo[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dashboard_memos");
+    if (saved) {
+      try {
+        setMemos(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse memos");
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("dashboard_memos", JSON.stringify(memos));
+    }
+  }, [memos, isLoaded]);
 
   const addMemo = () => {
     if (memos.length >= 8) return;
