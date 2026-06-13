@@ -3,9 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { logoutAction } from '@/app/actions/auth.actions';
+import { BusinessProps } from '@/core/domain/entities/Business';
+import { PlatformMarginProps } from '@/core/domain/entities/PlatformMargin';
 
-export default function DashboardNav() {
+interface DashboardNavProps {
+  businesses?: BusinessProps[];
+  margins?: PlatformMarginProps[];
+}
+
+export default function DashboardNav({ businesses = [], margins = [] }: DashboardNavProps) {
   const pathname = usePathname();
+
+  const sortedBusinesses = [...businesses].sort((a, b) => {
+    if (a.isMain && !b.isMain) return -1;
+    if (!a.isMain && b.isMain) return 1;
+    return 0;
+  });
 
   const navLinks = [
     { name: '대시보드', href: '/' },
@@ -27,6 +40,61 @@ export default function DashboardNav() {
         <div className="flex items-center gap-2 h-full">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
+
+            // 주문 변환 메뉴 특별 처리 (드롭다운)
+            if (link.name === '주문 변환') {
+              return (
+                <div key={link.name} className="relative group h-full flex items-center">
+                  <Link
+                    href={link.href}
+                    className={`flex items-center h-full px-3 border-b-2 transition-colors duration-200 text-[11px] font-medium ${
+                      isActive
+                        ? 'border-primary text-primary-fixed-variant'
+                        : 'border-transparent text-on-surface-variant group-hover:text-on-surface'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+
+                  {/* 1 Depth: 사업자 목록 */}
+                  <div className="absolute top-full left-0 hidden group-hover:block w-48 bg-surface-container-lowest border border-outline-variant rounded-md shadow-lg py-2 mt-0 z-[60]">
+                    {sortedBusinesses.length === 0 ? (
+                      <div className="px-4 py-2 text-xs text-on-surface-variant">등록된 상호가 없습니다.</div>
+                    ) : (
+                      sortedBusinesses.map((biz) => {
+                        const bizMargins = margins.filter(m => m.businessId === biz.id);
+
+                        return (
+                          <div key={biz.id} className="relative group/sub">
+                            <div className="px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low cursor-default flex justify-between items-center">
+                              <span>{biz.companyName} {biz.isMain && '(★)'}</span>
+                              {bizMargins.length > 0 && <span className="material-symbols-outlined text-[14px]">chevron_right</span>}
+                            </div>
+
+                            {/* 2 Depth: 플랫폼 목록 */}
+                            {bizMargins.length > 0 && (
+                              <div className="absolute top-0 left-full hidden group-hover/sub:block w-48 bg-surface-container-lowest border border-outline-variant rounded-md shadow-lg py-2 ml-0 z-[70]">
+                                {bizMargins.map(margin => (
+                                  <Link
+                                    key={margin.id}
+                                    href={`/order-conversion?businessId=${biz.id}&platform=${encodeURIComponent(margin.platformName)}`}
+                                    className="block px-4 py-2 text-xs text-on-surface hover:bg-surface-container-low transition-colors"
+                                  >
+                                    {margin.platformName}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            // 그 외 일반 메뉴
             return (
               <Link
                 key={link.name}
