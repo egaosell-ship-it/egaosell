@@ -32,7 +32,7 @@ export function MemoWidget() {
   }, [memos, isLoaded]);
 
   const addMemo = () => {
-    if (memos.length >= 8) return;
+    if (memos.length >= 16) return;
     const newMemo: Memo = {
       id: Date.now().toString(),
       title: "새 메모장",
@@ -69,7 +69,7 @@ export function MemoWidget() {
         </div>
       )}
       
-      {memos.length < 8 && (
+      {memos.length < 16 && (
         <div className="flex justify-end mt-1">
           <Button onClick={addMemo} icon="add">
             메모장 추가
@@ -141,7 +141,7 @@ function MemoItem({
       </div>
       
       <textarea
-        className="text-xs text-on-surface bg-transparent resize-none outline-none border border-transparent focus:border-outline-variant rounded p-1 h-[120px] w-full"
+        className="text-xs text-on-surface bg-transparent resize-none outline-none border border-transparent focus:border-outline-variant rounded p-1 h-[200px] w-full"
         placeholder="내용을 입력하세요..."
         value={memo.content}
         onChange={(e) => onUpdateContent(memo.id, e.target.value)}
