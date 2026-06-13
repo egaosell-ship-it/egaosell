@@ -60,6 +60,11 @@ export default function DashboardNav() {
           내 계정
         </Link>
 
+        <Link href="/settings" className="flex items-center px-2 py-1.5 rounded-md text-[11px] font-medium text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors duration-200">
+          <span className="text-[16px] mr-1">⚙️</span>
+          설정
+        </Link>
+
         <Link href="/upgrade" target="_blank" className="flex items-center bg-tertiary-container text-on-tertiary-container px-3 py-1.5 rounded-md text-[11px] font-bold shadow-sm hover:opacity-90 transition-opacity">
           <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
           업그레이드

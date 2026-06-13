@@ -1,0 +1,278 @@
+- generic [active] [ref=e1]:
+  - region "antigravity.google uses cookies to deliver and enhance the quality of its services and to analyze traffic. If you agree, cookies are also used to serve advertising and to personalize the content and advertisements that you see." [ref=e2]:
+    - paragraph [ref=e3]:
+      - text: antigravity.google uses cookies to deliver and enhance the quality of its services and to analyze traffic. If you agree, cookies are also used to serve advertising and to personalize the content and advertisements that you see.
+      - link "Learn more about how Google uses cookies. Opens in a new tab." [ref=e4] [cursor=pointer]:
+        - /url: https://policies.google.com/technologies/cookies?hl=en
+        - text: Learn more
+    - button "Agree" [ref=e5] [cursor=pointer]
+    - button "No thanks" [ref=e6] [cursor=pointer]
+  - main [ref=e7]:
+    - generic [ref=e10]:
+      - generic [ref=e13]:
+        - link "Google Antigravity" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+        - generic [ref=e59]:
+          - navigation [ref=e60] [cursor=pointer]:
+            - button "Products" [ref=e63]:
+              - text: Products
+              - generic [ref=e64]: keyboard_arrow_down
+            - button "Use Cases" [ref=e67]:
+              - text: Use Cases
+              - generic [ref=e68]: keyboard_arrow_down
+            - button "Pricing" [expanded] [ref=e71]
+            - button "Blog" [expanded] [ref=e74]
+            - button "Resources" [ref=e77]:
+              - text: Resources
+              - generic [ref=e78]: keyboard_arrow_down
+          - button "Download download" [ref=e80] [cursor=pointer]:
+            - text: Download
+            - generic [ref=e81]: download
+      - generic [ref=e83]:
+        - navigation "Documentation navigation" [ref=e86]:
+          - link "Home" [ref=e88] [cursor=pointer]:
+            - /url: /docs/home
+            - generic [ref=e89]: Home
+          - generic [ref=e91]:
+            - generic [ref=e92] [cursor=pointer]: Antigravity 2.0
+            - generic [ref=e93] [cursor=pointer]: expand_more
+          - link "Overview" [ref=e95] [cursor=pointer]:
+            - /url: /docs/overview
+            - generic [ref=e96]: Overview
+          - link "Getting Started" [ref=e98] [cursor=pointer]:
+            - /url: /docs/getting-started
+            - generic [ref=e99]: Getting Started
+          - link "Build with Google" [ref=e101] [cursor=pointer]:
+            - /url: /docs/build-with-google
+            - generic [ref=e102]: Build with Google
+          - link "Feature Overview" [ref=e104] [cursor=pointer]:
+            - /url: /docs/features
+            - generic [ref=e105]: Feature Overview
+          - link "Models" [ref=e107] [cursor=pointer]:
+            - /url: /docs/models
+            - generic [ref=e108]: Models
+          - link "Projects" [ref=e110] [cursor=pointer]:
+            - /url: /docs/projects
+            - generic [ref=e111]: Projects
+          - generic [ref=e113]:
+            - generic [ref=e114] [cursor=pointer]: Settings
+            - generic [ref=e115] [cursor=pointer]: chevron_right
+          - generic [ref=e117]:
+            - generic [ref=e118] [cursor=pointer]: Customizations
+            - generic [ref=e119] [cursor=pointer]: expand_more
+          - link "MCP" [ref=e121] [cursor=pointer]:
+            - /url: /docs/mcp
+            - generic [ref=e122]: MCP
+          - link "Skills" [ref=e124] [cursor=pointer]:
+            - /url: /docs/skills
+            - generic [ref=e125]: Skills
+          - link "Rules" [ref=e127] [cursor=pointer]:
+            - /url: /docs/rules-workflows
+            - generic [ref=e128]: Rules
+          - link "Plugins" [ref=e130] [cursor=pointer]:
+            - /url: /docs/plugins
+            - generic [ref=e131]: Plugins
+          - link "Hooks" [ref=e133] [cursor=pointer]:
+            - /url: /docs/hooks
+            - generic [ref=e134]: Hooks
+          - link "Sidecars" [ref=e136] [cursor=pointer]:
+            - /url: /docs/sidecars
+            - generic [ref=e137]: Sidecars
+          - generic [ref=e139]:
+            - generic [ref=e140] [cursor=pointer]: Agent Capabilities
+            - generic [ref=e141] [cursor=pointer]: chevron_right
+          - generic [ref=e143]:
+            - generic [ref=e144] [cursor=pointer]: Artifacts
+            - generic [ref=e145] [cursor=pointer]: chevron_right
+          - generic [ref=e147]:
+            - generic [ref=e148] [cursor=pointer]: Antigravity CLI
+            - generic [ref=e149] [cursor=pointer]: chevron_right
+          - generic [ref=e151]:
+            - generic [ref=e152] [cursor=pointer]: Antigravity SDK
+            - generic [ref=e153] [cursor=pointer]: chevron_right
+          - generic [ref=e155]:
+            - generic [ref=e156] [cursor=pointer]: Antigravity IDE
+            - generic [ref=e157] [cursor=pointer]: chevron_right
+          - generic [ref=e159]:
+            - generic [ref=e160] [cursor=pointer]: Migration
+            - generic [ref=e161] [cursor=pointer]: chevron_right
+          - link "Enterprise" [ref=e163] [cursor=pointer]:
+            - /url: /docs/enterprise
+            - generic [ref=e164]: Enterprise
+          - link "Plans" [ref=e166] [cursor=pointer]:
+            - /url: /docs/plans
+            - generic [ref=e167]: Plans
+          - link "FAQ" [ref=e169] [cursor=pointer]:
+            - /url: /docs/faq
+            - generic [ref=e170]: FAQ
+        - generic [ref=e171]:
+          - list [ref=e172] [cursor=pointer]:
+            - listitem [ref=e173]: Antigravity 2.0
+            - generic [ref=e174]: ">"
+            - listitem [ref=e175]: Customizations
+            - generic [ref=e176]: ">"
+            - listitem [ref=e177]: Skills
+          - heading "Agent Skills" [level=1] [ref=e179]
+          - paragraph [ref=e181]:
+            - text: Skills are an
+            - link "open standard" [ref=e182] [cursor=pointer]:
+              - /url: https://agentskills.io/home
+            - text: for extending agent capabilities. A skill is a folder containing a
+            - code [ref=e183]: SKILL.md
+            - text: file with instructions that the agent can follow when working on specific tasks.
+          - heading "What are skills?" [level=2] [ref=e185]
+          - paragraph [ref=e187]: "Skills are reusable packages of knowledge that extend what the agent can do. Each skill contains:"
+          - list [ref=e189]:
+            - listitem [ref=e190]:
+              - generic [ref=e191]:
+                - strong [ref=e192]: Instructions
+                - text: for how to approach a specific type of task
+            - listitem [ref=e193]:
+              - generic [ref=e194]:
+                - strong [ref=e195]: Best practices
+                - text: and conventions to follow
+            - listitem [ref=e196]:
+              - generic [ref=e197]:
+                - strong [ref=e198]: Optional scripts and resources
+                - text: the agent can use
+          - paragraph [ref=e200]: When you start a conversation, the agent sees a list of available skills with their names and descriptions. If a skill looks relevant to your task, the agent reads the full instructions and follows them.
+          - heading "Where skills live" [level=2] [ref=e202]
+          - paragraph [ref=e204]: "Antigravity supports two types of skills:"
+          - paragraph [ref=e206]:
+            - table [ref=e207]:
+              - rowgroup [ref=e208]:
+                - row "Location Scope" [ref=e209]:
+                  - columnheader "Location" [ref=e210]
+                  - columnheader "Scope" [ref=e211]
+              - rowgroup [ref=e212]:
+                - row "<workspace-root>/.agents/skills/<skill-folder>/ Workspace-specific" [ref=e213]:
+                  - cell "<workspace-root>/.agents/skills/<skill-folder>/" [ref=e214]:
+                    - code [ref=e215]: <workspace-root>/.agents/skills/<skill-folder>/
+                  - cell "Workspace-specific" [ref=e216]
+                - row "~/.gemini/config/skills/<skill-folder>/ Global (all workspaces)" [ref=e217]:
+                  - cell "~/.gemini/config/skills/<skill-folder>/" [ref=e218]:
+                    - code [ref=e219]: ~/.gemini/config/skills/<skill-folder>/
+                  - cell "Global (all workspaces)" [ref=e220]
+          - paragraph [ref=e222]:
+            - strong [ref=e223]: Workspace skills
+            - text: are great for project-specific workflows, like your team's deployment process or testing conventions.
+          - paragraph [ref=e225]:
+            - strong [ref=e226]: Global skills
+            - text: work across all your projects. Use these for personal utilities or general-purpose tools you want everywhere.
+          - paragraph [ref=e228]: "Note: Antigravity now defaults to .agents/skills, but still maintains backward support for .agent/skills."
+          - heading "Creating a skill" [level=2] [ref=e230]
+          - paragraph [ref=e232]: "To create a skill:"
+          - list [ref=e234]:
+            - listitem [ref=e235]: Create a folder for your skill in one of the skill directories
+            - listitem [ref=e236]:
+              - generic [ref=e237]:
+                - text: Add a
+                - code [ref=e238]: SKILL.md
+                - text: file inside that folder
+          - generic [ref=e241]:
+            - button "content_copy" [ref=e242] [cursor=pointer]
+            - code [ref=e245]: .agents/skills/ └─── my-skill/ └─── SKILL.md
+          - paragraph [ref=e247]:
+            - text: Every skill needs a
+            - code [ref=e248]: SKILL.md
+            - text: "file with YAML frontmatter at the top:"
+          - generic [ref=e251]:
+            - button "content_copy" [ref=e252] [cursor=pointer]
+            - code [ref=e255]: "--- name: my-skill description: Helps with a specific task. Use when you need to do X or Y. --- # My Skill Detailed instructions for the agent go here. ## When to use this skill - Use this when... - This is helpful for... ## How to use it Step-by-step guidance, conventions, and patterns the agent should follow."
+          - heading "Frontmatter fields" [level=3] [ref=e257]
+          - paragraph [ref=e259]:
+            - table [ref=e260]:
+              - rowgroup [ref=e261]:
+                - row "Field Required Description" [ref=e262]:
+                  - columnheader "Field" [ref=e263]
+                  - columnheader "Required" [ref=e264]
+                  - columnheader "Description" [ref=e265]
+              - rowgroup [ref=e266]:
+                - row "name No A unique identifier for the skill (lowercase, hyphens for spaces). Defaults to the folder name if not provided." [ref=e267]:
+                  - cell "name" [ref=e268]:
+                    - code [ref=e269]: name
+                  - cell "No" [ref=e270]
+                  - cell "A unique identifier for the skill (lowercase, hyphens for spaces). Defaults to the folder name if not provided." [ref=e271]
+                - row "description Yes A clear description of what the skill does and when to use it. This is what the agent sees when deciding whether to apply the skill." [ref=e272]:
+                  - cell "description" [ref=e273]:
+                    - code [ref=e274]: description
+                  - cell "Yes" [ref=e275]
+                  - cell "A clear description of what the skill does and when to use it. This is what the agent sees when deciding whether to apply the skill." [ref=e276]
+          - paragraph [ref=e278]: "Tip: Write your description in third person and include keywords that help the agent recognize when the skill is relevant. For example: \"Generates unit tests for Python code using pytest conventions.\""
+          - heading "Skill folder structure" [level=2] [ref=e280]
+          - paragraph [ref=e282]:
+            - text: While
+            - code [ref=e283]: SKILL.md
+            - text: "is the only required file, you can include additional resources:"
+          - generic [ref=e286]:
+            - button "content_copy" [ref=e287] [cursor=pointer]
+            - code [ref=e290]: ".agents/skills/my-skill/ ├─── SKILL.md # Main instructions (required) ├─── scripts/ # Helper scripts (optional) ├─── examples/ # Reference implementations (optional) └─── resources/ # Templates and other assets (optional)"
+          - paragraph [ref=e292]: The agent can read these files when following your skill's instructions.
+          - heading "How the agent uses skills" [level=2] [ref=e294]
+          - paragraph [ref=e296]:
+            - text: Skills follow a
+            - strong [ref=e297]: progressive disclosure
+            - text: "pattern:"
+          - list [ref=e299]:
+            - listitem [ref=e300]:
+              - generic [ref=e301]:
+                - strong [ref=e302]: Discovery
+                - text: ":"
+              - text: When a conversation starts, the agent sees a list of available skills with their names and descriptions
+            - listitem [ref=e303]:
+              - generic [ref=e304]:
+                - strong [ref=e305]: Activation
+                - text: ":"
+              - generic [ref=e306]:
+                - text: If a skill looks relevant to your task, the agent reads the full
+                - code [ref=e307]: SKILL.md
+                - text: content
+            - listitem [ref=e308]:
+              - generic [ref=e309]:
+                - strong [ref=e310]: Execution
+                - text: ":"
+              - text: The agent follows the skill's instructions while working on your task
+          - paragraph [ref=e312]: You don't need to explicitly tell the agent to use a skill—it decides based on context. However, you can mention a skill by name if you want to ensure it's used.
+          - heading "Best practices" [level=2] [ref=e314]
+          - heading "Keep skills focused" [level=3] [ref=e316]
+          - paragraph [ref=e318]: Each skill should do one thing well. Instead of a "do everything" skill, create separate skills for distinct tasks.
+          - heading "Write clear descriptions" [level=3] [ref=e320]
+          - paragraph [ref=e322]: The description is how the agent decides whether to use your skill. Make it specific about what the skill does and when it's useful.
+          - heading "Use scripts as black boxes" [level=3] [ref=e324]
+          - paragraph [ref=e326]:
+            - text: If your skill includes scripts, encourage the agent to run them with
+            - code [ref=e327]: "--help"
+            - text: first rather than reading the entire source code. This keeps the agent's context focused on the task.
+          - heading "Include decision trees" [level=3] [ref=e329]
+          - paragraph [ref=e331]: For complex skills, add a section that helps the agent choose the right approach based on the situation.
+          - 'heading "Example: A code review skill" [level=2] [ref=e333]'
+          - paragraph [ref=e335]: "Here's a simple skill that helps the agent review code:"
+          - generic [ref=e338]:
+            - button "content_copy" [ref=e339] [cursor=pointer]
+            - code [ref=e342]: "--- name: code-review description: Reviews code changes for bugs, style issues, and best practices. Use when reviewing PRs or checking code quality. --- # Code Review Skill When reviewing code, follow these steps: ## Review checklist 1. **Correctness**: Does the code do what it's supposed to? 2. **Edge cases**: Are error conditions handled? 3. **Style**: Does it follow project conventions? 4. **Performance**: Are there obvious inefficiencies? ## How to provide feedback - Be specific about what needs to change - Explain why, not just what - Suggest alternatives when possible"
+          - navigation [ref=e343]:
+            - link "keyboard_arrow_left MCP" [ref=e345] [cursor=pointer]:
+              - /url: /docs/mcp
+            - link "Rules keyboard_arrow_right" [ref=e347] [cursor=pointer]:
+              - /url: /docs/rules-workflows
+        - generic [ref=e349]:
+          - generic [ref=e350]: On this Page
+          - navigation [ref=e351]:
+            - list [ref=e353]:
+              - listitem [ref=e355] [cursor=pointer]:
+                - generic [ref=e356]: Agent Skills
+              - listitem [ref=e357] [cursor=pointer]:
+                - generic [ref=e358]: What are skills?
+              - listitem [ref=e359] [cursor=pointer]:
+                - generic [ref=e360]: Where skills live
+              - listitem [ref=e361] [cursor=pointer]:
+                - generic [ref=e362]: Creating a skill
+              - listitem [ref=e363] [cursor=pointer]:
+                - generic [ref=e364]: Skill folder structure
+              - listitem [ref=e365] [cursor=pointer]:
+                - generic [ref=e366]: How the agent uses skills
+              - listitem [ref=e367] [cursor=pointer]:
+                - generic [ref=e368]: Best practices
+              - listitem [ref=e369] [cursor=pointer]:
+                - generic [ref=e370]: "Example: A code review skill"
