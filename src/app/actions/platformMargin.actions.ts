@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { CreatePlatformMarginUseCase } from "@/core/application/use-cases/platformMargin/CreatePlatformMarginUseCase";
 import { SupabasePlatformMarginRepository } from "@/infrastructure/repositories/SupabasePlatformMarginRepository";
 import { createClient } from "@/infrastructure/config/supabase/server";
-import { CreatePlatformMarginDTO } from "@/core/application/dtos/PlatformMarginDTO";
+import { CreatePlatformMarginDTO, UpdatePlatformMarginDTO } from "@/core/application/dtos/PlatformMarginDTO";
+import { UpdatePlatformMarginUseCase } from "@/core/application/use-cases/platformMargin/UpdatePlatformMarginUseCase";
+import { DeletePlatformMarginUseCase } from "@/core/application/use-cases/platformMargin/DeletePlatformMarginUseCase";
 
 export async function createPlatformMarginAction(prevState: unknown, formData: FormData) {
   try {
@@ -35,5 +37,59 @@ export async function createPlatformMarginAction(prevState: unknown, formData: F
   } catch (error: unknown) {
     console.error("CreatePlatformMargin error:", error);
     return { success: false, message: (error as Error).message || "저장되지 않았습니다." };
+  }
+}
+
+export async function updatePlatformMarginAction(prevState: unknown, formData: FormData) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, message: "로그인이 필요합니다." };
+    }
+
+    const dto: UpdatePlatformMarginDTO = {
+      id: formData.get("id") as string,
+      businessId: formData.get("businessId") as string,
+      platformName: formData.get("platformName") as string,
+      colorCode: (formData.get("colorCode") as string) || "#E2E8F0",
+      commissionRate: Number(formData.get("commissionRate") || 0),
+      shippingFee: Number(formData.get("shippingFee") || 0),
+      otherCosts: Number(formData.get("otherCosts") || 0),
+    };
+
+    const repository = new SupabasePlatformMarginRepository();
+    const useCase = new UpdatePlatformMarginUseCase(repository);
+
+    await useCase.execute(dto, user.id);
+    revalidatePath("/settings");
+
+    return { success: true, message: "수정되었습니다." };
+  } catch (error: unknown) {
+    console.error("UpdatePlatformMargin error:", error);
+    return { success: false, message: (error as Error).message || "수정되지 않았습니다." };
+  }
+}
+
+export async function deletePlatformMarginAction(id: string) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, message: "로그인이 필요합니다." };
+    }
+
+    const repository = new SupabasePlatformMarginRepository();
+    const useCase = new DeletePlatformMarginUseCase(repository);
+
+    await useCase.execute(id, user.id);
+    revalidatePath("/settings");
+
+    return { success: true, message: "삭제되었습니다." };
+  } catch (error: unknown) {
+    console.error("DeletePlatformMargin error:", error);
+    return { success: false, message: (error as Error).message || "삭제되지 않았습니다." };
   }
 }

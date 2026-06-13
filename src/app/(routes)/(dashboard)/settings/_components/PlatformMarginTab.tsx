@@ -6,6 +6,8 @@ import { GetBusinessesUseCase } from "@/core/application/use-cases/business/GetB
 import { PlatformMargin } from "@/core/domain/entities/PlatformMargin";
 import { Business } from "@/core/domain/entities/Business";
 import AddPlatformMarginModal from "./AddPlatformMarginModal";
+import EditPlatformMarginModal from "./EditPlatformMarginModal";
+import PlatformMarginDeleteButton from "./PlatformMarginDeleteButton";
 
 export default async function PlatformMarginTab() {
   const supabase = await createClient();
@@ -76,8 +78,8 @@ export default async function PlatformMarginTab() {
                     <td className="px-4 py-3">{plat.shippingFee.toLocaleString()}원</td>
                     <td className="px-4 py-3">{plat.otherCosts.toLocaleString()}원</td>
                     <td className="px-4 py-3 text-center">
-                      <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2 cursor-pointer">수정</button>
-                      <button className="text-error hover:text-error/80 text-xs font-medium cursor-pointer">삭제</button>
+                      <EditPlatformMarginModal businesses={plainBusinesses} margin={plat.toPlainObj()} />
+                      <PlatformMarginDeleteButton id={plat.id as string} />
                     </td>
                   </tr>
                 );
