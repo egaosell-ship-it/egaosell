@@ -1,4 +1,4 @@
-import { Button } from '@/components/common/Button';
+import AddBusinessModal from './AddBusinessModal';
 
 export default function BusinessInfoTab() {
   // Mock Data
@@ -19,7 +19,7 @@ export default function BusinessInfoTab() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-on-surface">사업자정보관리</h2>
-        <Button icon="add">새 사업자 등록</Button>
+        <AddBusinessModal />
       </div>
 
       <div className="overflow-x-auto border border-outline-variant rounded-md">
