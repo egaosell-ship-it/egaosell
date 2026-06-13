@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BusinessInfoTab from './_components/BusinessInfoTab';
 import BrandListTab from './_components/BrandListTab';
 import PlatformMarginTab from './_components/PlatformMarginTab';
+import CoupangApiTab from './_components/CoupangApiTab';
 
 interface SettingsPageProps {
   searchParams: Promise<{ tab?: string }>;
@@ -15,6 +16,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     { id: 'business', name: '사업자정보관리' },
     { id: 'brands', name: '브랜드리스트' },
     { id: 'margins', name: '플랫폼마진세팅' },
+    { id: 'coupang-api', name: '쿠팡API' },
   ];
 
   return (
@@ -50,6 +52,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         {currentTab === 'business' && <BusinessInfoTab />}
         {currentTab === 'brands' && <BrandListTab />}
         {currentTab === 'margins' && <PlatformMarginTab />}
+        {currentTab === 'coupang-api' && <CoupangApiTab />}
       </div>
     </div>
   );
