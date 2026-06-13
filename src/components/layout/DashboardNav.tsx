@@ -62,30 +62,14 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
                       <div className="px-4 py-2 text-xs text-on-surface-variant">등록된 상호가 없습니다.</div>
                     ) : (
                       sortedBusinesses.map((biz) => {
-                        const bizMargins = margins.filter(m => m.businessId === biz.id);
-
                         return (
-                          <div key={biz.id} className="relative group/sub">
-                            <div className="px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low cursor-default flex justify-between items-center">
-                              <span>{biz.companyName} {biz.isMain && '(★)'}</span>
-                              {bizMargins.length > 0 && <span className="material-symbols-outlined text-[14px]">chevron_right</span>}
-                            </div>
-
-                            {/* 2 Depth: 플랫폼 목록 */}
-                            {bizMargins.length > 0 && (
-                              <div className="absolute top-0 left-full hidden group-hover/sub:block w-48 bg-surface-container-lowest border border-outline-variant rounded-md shadow-lg py-2 ml-0 z-[70]">
-                                {bizMargins.map(margin => (
-                                  <Link
-                                    key={margin.id}
-                                    href={`/order-conversion?businessId=${biz.id}&platform=${encodeURIComponent(margin.platformName)}`}
-                                    className="block px-4 py-2 text-xs text-on-surface hover:bg-surface-container-low transition-colors"
-                                  >
-                                    {margin.platformName}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          <Link 
+                            key={biz.id} 
+                            href={`/order-conversion?businessId=${biz.id}`}
+                            className="block px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low transition-colors"
+                          >
+                            {biz.companyName} {biz.isMain && '(★)'}
+                          </Link>
                         );
                       })
                     )}
