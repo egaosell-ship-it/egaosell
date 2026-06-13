@@ -30,14 +30,14 @@ export default function BusinessActionButtons({ business }: Props) {
     <>
       <button 
         onClick={() => setIsEditModalOpen(true)}
-        className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2"
+        className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2 cursor-pointer disabled:cursor-not-allowed"
         disabled={isPending}
       >
         수정
       </button>
       <button 
         onClick={handleDelete}
-        className="text-error hover:text-error/80 text-xs font-medium"
+        className="text-error hover:text-error/80 text-xs font-medium cursor-pointer disabled:cursor-not-allowed"
         disabled={isPending}
       >
         {isPending ? "삭제 중..." : "삭제"}

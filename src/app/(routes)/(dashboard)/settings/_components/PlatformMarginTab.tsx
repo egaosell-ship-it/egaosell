@@ -1,31 +1,36 @@
-import { Button } from '@/components/common/Button';
+import { createClient } from "@/infrastructure/config/supabase/server";
+import { SupabasePlatformMarginRepository } from "@/infrastructure/repositories/SupabasePlatformMarginRepository";
+import { SupabaseBusinessRepository } from "@/infrastructure/repositories/SupabaseBusinessRepository";
+import { GetPlatformMarginsUseCase } from "@/core/application/use-cases/platformMargin/GetPlatformMarginsUseCase";
+import { GetBusinessesUseCase } from "@/core/application/use-cases/business/GetBusinessesUseCase";
+import { PlatformMargin } from "@/core/domain/entities/PlatformMargin";
+import { Business } from "@/core/domain/entities/Business";
+import AddPlatformMarginModal from "./AddPlatformMarginModal";
 
-export default function PlatformMarginTab() {
-  // Mock Data
-  const mockPlatforms = [
-    {
-      id: 1,
-      companyName: '(주)이가오셀',
-      platform: '쿠팡',
-      commission: '10.5%',
-      shippingFee: '3,000원',
-      otherCosts: '0원',
-    },
-    {
-      id: 2,
-      companyName: '(주)이가오셀',
-      platform: '네이버 스마트스토어',
-      commission: '5.8%',
-      shippingFee: '3,000원',
-      otherCosts: '100원',
-    },
-  ];
+export default async function PlatformMarginTab() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let margins: PlatformMargin[] = [];
+  let businesses: Business[] = [];
+  
+  if (user) {
+    const marginRepo = new SupabasePlatformMarginRepository();
+    const getMarginsUseCase = new GetPlatformMarginsUseCase(marginRepo);
+    margins = await getMarginsUseCase.execute(user.id);
+
+    const businessRepo = new SupabaseBusinessRepository();
+    const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
+    businesses = await getBusinessesUseCase.execute(user.id);
+  }
+
+  const plainBusinesses = businesses.map(b => b.toPlainObj());
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-on-surface">플랫폼마진세팅</h2>
-        <Button icon="add">새플랫폼</Button>
+        <AddPlatformMarginModal businesses={plainBusinesses} />
       </div>
 
       <div className="overflow-x-auto border border-outline-variant rounded-md">
@@ -42,27 +47,33 @@ export default function PlatformMarginTab() {
             </tr>
           </thead>
           <tbody>
-            {mockPlatforms.length === 0 ? (
+            {margins.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-8 text-center text-on-surface-variant">
                   등록된 플랫폼 마진 세팅이 없습니다.
                 </td>
               </tr>
             ) : (
-              mockPlatforms.map((plat, index) => (
-                <tr key={plat.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
-                  <td className="px-4 py-3">{index + 1}</td>
-                  <td className="px-4 py-3 font-medium">{plat.companyName}</td>
-                  <td className="px-4 py-3">{plat.platform}</td>
-                  <td className="px-4 py-3">{plat.commission}</td>
-                  <td className="px-4 py-3">{plat.shippingFee}</td>
-                  <td className="px-4 py-3">{plat.otherCosts}</td>
-                  <td className="px-4 py-3 text-center">
-                    <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2">수정</button>
-                    <button className="text-error hover:text-error/80 text-xs font-medium">삭제</button>
-                  </td>
-                </tr>
-              ))
+              margins.map((plat, index) => {
+                // 상호명 매칭
+                const biz = businesses.find(b => b.id === plat.businessId);
+                const companyName = biz ? biz.companyName : "알 수 없음";
+
+                return (
+                  <tr key={plat.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
+                    <td className="px-4 py-3">{index + 1}</td>
+                    <td className="px-4 py-3 font-medium">{companyName}</td>
+                    <td className="px-4 py-3">{plat.platformName}</td>
+                    <td className="px-4 py-3">{plat.commissionRate}%</td>
+                    <td className="px-4 py-3">{plat.shippingFee.toLocaleString()}원</td>
+                    <td className="px-4 py-3">{plat.otherCosts.toLocaleString()}원</td>
+                    <td className="px-4 py-3 text-center">
+                      <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2 cursor-pointer">수정</button>
+                      <button className="text-error hover:text-error/80 text-xs font-medium cursor-pointer">삭제</button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

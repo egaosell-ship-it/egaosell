@@ -1,29 +1,25 @@
-import { Button } from '@/components/common/Button';
+import { createClient } from "@/infrastructure/config/supabase/server";
+import { SupabaseBrandRepository } from "@/infrastructure/repositories/SupabaseBrandRepository";
+import { GetBrandsUseCase } from "@/core/application/use-cases/brand/GetBrandsUseCase";
+import { Brand } from "@/core/domain/entities/Brand";
+import AddBrandModal from "./AddBrandModal";
 
-export default function BrandListTab() {
-  // Mock Data
-  const mockBrands = [
-    {
-      id: 1,
-      brandName: '나이키',
-      code: 'NK-001',
-      cafe24Code: 'C24-NK01',
-      regDate: '2026-06-10',
-    },
-    {
-      id: 2,
-      brandName: '아디다스',
-      code: 'AD-002',
-      cafe24Code: 'C24-AD02',
-      regDate: '2026-06-11',
-    },
-  ];
+export default async function BrandListTab() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let brands: Brand[] = [];
+  if (user) {
+    const repository = new SupabaseBrandRepository();
+    const useCase = new GetBrandsUseCase(repository);
+    brands = await useCase.execute(user.id);
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-on-surface">브랜드리스트</h2>
-        <Button icon="add">새플랫폼</Button>
+        <AddBrandModal />
       </div>
 
       <div className="overflow-x-auto border border-outline-variant rounded-md">
@@ -39,23 +35,23 @@ export default function BrandListTab() {
             </tr>
           </thead>
           <tbody>
-            {mockBrands.length === 0 ? (
+            {brands.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant">
                   등록된 브랜드가 없습니다.
                 </td>
               </tr>
             ) : (
-              mockBrands.map((brand, index) => (
+              brands.map((brand, index) => (
                 <tr key={brand.id} className="border-b border-outline-variant last:border-0 hover:bg-surface-container-lowest transition-colors">
                   <td className="px-4 py-3">{index + 1}</td>
                   <td className="px-4 py-3 font-medium">{brand.brandName}</td>
                   <td className="px-4 py-3">{brand.code}</td>
                   <td className="px-4 py-3">{brand.cafe24Code}</td>
-                  <td className="px-4 py-3">{brand.regDate}</td>
+                  <td className="px-4 py-3">{brand.createdAt?.toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-center">
-                    <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2">수정</button>
-                    <button className="text-error hover:text-error/80 text-xs font-medium">삭제</button>
+                    <button className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2 cursor-pointer">수정</button>
+                    <button className="text-error hover:text-error/80 text-xs font-medium cursor-pointer">삭제</button>
                   </td>
                 </tr>
               ))
