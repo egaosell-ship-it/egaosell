@@ -8,9 +8,12 @@ import { GetPlatformMarginsUseCase } from "@/core/application/use-cases/platform
 import { PlatformMargin } from "@/core/domain/entities/PlatformMargin";
 import { SupabaseBusinessRepository } from "@/infrastructure/repositories/SupabaseBusinessRepository";
 import { GetBusinessesUseCase } from "@/core/application/use-cases/business/GetBusinessesUseCase";
+import { SupabaseOwnedStoreRepository } from "@/infrastructure/repositories/SupabaseOwnedStoreRepository";
+import { GetOwnedStoresUseCase } from "@/core/application/use-cases/ownedStore/GetOwnedStoresUseCase";
+import { OwnedStore } from "@/core/domain/entities/OwnedStore";
 
 interface PageProps {
-  searchParams: Promise<{ businessId?: string; platform?: string }>;
+  searchParams: Promise<{ businessId?: string; storeId?: string }>;
 }
 
 function hexToRgba(hex: string, alpha: number) {
@@ -22,19 +25,25 @@ function hexToRgba(hex: string, alpha: number) {
 
 export default async function OrderConversionPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
-  const { businessId, platform } = resolvedParams;
+  const { businessId, storeId } = resolvedParams;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   let margins: PlatformMargin[] = [];
+  let ownedStores: OwnedStore[] = [];
   let businessName = "";
 
   if (user && businessId) {
     const marginRepo = new SupabasePlatformMarginRepository();
     const getMarginsUseCase = new GetPlatformMarginsUseCase(marginRepo);
     const allMargins = await getMarginsUseCase.execute(user.id);
-    margins = allMargins.filter(m => m.businessId === businessId).reverse(); // 역순
+    margins = allMargins.filter(m => m.businessId === businessId);
+
+    const storeRepo = new SupabaseOwnedStoreRepository();
+    const getStoresUseCase = new GetOwnedStoresUseCase(storeRepo);
+    const allStores = await getStoresUseCase.execute(user.id);
+    ownedStores = allStores.filter(s => s.businessId === businessId);
 
     const businessRepo = new SupabaseBusinessRepository();
     const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
@@ -46,7 +55,9 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
   }
 
   const hasBusinessId = !!businessId;
-  const currentPlatformName = platform || (margins.length > 0 ? margins[0].platformName : "");
+  const currentStoreId = storeId || (ownedStores.length > 0 ? ownedStores[0].id : "");
+  const currentStore = ownedStores.find(s => s.id === currentStoreId);
+  const currentPlatformName = currentStore?.platformName || "";
   const currentMargin = margins.find(m => m.platformName === currentPlatformName);
   const currentColor = currentMargin?.colorCode || "#E2E8F0";
 
@@ -60,24 +71,27 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
       {/* 서브메뉴(플랫폼 탭) 렌더링 */}
       {hasBusinessId && (
         <div className="flex border-b border-outline-variant mt-2 px-1 gap-2 overflow-x-auto">
-          {margins.length === 0 ? (
-            <div className="py-2 text-sm text-on-surface-variant">등록된 플랫폼 마진 설정이 없습니다. 설정 메뉴에서 먼저 플랫폼을 추가해주세요.</div>
+          {ownedStores.length === 0 ? (
+            <div className="py-2 text-sm text-on-surface-variant">등록된 스토어가 없습니다. 설정 메뉴에서 보유스토어를 추가해주세요.</div>
           ) : (
-            margins.map(margin => {
-              const isActive = currentPlatformName === margin.platformName;
+            ownedStores.map(store => {
+              const isActive = currentStoreId === store.id;
+              const margin = margins.find(m => m.platformName === store.platformName);
+              const colorCode = margin?.colorCode || "#E2E8F0";
+
               return (
                 <Link
-                  key={margin.id}
-                  href={`/order-conversion?businessId=${businessId}&platform=${encodeURIComponent(margin.platformName)}`}
+                  key={store.id}
+                  href={`/order-conversion?businessId=${businessId}&storeId=${store.id}`}
                   style={{ 
-                    color: isActive ? margin.colorCode : undefined,
-                    borderBottomColor: isActive ? margin.colorCode : 'transparent'
+                    color: isActive ? colorCode : undefined,
+                    borderBottomColor: isActive ? colorCode : 'transparent'
                   }}
                   className={`px-4 py-2 text-sm border-b-2 transition-colors duration-200 whitespace-nowrap font-bold ${
                     !isActive && 'text-on-surface-variant hover:text-on-surface hover:border-outline'
                   }`}
                 >
-                  {margin.platformName}
+                  {store.platformName}({store.siteName})
                 </Link>
               );
             })
@@ -98,8 +112,10 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
         <div className="flex-1 flex flex-col mt-2 min-h-[400px]">
           <div className="flex items-center gap-2 mb-3 px-1">
             <span className="material-symbols-outlined text-[20px]" style={{ color: currentColor }}>storefront</span>
-            <span className="text-sm font-bold text-on-surface">{currentPlatformName || "플랫폼 미지정"}</span>
-            <span className="text-xs text-on-surface-variant">플랫폼 주문 데이터 변환</span>
+            <span className="text-sm font-bold text-on-surface">
+              {currentStore ? `${currentStore.platformName}(${currentStore.siteName})` : "스토어 미지정"}
+            </span>
+            <span className="text-xs text-on-surface-variant">스토어 주문 데이터 변환</span>
           </div>
           
           <div className="flex-1 flex flex-col border border-outline-variant rounded-md overflow-hidden shadow-sm" style={{ backgroundColor: hexToRgba(currentColor, 0.1) }}>
