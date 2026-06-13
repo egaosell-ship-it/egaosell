@@ -25,7 +25,7 @@ export default function PlatformMarginTab() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-on-surface">플랫폼마진세팅</h2>
-        <Button icon="add">새 플랫폼 세팅</Button>
+        <Button icon="add">새플랫폼</Button>
       </div>
 
       <div className="overflow-x-auto border border-outline-variant rounded-md">
