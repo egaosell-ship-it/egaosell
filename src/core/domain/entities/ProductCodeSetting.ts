@@ -29,8 +29,8 @@ export class ProductCodeSetting {
     if (!props.supplierNameDelimiter2) {
       throw new Error("공급상품명구분자2는 필수입니다.");
     }
-    if (!props.priceInfoDelimiter) {
-      throw new Error("가격정보구분자는 필수입니다.");
+    if (props.priceInfoDelimiter === undefined || props.priceInfoDelimiter === null) {
+      props.priceInfoDelimiter = "";
     }
 
     return new ProductCodeSetting(props);

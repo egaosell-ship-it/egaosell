@@ -22,7 +22,7 @@ export async function createProductCodeSettingAction(formData: FormData) {
       platformName: formData.get("platformName") as string,
       supplierNameDelimiter1: formData.get("supplierNameDelimiter1") as string || "[",
       supplierNameDelimiter2: formData.get("supplierNameDelimiter2") as string || "]",
-      priceInfoDelimiter: formData.get("priceInfoDelimiter") as string || "-",
+      priceInfoDelimiter: formData.get("priceInfoDelimiter") as string ?? "",
     };
 
     const repository = new SupabaseProductCodeSettingRepository();
@@ -48,7 +48,7 @@ export async function updateProductCodeSettingAction(formData: FormData) {
       platformName: formData.get("platformName") as string,
       supplierNameDelimiter1: formData.get("supplierNameDelimiter1") as string || "[",
       supplierNameDelimiter2: formData.get("supplierNameDelimiter2") as string || "]",
-      priceInfoDelimiter: formData.get("priceInfoDelimiter") as string || "-",
+      priceInfoDelimiter: formData.get("priceInfoDelimiter") as string ?? "",
     };
 
     if (!dto.id) throw new Error("ID가 누락되었습니다.");

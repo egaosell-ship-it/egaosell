@@ -83,7 +83,7 @@ export default function EditProductCodeSettingModal({ margins, setting }: EditPr
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">가격정보구분자</label>
-              <input type="text" name="priceInfoDelimiter" defaultValue={setting.priceInfoDelimiter} required className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="-" />
+              <input type="text" name="priceInfoDelimiter" defaultValue={setting.priceInfoDelimiter} className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="-" />
             </div>
 
           </div>
