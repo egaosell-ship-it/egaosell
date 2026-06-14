@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Panel } from "@/components/common/Panel";
 import { Button } from "@/components/common/Button";
@@ -34,23 +35,33 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
   let ownedStores: OwnedStore[] = [];
   let businessName = "";
 
-  if (user && businessId) {
-    const marginRepo = new SupabasePlatformMarginRepository();
-    const getMarginsUseCase = new GetPlatformMarginsUseCase(marginRepo);
-    const allMargins = await getMarginsUseCase.execute(user.id);
-    margins = allMargins.filter(m => m.businessId === businessId);
+  if (user) {
+    if (!businessId) {
+      const businessRepo = new SupabaseBusinessRepository();
+      const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
+      const businesses = await getBusinessesUseCase.execute(user.id);
+      const mainBiz = businesses.find(b => b.isMain);
+      if (mainBiz) {
+        redirect(`/order-conversion?businessId=${mainBiz.id}`);
+      }
+    } else {
+      const marginRepo = new SupabasePlatformMarginRepository();
+      const getMarginsUseCase = new GetPlatformMarginsUseCase(marginRepo);
+      const allMargins = await getMarginsUseCase.execute(user.id);
+      margins = allMargins.filter(m => m.businessId === businessId);
 
-    const storeRepo = new SupabaseOwnedStoreRepository();
-    const getStoresUseCase = new GetOwnedStoresUseCase(storeRepo);
-    const allStores = await getStoresUseCase.execute(user.id);
-    ownedStores = allStores.filter(s => s.businessId === businessId).reverse(); // 역순
+      const storeRepo = new SupabaseOwnedStoreRepository();
+      const getStoresUseCase = new GetOwnedStoresUseCase(storeRepo);
+      const allStores = await getStoresUseCase.execute(user.id);
+      ownedStores = allStores.filter(s => s.businessId === businessId).reverse(); // 역순
 
-    const businessRepo = new SupabaseBusinessRepository();
-    const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
-    const businesses = await getBusinessesUseCase.execute(user.id);
-    const biz = businesses.find(b => b.id === businessId);
-    if (biz) {
-      businessName = biz.companyName;
+      const businessRepo = new SupabaseBusinessRepository();
+      const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
+      const businesses = await getBusinessesUseCase.execute(user.id);
+      const biz = businesses.find(b => b.id === businessId);
+      if (biz) {
+        businessName = biz.companyName;
+      }
     }
   }
 
