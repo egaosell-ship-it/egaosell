@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Panel } from "@/components/common/Panel";
-import { Button } from "@/components/common/Button";
+import { OrderConversionClient } from "./_components/OrderConversionClient";
 import { createClient } from "@/infrastructure/config/supabase/server";
 import { SupabasePlatformMarginRepository } from "@/infrastructure/repositories/SupabasePlatformMarginRepository";
 import { GetPlatformMarginsUseCase } from "@/core/application/use-cases/platformMargin/GetPlatformMarginsUseCase";
@@ -120,25 +120,10 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
           </Panel>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col mt-2 min-h-[400px]">
-          <div className="flex items-center gap-2 mb-3 px-1">
-            <span className="material-symbols-outlined text-[20px]" style={{ color: currentColor }}>storefront</span>
-            <span className="text-sm font-bold text-on-surface">
-              {currentStore ? `${currentStore.platformName}(${currentStore.siteName})` : "스토어 미지정"}
-            </span>
-            <span className="text-xs text-on-surface-variant">스토어 주문 데이터 변환</span>
-          </div>
-          
-          <div className="flex-1 flex flex-col border border-outline-variant rounded-md overflow-hidden shadow-sm" style={{ backgroundColor: hexToRgba(currentColor, 0.1) }}>
-            <textarea 
-              className="flex-1 w-full p-4 text-sm text-on-surface bg-transparent resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
-              placeholder="여기에 주문 데이터를 붙여넣으세요..."
-            />
-            <div className="border-t border-outline-variant p-3 flex justify-end shrink-0" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
-              <Button icon="transform">변환</Button>
-            </div>
-          </div>
-        </div>
+        <OrderConversionClient 
+          currentStore={currentStore ? currentStore.toPlainObj() : null} 
+          currentColor={currentColor} 
+        />
       )}
     </div>
   );
