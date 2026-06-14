@@ -4,6 +4,13 @@ import BrandListTab from './_components/BrandListTab';
 import PlatformMarginTab from './_components/PlatformMarginTab';
 import CoupangApiTab from './_components/CoupangApiTab';
 import OwnedStoresTab from './_components/OwnedStoresTab';
+import ProductCodeSettingsTab from './_components/ProductCodeSettingsTab';
+
+import { createClient } from "@/infrastructure/config/supabase/server";
+import { SupabasePlatformMarginRepository } from "@/infrastructure/repositories/SupabasePlatformMarginRepository";
+import { GetPlatformMarginsUseCase } from "@/core/application/use-cases/platformMargin/GetPlatformMarginsUseCase";
+import { SupabaseProductCodeSettingRepository } from "@/infrastructure/repositories/SupabaseProductCodeSettingRepository";
+import { GetProductCodeSettingsUseCase } from "@/core/application/use-cases/productCodeSetting/GetProductCodeSettingsUseCase";
 
 interface SettingsPageProps {
   searchParams: Promise<{ tab?: string }>;
@@ -13,12 +20,31 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const resolvedParams = await searchParams;
   const currentTab = resolvedParams.tab || 'business';
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let margins: any[] = [];
+  let productCodeSettings: any[] = [];
+
+  if (user) {
+    const marginRepo = new SupabasePlatformMarginRepository();
+    const getMarginsUseCase = new GetPlatformMarginsUseCase(marginRepo);
+    margins = await getMarginsUseCase.execute(user.id);
+    margins = margins.map(m => m.toPlainObj());
+
+    const productCodeSettingRepo = new SupabaseProductCodeSettingRepository();
+    const getProductCodeSettingsUseCase = new GetProductCodeSettingsUseCase(productCodeSettingRepo);
+    productCodeSettings = await getProductCodeSettingsUseCase.execute(user.id);
+    productCodeSettings = productCodeSettings.map(s => s.toPlainObj());
+  }
+
   const tabs = [
     { id: 'business', name: '사업자정보관리' },
     { id: 'brands', name: '브랜드리스트' },
     { id: 'margins', name: '플랫폼마진세팅' },
     { id: 'owned-stores', name: '보유스토어' },
     { id: 'coupang-api', name: '쿠팡API' },
+    { id: 'product-code', name: '상품코드설정' },
   ];
 
   return (
@@ -56,6 +82,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         {currentTab === 'margins' && <PlatformMarginTab />}
         {currentTab === 'owned-stores' && <OwnedStoresTab />}
         {currentTab === 'coupang-api' && <CoupangApiTab />}
+        {currentTab === 'product-code' && <ProductCodeSettingsTab settings={productCodeSettings} margins={margins} />}
       </div>
     </div>
   );
