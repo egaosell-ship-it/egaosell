@@ -23,6 +23,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
   const navLinks = [
     { name: '대시보드', href: '/' },
     { name: '주문 변환', href: '/order-conversion' },
+    { name: '주문 수집', href: '/order-collection' },
     { name: '상품 목록', href: '/products' },
     { name: '상품 수집', href: '/crawling' },
     { name: '마진 계산기', href: '/calculator' },
@@ -41,8 +42,8 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
 
-            // 주문 변환 메뉴 특별 처리 (드롭다운)
-            if (link.name === '주문 변환') {
+            // 드롭다운 메뉴 특별 처리
+            if (link.name === '주문 변환' || link.name === '주문 수집') {
               return (
                 <div key={link.name} className="relative group h-full flex items-center">
                   <Link
@@ -65,7 +66,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
                         return (
                           <Link 
                             key={biz.id} 
-                            href={`/order-conversion?businessId=${biz.id}`}
+                            href={`${link.href}?businessId=${biz.id}`}
                             className="block px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low transition-colors"
                           >
                             {biz.companyName} {biz.isMain && '(★)'}
