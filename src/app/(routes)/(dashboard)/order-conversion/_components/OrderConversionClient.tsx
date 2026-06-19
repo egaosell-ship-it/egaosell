@@ -50,6 +50,13 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
         // [8]: 옵션정보
         // [9]: 수량
         
+        let prefix = "";
+        if (currentStore) {
+          const platformStr = currentStore.platformName || "";
+          const siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
+          prefix = `${platformStr}${siteStr}`;
+        }
+
         let productCode = columns[7];
         if (currentSetting?.supplierNameDelimiter1) {
           const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -57,6 +64,8 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
             productCode = productCode.substring(delimIndex);
           }
         }
+        
+        productCode = `${prefix}${productCode}`;
         
         const newColumns = [
           columns[0], // 수취인명
