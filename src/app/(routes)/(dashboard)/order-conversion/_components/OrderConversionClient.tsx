@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/common/Button";
 import { OwnedStoreProps } from "@/core/domain/entities/OwnedStore";
 
@@ -18,12 +18,12 @@ function hexToRgba(hex: string, alpha: number) {
 
 export function OrderConversionClient({ currentStore, currentColor }: OrderConversionClientProps) {
   const [text, setText] = useState("");
-  const [originalText, setOriginalText] = useState("");
+  const originalTextRef = useRef("");
   const [isConverted, setIsConverted] = useState(false);
 
   const handleConversion = () => {
     if (!text.trim()) return;
-    setOriginalText(text);
+    originalTextRef.current = text;
 
     // 네이버 스마트스토어 주문 양식 변환 로직
     // 플랫폼 이름에 '스마트스토어'나 '네이버'가 포함되어 있다고 가정 (현재는 일괄 적용)
@@ -71,7 +71,7 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
   };
 
   const handleRevert = () => {
-    setText(originalText);
+    setText(originalTextRef.current);
     setIsConverted(false);
   };
 
@@ -81,6 +81,13 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
       alert("클립보드에 복사되었습니다.");
     } catch (err) {
       alert("복사에 실패했습니다.");
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    if (isConverted) {
+      setIsConverted(false);
     }
   };
 
@@ -99,7 +106,7 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
           className="flex-1 w-full p-4 text-sm text-on-surface bg-transparent resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
           placeholder="여기에 주문 데이터를 붙여넣으세요..."
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleChange}
         />
         <div className="border-t border-outline-variant p-3 flex justify-end shrink-0 gap-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
           {isConverted ? (

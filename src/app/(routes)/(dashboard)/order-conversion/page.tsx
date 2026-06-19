@@ -121,6 +121,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
         </div>
       ) : (
         <OrderConversionClient 
+          key={currentStoreId}
           currentStore={currentStore ? currentStore.toPlainObj() : null} 
           currentColor={currentColor} 
         />
