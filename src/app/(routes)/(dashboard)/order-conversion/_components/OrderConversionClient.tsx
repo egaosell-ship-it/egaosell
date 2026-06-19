@@ -3,10 +3,12 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/common/Button";
 import { OwnedStoreProps } from "@/core/domain/entities/OwnedStore";
+import { ProductCodeSettingProps } from "@/core/domain/entities/ProductCodeSetting";
 
 interface OrderConversionClientProps {
   currentStore: OwnedStoreProps | null;
   currentColor: string;
+  currentSetting?: ProductCodeSettingProps | null;
 }
 
 function hexToRgba(hex: string, alpha: number) {
@@ -16,7 +18,7 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function OrderConversionClient({ currentStore, currentColor }: OrderConversionClientProps) {
+export function OrderConversionClient({ currentStore, currentColor, currentSetting }: OrderConversionClientProps) {
   const [text, setText] = useState("");
   const originalTextRef = useRef("");
   const [isConverted, setIsConverted] = useState(false);
@@ -42,11 +44,19 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
         // [2]: 우편번호
         // [3]: 기본배송지
         // [4]: 상세배송지
-        // [5]: 배송메세지
+        // [5]: 배송메시지
         // [6]: 수취인연락처2
         // [7]: 판매자 상품코드
         // [8]: 옵션정보
         // [9]: 수량
+        
+        let productCode = columns[7];
+        if (currentSetting?.supplierNameDelimiter1) {
+          const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
+          if (delimIndex !== -1) {
+            productCode = productCode.substring(delimIndex);
+          }
+        }
         
         const newColumns = [
           columns[0], // 수취인명
@@ -55,7 +65,7 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
           `${columns[3]} ${columns[4]}`.trim(), // 주소(기본배송지+상세배송지)
           columns[5], // 배송메시지
           columns[6], // 수취인연락처2
-          `${columns[7]} ${columns[8]}`.trim(), // 상품명(판매자 상품코드+옵션정보)
+          `${productCode} ${columns[8]}`.trim(), // 상품명(판매자 상품코드+옵션정보)
           columns[9]  // 수량
         ];
         

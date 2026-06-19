@@ -12,6 +12,9 @@ import { GetBusinessesUseCase } from "@/core/application/use-cases/business/GetB
 import { SupabaseOwnedStoreRepository } from "@/infrastructure/repositories/SupabaseOwnedStoreRepository";
 import { GetOwnedStoresUseCase } from "@/core/application/use-cases/ownedStore/GetOwnedStoresUseCase";
 import { OwnedStore } from "@/core/domain/entities/OwnedStore";
+import { SupabaseProductCodeSettingRepository } from "@/infrastructure/repositories/SupabaseProductCodeSettingRepository";
+import { GetProductCodeSettingsUseCase } from "@/core/application/use-cases/productCodeSetting/GetProductCodeSettingsUseCase";
+import { ProductCodeSetting } from "@/core/domain/entities/ProductCodeSetting";
 
 interface PageProps {
   searchParams: Promise<{ businessId?: string; storeId?: string }>;
@@ -33,6 +36,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
 
   let margins: PlatformMargin[] = [];
   let ownedStores: OwnedStore[] = [];
+  let productCodeSettings: ProductCodeSetting[] = [];
   let businessName = "";
 
   if (user) {
@@ -55,6 +59,10 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
       const allStores = await getStoresUseCase.execute(user.id);
       ownedStores = allStores.filter(s => s.businessId === businessId).reverse(); // 역순
 
+      const productCodeSettingRepo = new SupabaseProductCodeSettingRepository();
+      const getProductCodeSettingsUseCase = new GetProductCodeSettingsUseCase(productCodeSettingRepo);
+      productCodeSettings = await getProductCodeSettingsUseCase.execute(user.id);
+
       const businessRepo = new SupabaseBusinessRepository();
       const getBusinessesUseCase = new GetBusinessesUseCase(businessRepo);
       const businesses = await getBusinessesUseCase.execute(user.id);
@@ -71,6 +79,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
   const currentPlatformName = currentStore?.platformName || "";
   const currentMargin = margins.find(m => m.platformName === currentPlatformName);
   const currentColor = currentMargin?.colorCode || "#E2E8F0";
+  const currentProductCodeSetting = productCodeSettings.find(s => s.platformName === currentPlatformName);
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -124,6 +133,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
           key={currentStoreId}
           currentStore={currentStore ? currentStore.toPlainObj() : null} 
           currentColor={currentColor} 
+          currentSetting={currentProductCodeSetting ? currentProductCodeSetting.toPlainObj() : null}
         />
       )}
     </div>
