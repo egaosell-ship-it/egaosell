@@ -18,9 +18,12 @@ function hexToRgba(hex: string, alpha: number) {
 
 export function OrderConversionClient({ currentStore, currentColor }: OrderConversionClientProps) {
   const [text, setText] = useState("");
+  const [originalText, setOriginalText] = useState("");
+  const [isConverted, setIsConverted] = useState(false);
 
   const handleConversion = () => {
     if (!text.trim()) return;
+    setOriginalText(text);
 
     // 네이버 스마트스토어 주문 양식 변환 로직
     // 플랫폼 이름에 '스마트스토어'나 '네이버'가 포함되어 있다고 가정 (현재는 일괄 적용)
@@ -64,6 +67,21 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
     });
 
     setText(convertedLines.join("\n"));
+    setIsConverted(true);
+  };
+
+  const handleRevert = () => {
+    setText(originalText);
+    setIsConverted(false);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("클립보드에 복사되었습니다.");
+    } catch (err) {
+      alert("복사에 실패했습니다.");
+    }
   };
 
   return (
@@ -83,8 +101,15 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <div className="border-t border-outline-variant p-3 flex justify-end shrink-0" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
-          <Button icon="transform" onClick={handleConversion}>변환</Button>
+        <div className="border-t border-outline-variant p-3 flex justify-end shrink-0 gap-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+          {isConverted ? (
+            <>
+              <Button icon="undo" variant="outline" onClick={handleRevert}>이전단계</Button>
+              <Button icon="content_copy" onClick={handleCopy}>복사</Button>
+            </>
+          ) : (
+            <Button icon="transform" onClick={handleConversion}>변환</Button>
+          )}
         </div>
       </div>
     </div>
