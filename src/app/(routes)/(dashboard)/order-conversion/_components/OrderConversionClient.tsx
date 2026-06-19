@@ -30,7 +30,26 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
     // 네이버 스마트스토어 주문 양식 변환 로직
     // 플랫폼 이름에 '스마트스토어'나 '네이버'가 포함되어 있다고 가정 (현재는 일괄 적용)
     
-    const lines = text.split("\n");
+    // 엑셀에서 복사 시 포함된 쌍따옴표 및 셀 내부 줄바꿈 처리
+    let preprocessedText = "";
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+        continue; // 쌍따옴표 제거
+      }
+      if (inQuotes) {
+        if (char === '\r') continue;
+        if (char === '\n') {
+          preprocessedText += ' '; // 셀 내부 줄바꿈을 공백으로 치환
+          continue;
+        }
+      }
+      preprocessedText += char;
+    }
+
+    const lines = preprocessedText.split("\n");
     const convertedLines = lines.map(line => {
       // 빈 줄 무시
       if (!line.trim()) return line;
