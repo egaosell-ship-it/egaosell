@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import * as XLSX from "xlsx";
 import { Button } from "@/components/common/Button";
 import { OwnedStoreProps } from "@/core/domain/entities/OwnedStore";
 import { ProductCodeSettingProps } from "@/core/domain/entities/ProductCodeSetting";
@@ -131,6 +132,35 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
     }
   };
 
+  const handleExcelDownload = () => {
+    if (!text.trim()) return;
+
+    const headers = ["수령인", "휴대전화", "우편번호", "주소", "배송메시지", "연락처2", "상품명", "수량", "홍보문구1", "홍보문구2"];
+    const rows = text.split("\n").map(line => line.split("\t"));
+    
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "주문데이터");
+
+    let platformStr = "플랫폼미상";
+    let siteStr = "";
+    if (currentStore) {
+      platformStr = currentStore.platformName || "플랫폼미상";
+      siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
+    }
+
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = `${mm}.${dd}.${hh}.${min}`;
+
+    const filename = `배송.${platformStr}.${siteStr}.${timeStr}.xlsx`;
+    
+    XLSX.writeFile(workbook, filename);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
     if (isConverted) {
@@ -160,6 +190,7 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
             <>
               <Button icon="undo" variant="outline" onClick={handleRevert}>이전단계</Button>
               <Button icon="content_copy" onClick={handleCopy}>복사</Button>
+              <Button icon="download" onClick={handleExcelDownload}>엑셀다운로드</Button>
             </>
           ) : (
             <Button icon="transform" onClick={handleConversion}>변환</Button>
