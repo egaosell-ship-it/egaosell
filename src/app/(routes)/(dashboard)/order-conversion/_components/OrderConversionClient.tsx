@@ -59,6 +59,15 @@ export function OrderConversionClient({ currentStore, currentColor }: OrderConve
           columns[9]  // 수량
         ];
         
+        const promo1 = currentStore?.invoicePromo1 || "";
+        const promo2 = currentStore?.invoicePromo2 || "";
+        if (promo1 || promo2) {
+          newColumns.push(promo1);
+          if (promo2) {
+            newColumns.push(promo2);
+          }
+        }
+        
         return newColumns.join("\t");
       }
       
