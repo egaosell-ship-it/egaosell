@@ -65,8 +65,65 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
       }
 
       const isCoupang = currentStore?.platformName?.includes("쿠팡");
+      const isToss = currentStore?.platformName?.includes("토스");
 
-      if (isCoupang && columns.length >= 8) {
+      if (isToss && columns.length >= 13) {
+        // 토스 13열 포맷 변환
+        // [0]: 옵션명
+        // [1]: 주문건수
+        // [2]: 상품ID
+        // [3]: 상품관리코드
+        // [4]: 옵션 ID
+        // [5]: 옵션 관리 코드
+        // [6]: 구매자명
+        // [7]: 구매자연락처
+        // [8]: 수령인명
+        // [9]: 수령인연락처
+        // [10]: 우편번호
+        // [11]: 배송지
+        // [12]: 주문요청사항
+
+        let productCode = columns[3];
+        if (currentSetting?.supplierNameDelimiter1) {
+          const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
+          if (delimIndex !== -1) {
+            productCode = productCode.substring(delimIndex);
+          }
+        }
+
+        const delim1 = currentSetting?.supplierNameDelimiter1 || '[';
+        const delim2 = currentSetting?.supplierNameDelimiter2 || ']';
+        if (!productCode.startsWith(delim1)) {
+          productCode = `${delim1}${productCode}${delim2}`;
+        }
+        
+        productCode = `${prefix}${productCode}`;
+        
+        const optionName = columns[0].replace(/,/g, '');
+
+        const newColumns = [
+          columns[8], // 수령인명
+          columns[9], // 수령인연락처
+          columns[10], // 우편번호
+          columns[11].trim(), // 배송지
+          columns[12], // 주문요청사항
+          columns[7], // 구매자연락처
+          `${productCode}${optionName}`.trim(), // 상품명(상품명+옵션, 공백없이 결합)
+          columns[1]  // 수량
+        ];
+
+        const promo1 = currentStore?.invoicePromo1 || "";
+        const promo2 = currentStore?.invoicePromo2 || "";
+        if (promo1 || promo2) {
+          newColumns.push(promo1);
+          if (promo2) {
+            newColumns.push(promo2);
+          }
+        }
+        
+        return newColumns.join("\t");
+
+      } else if (isCoupang && columns.length >= 8) {
         // 쿠팡 8열 포맷 변환
         // [0]: 등록상품명
         // [1]: 등록옵션명
