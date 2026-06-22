@@ -57,8 +57,59 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
       
       const columns = line.split("\t");
       
-      // 입력 데이터가 10개 이상인지 확인 (기대하는 포맷)
-      if (columns.length >= 10) {
+      let prefix = "";
+      if (currentStore) {
+        const platformStr = currentStore.platformName || "";
+        const siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
+        prefix = `${platformStr}${siteStr}`;
+      }
+
+      const isCoupang = currentStore?.platformName?.includes("쿠팡");
+
+      if (isCoupang && columns.length >= 8) {
+        // 쿠팡 8열 포맷 변환
+        // [0]: 등록상품명
+        // [1]: 등록옵션명
+        // [2]: 구매수(수량)
+        // [3]: 수취인이름
+        // [4]: 수취인전화번호
+        // [5]: 우편번호
+        // [6]: 수취인주소
+        // [7]: 배송메세지
+
+        let productCode = columns[0];
+        if (currentSetting?.supplierNameDelimiter1) {
+          const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
+          if (delimIndex !== -1) {
+            productCode = productCode.substring(delimIndex);
+          }
+        }
+        productCode = `${prefix}${productCode}`;
+
+        const newColumns = [
+          columns[3], // 수취인명
+          columns[4], // 수취인연락처1
+          columns[5], // 우편번호
+          columns[6].trim(), // 주소
+          columns[7], // 배송메시지
+          "",         // 연락처2 (없음)
+          `${productCode} ${columns[1]}`.trim(), // 상품명(상품명+옵션)
+          columns[2]  // 수량
+        ];
+
+        const promo1 = currentStore?.invoicePromo1 || "";
+        const promo2 = currentStore?.invoicePromo2 || "";
+        if (promo1 || promo2) {
+          newColumns.push(promo1);
+          if (promo2) {
+            newColumns.push(promo2);
+          }
+        }
+        
+        return newColumns.join("\t");
+
+      } else if (!isCoupang && columns.length >= 10) {
+        // 기존 네이버 스마트스토어 10열 포맷 변환
         // [0]: 수취인명
         // [1]: 수취인연락처1
         // [2]: 우편번호
@@ -70,13 +121,6 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
         // [8]: 옵션정보
         // [9]: 수량
         
-        let prefix = "";
-        if (currentStore) {
-          const platformStr = currentStore.platformName || "";
-          const siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
-          prefix = `${platformStr}${siteStr}`;
-        }
-
         let productCode = columns[7];
         if (currentSetting?.supplierNameDelimiter1) {
           const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -84,7 +128,6 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
             productCode = productCode.substring(delimIndex);
           }
         }
-        
         productCode = `${prefix}${productCode}`;
         
         const newColumns = [
