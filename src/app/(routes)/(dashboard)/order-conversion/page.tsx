@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Panel } from "@/components/common/Panel";
 import { OrderConversionClient } from "./_components/OrderConversionClient";
+import { OrderConversionBatchClient } from "./_components/OrderConversionBatchClient";
 import { createClient } from "@/infrastructure/config/supabase/server";
 import { SupabasePlatformMarginRepository } from "@/infrastructure/repositories/SupabasePlatformMarginRepository";
 import { GetPlatformMarginsUseCase } from "@/core/application/use-cases/platformMargin/GetPlatformMarginsUseCase";
@@ -17,7 +18,7 @@ import { GetProductCodeSettingsUseCase } from "@/core/application/use-cases/prod
 import { ProductCodeSetting } from "@/core/domain/entities/ProductCodeSetting";
 
 interface PageProps {
-  searchParams: Promise<{ businessId?: string; storeId?: string }>;
+  searchParams: Promise<{ businessId?: string; storeId?: string; mode?: string }>;
 }
 
 function hexToRgba(hex: string, alpha: number) {
@@ -86,10 +87,27 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
       <PageHeader 
         title={businessName ? `${businessName} 주문 데이터 변환` : "주문 데이터 변환"} 
         description="오픈마켓 발주서를 택배사 송장 양식으로 변환합니다." 
-      />
+      >
+        {hasBusinessId && (
+          <div className="flex bg-surface-variant p-1 rounded-md">
+            <Link 
+              href={`/order-conversion?businessId=${businessId}&storeId=${currentStoreId}`}
+              className={`px-4 py-1.5 text-sm font-medium rounded-sm transition-colors ${resolvedParams.mode !== 'batch' ? 'bg-surface text-on-surface shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              각각변환
+            </Link>
+            <Link 
+              href={`/order-conversion?businessId=${businessId}&mode=batch`}
+              className={`px-4 py-1.5 text-sm font-medium rounded-sm transition-colors ${resolvedParams.mode === 'batch' ? 'bg-surface text-on-surface shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+            >
+              한꺼번에변환
+            </Link>
+          </div>
+        )}
+      </PageHeader>
 
-      {/* 서브메뉴(플랫폼 탭) 렌더링 */}
-      {hasBusinessId && (
+      {/* 서브메뉴(플랫폼 탭) 렌더링 - 각각변환 모드일 때만 표시 */}
+      {hasBusinessId && resolvedParams.mode !== 'batch' && (
         <div className="flex border-b border-outline-variant mt-2 px-1 gap-2 overflow-x-auto">
           {ownedStores.length === 0 ? (
             <div className="py-2 text-sm text-on-surface-variant">등록된 스토어가 없습니다. 설정 메뉴에서 보유스토어를 추가해주세요.</div>
@@ -128,6 +146,12 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
             </div>
           </Panel>
         </div>
+      ) : resolvedParams.mode === 'batch' ? (
+        <OrderConversionBatchClient 
+          ownedStores={ownedStores.map(s => s.toPlainObj())}
+          productCodeSettings={productCodeSettings.map(s => s.toPlainObj())}
+          margins={margins.map(m => m.toPlainObj())}
+        />
       ) : (
         <OrderConversionClient 
           key={currentStoreId}
