@@ -26,7 +26,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
   const lines = preprocessedText.split("\n");
   const convertedLines = lines.map(line => {
     // 빈 줄 무시
-    if (!line.trim()) return line;
+    if (!line.trim()) return null;
     
     const columns = line.split("\t");
     
@@ -175,7 +175,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     }
     
     return line;
-  });
+  }).filter((line): line is string => line !== null && line.trim() !== "");
 
   return convertedLines;
 }
