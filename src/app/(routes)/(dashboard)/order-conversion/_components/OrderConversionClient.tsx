@@ -66,8 +66,49 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
 
       const isCoupang = currentStore?.platformName?.includes("쿠팡");
       const isToss = currentStore?.platformName?.includes("토스");
+      const isEsm = currentStore?.platformName?.includes("ESM");
 
-      if (isToss && columns.length >= 13) {
+      if (isEsm && columns.length >= 23) {
+        // ESM 23열 포맷 변환
+        // [0]: 수령인명, [1]: 구매자명, [2]: 선물주문여부, [3]: 선물수락일시
+        // [4]: 설치주문여부, [5]: 설치예정일, [6]: 수량, [7]: 옵션, [8]: 추가구성
+        // [9]: 사은품, [10]: 사은품 관리코드, [11]: 덤, [12]: 덤 관리코드
+        // [13]: 판매단가, [14]: 판매금액, [15]: 판매자관리코드, [16]: 판매자 상세관리코드
+        // [17]: 수령인휴대폰, [18]: 수령인전화번호, [19]: 배송지변경 여부
+        // [20]: 우편번호, [21]: 주소, [22]: 배송시요구사항
+
+        let productCode = columns[15];
+        if (currentSetting?.supplierNameDelimiter1) {
+          const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
+          if (delimIndex !== -1) {
+            productCode = productCode.substring(delimIndex);
+          }
+        }
+        productCode = `${prefix}${productCode}`;
+
+        const newColumns = [
+          columns[0], // 수령인명
+          columns[17], // 수령인휴대폰
+          columns[20], // 우편번호
+          columns[21].trim(), // 주소
+          columns[22], // 배송시요구사항
+          columns[18], // 수령인전화번호(연락처2)
+          `${productCode}${columns[7]}`.trim(), // 상품명(판매자관리코드+옵션, 공백없이 결합)
+          columns[6]  // 수량
+        ];
+
+        const promo1 = currentStore?.invoicePromo1 || "";
+        const promo2 = currentStore?.invoicePromo2 || "";
+        if (promo1 || promo2) {
+          newColumns.push(promo1);
+          if (promo2) {
+            newColumns.push(promo2);
+          }
+        }
+        
+        return newColumns.join("\t");
+
+      } else if (isToss && columns.length >= 13) {
         // 토스 13열 포맷 변환
         // [0]: 옵션명
         // [1]: 주문건수
