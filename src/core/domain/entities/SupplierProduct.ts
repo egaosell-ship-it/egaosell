@@ -61,8 +61,7 @@ export class SupplierProduct {
   }
 
   public toJSON() {
-    return {
-      id: this.id,
+    const obj: any = {
       user_id: this.user_id,
       naver_product_id: this.naver_product_id,
       image_url: this.image_url,
@@ -75,8 +74,12 @@ export class SupplierProduct {
       registered_platform: this.registered_platform,
       net_profit: this.net_profit,
       is_used: this.is_used,
-      created_at: this.created_at,
-      updated_at: this.updated_at,
     };
+
+    if (this.id !== undefined) obj.id = this.id;
+    if (this.created_at !== undefined) obj.created_at = this.created_at;
+    if (this.updated_at !== undefined) obj.updated_at = this.updated_at;
+
+    return obj;
   }
 }

@@ -55,7 +55,8 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             const naver_product_id = row[0] ? String(row[0]) : null;
             const originalProductName = row[1] ? String(row[1]) : "";
             const registered_platform = row[2] ? String(row[2]) : null;
-            const sell_price = row[3] ? parseInt(String(row[3]).replace(/,/g, ''), 10) : 0;
+            const sellPriceRaw = row[3] ? parseInt(String(row[3]).replace(/,/g, ''), 10) : 0;
+            const sell_price = isNaN(sellPriceRaw) ? 0 : sellPriceRaw;
             const sub_category = row[4] ? String(row[4]) : null;
             const brand_name = row[5] ? String(row[5]) : null;
             const image_url = row[6] ? String(row[6]) : null;
@@ -70,7 +71,8 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             const match = originalProductName.match(regex);
 
             if (match) {
-              supply_price = parseInt(match[1], 10);
+              const sp = parseInt(match[1], 10);
+              supply_price = isNaN(sp) ? 0 : sp;
               supplier_name = match[2];
               supply_product_name = match[3];
             }
