@@ -1,8 +1,11 @@
 import { MemoWidget } from "@/components/dashboard/MemoWidget";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/common/Button";
+import { getMemosAction } from "@/app/actions/memo.actions";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const memosResult = await getMemosAction();
+  const initialMemos = memosResult.success && memosResult.data ? memosResult.data : [];
   return (
     <>
       {/* Page Header */}
@@ -18,7 +21,7 @@ export default function DashboardPage() {
       </PageHeader>
 
       <div className="w-full mb-2">
-        <MemoWidget />
+        <MemoWidget initialMemos={initialMemos} />
       </div>
 
       {/* KPI Grid */}
