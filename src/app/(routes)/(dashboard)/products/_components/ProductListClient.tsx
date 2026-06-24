@@ -207,9 +207,8 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {product.image_url ? (
                       <img 
-                        src={product.image_url.replace(/^http:\/\//i, 'https://')} 
+                        src={`/api/proxy-image?url=${encodeURIComponent(product.image_url)}`} 
                         alt="상품 이미지" 
-                        referrerPolicy="no-referrer"
                         className="w-10 h-10 object-cover border border-outline-variant rounded" 
                       />
                     ) : (
