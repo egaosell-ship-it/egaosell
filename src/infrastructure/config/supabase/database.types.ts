@@ -25,6 +25,7 @@ export type Database = {
           supply_product_name: string
           supply_price: number | null
           sell_price: number | null
+          sub_category: string | null
           registered_platform: string | null
           net_profit: number | null
           is_used: boolean
@@ -41,6 +42,7 @@ export type Database = {
           supply_product_name: string
           supply_price?: number | null
           sell_price?: number | null
+          sub_category?: string | null
           registered_platform?: string | null
           net_profit?: number | null
           is_used?: boolean
@@ -57,6 +59,7 @@ export type Database = {
           supply_product_name?: string
           supply_price?: number | null
           sell_price?: number | null
+          sub_category?: string | null
           registered_platform?: string | null
           net_profit?: number | null
           is_used?: boolean
