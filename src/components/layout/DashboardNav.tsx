@@ -171,7 +171,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
                       onClick={() => setIsOrderConversionModalOpen(false)}
                       className="text-primary hover:text-primary-fixed-variant hover:underline font-semibold transition-colors whitespace-nowrap"
                     >
-                      {biz.companyName} {biz.isMain ? '(별 주사업자)' : ''}
+                      {biz.companyName} {biz.isMain ? '(★)' : ''}
                     </Link>
                     {idx < sortedBusinesses.length - 1 && (
                       <span className="mx-2 text-outline-variant">|</span>
