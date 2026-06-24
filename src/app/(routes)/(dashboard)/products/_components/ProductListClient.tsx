@@ -94,7 +94,10 @@ export function ProductListClient() {
                     </span>
                   </td>
                   <td className="py-2 px-4 text-center">
-                    <button className="text-primary hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-primary/10 transition-colors">수정</button>
+                    <div className="flex items-center justify-center gap-1">
+                      <button className="text-primary hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-primary/10 transition-colors">수정</button>
+                      <button className="text-error hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-error/10 transition-colors">삭제</button>
+                    </div>
                   </td>
                 </tr>
               ))}
