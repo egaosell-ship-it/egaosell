@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      supplier_products: {
+        Row: {
+          id: string
+          user_id: string
+          naver_product_id: string | null
+          image_url: string | null
+          supplier_name: string | null
+          brand_name: string | null
+          supply_product_name: string
+          supply_price: number | null
+          sell_price: number | null
+          registered_platform: string | null
+          net_profit: number | null
+          is_used: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          naver_product_id?: string | null
+          image_url?: string | null
+          supplier_name?: string | null
+          brand_name?: string | null
+          supply_product_name: string
+          supply_price?: number | null
+          sell_price?: number | null
+          registered_platform?: string | null
+          net_profit?: number | null
+          is_used?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          naver_product_id?: string | null
+          image_url?: string | null
+          supplier_name?: string | null
+          brand_name?: string | null
+          supply_product_name?: string
+          supply_price?: number | null
+          sell_price?: number | null
+          registered_platform?: string | null
+          net_profit?: number | null
+          is_used?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memos: {
         Row: {
           id: string
