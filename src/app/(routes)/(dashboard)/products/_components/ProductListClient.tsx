@@ -206,7 +206,12 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                   <td className="py-2 px-4 flex justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {product.image_url ? (
-                      <img src={product.image_url} alt="상품 이미지" className="w-10 h-10 object-cover border border-outline-variant rounded" />
+                      <img 
+                        src={product.image_url.replace(/^http:\/\//i, 'https://')} 
+                        alt="상품 이미지" 
+                        referrerPolicy="no-referrer"
+                        className="w-10 h-10 object-cover border border-outline-variant rounded" 
+                      />
                     ) : (
                       <div className="w-10 h-10 bg-surface-variant rounded border border-outline-variant" />
                     )}
