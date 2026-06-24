@@ -66,6 +66,7 @@ export function ProductListClient() {
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-right">판매가격</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">등록플랫폼/순이익</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">사용여부</th>
+                <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant text-sm text-on-surface bg-surface-container-lowest">
@@ -91,6 +92,9 @@ export function ProductListClient() {
                     }`}>
                       {product.isUsed}
                     </span>
+                  </td>
+                  <td className="py-2 px-4 text-center">
+                    <button className="text-primary hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-primary/10 transition-colors">수정</button>
                   </td>
                 </tr>
               ))}
