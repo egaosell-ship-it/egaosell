@@ -47,7 +47,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     if (currentStore?.invoicePromo2) promoCols.push(currentStore.invoicePromo2);
 
     if (isEsm) {
-      if (columns.length !== 23) throw new Error("ESM 데이터에 오류가 있습니다.");
+      if (columns.length < 22 || columns.length > 25) throw new Error("ESM 데이터에 오류가 있습니다.");
       let productCode = columns[15];
       if (currentSetting?.supplierNameDelimiter1) {
         const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -58,14 +58,14 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
       productCode = `${prefix}${productCode}`;
 
       const newColumns = [
-        columns[0], // 수령인명
-        columns[18], // 수령인휴대폰 자리에 수령인전화번호 입력
-        columns[20], // 우편번호
-        columns[21].trim(), // 주소
-        columns[22], // 배송시요구사항
-        columns[17], // 수령인전화번호 자리에 수령인휴대폰 입력
-        `${productCode}${columns[7]}`.trim(), // 상품명
-        columns[6]  // 수량
+        columns[0] || "", // 수령인명
+        columns[18] || "", // 수령인전화번호
+        columns[20] || "", // 우편번호
+        (columns[21] || "").trim(), // 주소
+        columns[22] || "", // 배송시요구사항
+        columns[17] || "", // 수령인휴대폰
+        `${productCode}${(columns[7] || "")}`.trim(), // 상품명
+        columns[6] || ""  // 수량
       ];
 
       newColumns.push(...promoCols);
@@ -157,7 +157,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     }
     
     // 공통 수령인명 1음절 괄호 처리
-    if (newColumns.length > 0 && newColumns[0].length === 1) {
+    if (newColumns.length > 0 && newColumns[0] && newColumns[0].length === 1) {
       newColumns[0] = `(${newColumns[0]})`;
     }
 
