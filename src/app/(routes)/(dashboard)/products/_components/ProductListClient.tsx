@@ -82,12 +82,19 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             // 엑셀의 '상품등록일' 을 product_registered_at 으로 저장
             let product_registered_at: string | null = null;
             if (row[7]) {
-              const dateStr = String(row[7]).replace(/\./g, '-');
-              const d = new Date(dateStr);
-              if (!isNaN(d.getTime())) {
-                product_registered_at = d.toISOString();
+              if (typeof row[7] === 'number') {
+                // 엑셀 날짜 일련번호 (Serial number) 처리
+                const dateObj = new Date(Math.round((row[7] - 25569) * 86400 * 1000));
+                if (!isNaN(dateObj.getTime())) {
+                  product_registered_at = dateObj.toISOString();
+                }
               } else {
-                product_registered_at = dateStr;
+                const dateStr = String(row[7]).replace(/\./g, '-');
+                const d = new Date(dateStr);
+                if (!isNaN(d.getTime())) {
+                  product_registered_at = d.toISOString();
+                }
+                // 변환 실패 시 DB 저장을 위해 null 유지
               }
             }
             
