@@ -21,8 +21,25 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       .select();
       
     if (error) {
+      // 42703 is PostgreSQL code for undefined_column
+      if (error.code === '42703' || error.message.includes('does not exist')) {
+        console.warn("DB schema mismatch detected. Retrying without new columns", error);
+        const safeInsertData = insertData.map(obj => {
+          const newObj = { ...obj };
+          delete newObj.sub_category;
+          delete newObj.product_registered_at;
+          return newObj;
+        });
+        
+        const retry = await supabase.from("supplier_products").insert(safeInsertData).select();
+        if (retry.error) {
+          throw new Error(`안전 모드 저장 중 오류가 발생했습니다: ${retry.error.message}`);
+        }
+        return retry.data.map(item => new SupplierProduct(item as any));
+      }
+
       console.error("Supabase insert error:", error);
-      throw new Error("상품 데이터를 저장하는 중 오류가 발생했습니다.");
+      throw new Error(`상품 데이터를 저장하는 중 오류가 발생했습니다: ${error.message}`);
     }
     
     return data.map(item => new SupplierProduct(item as any));
