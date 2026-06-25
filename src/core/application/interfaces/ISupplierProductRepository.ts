@@ -18,4 +18,9 @@ export interface ISupplierProductRepository {
    * @param id 삭제할 상품 ID
    */
   delete(id: string): Promise<void>;
+
+  /**
+   * 등록된 전체 상품을 삭제합니다.
+   */
+  deleteAll(): Promise<void>;
 }

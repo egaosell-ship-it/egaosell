@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { CreateSupplierProductsUseCase } from "@/core/application/use-cases/product/CreateSupplierProductsUseCase";
 import { GetSupplierProductsUseCase } from "@/core/application/use-cases/product/GetSupplierProductsUseCase";
+import { DeleteAllSupplierProductsUseCase } from "@/core/application/use-cases/product/DeleteAllSupplierProductsUseCase";
 import { SupabaseSupplierProductRepository } from "@/infrastructure/repositories/SupabaseSupplierProductRepository";
 import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
 
@@ -10,6 +11,7 @@ import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
 const repository = new SupabaseSupplierProductRepository();
 const createSupplierProductsUseCase = new CreateSupplierProductsUseCase(repository);
 const getSupplierProductsUseCase = new GetSupplierProductsUseCase(repository);
+const deleteAllSupplierProductsUseCase = new DeleteAllSupplierProductsUseCase(repository);
 
 export async function uploadSupplierProductsAction(products: SupplierProductProps[]) {
   try {
@@ -44,5 +46,16 @@ export async function deleteSupplierProductAction(id: string) {
   } catch (error: any) {
     console.error("deleteSupplierProductAction error:", error);
     return { success: false, error: error.message || "상품 삭제 중 오류가 발생했습니다." };
+  }
+}
+
+export async function deleteAllSupplierProductsAction() {
+  try {
+    await deleteAllSupplierProductsUseCase.execute();
+    revalidatePath("/products");
+    return { success: true };
+  } catch (error: any) {
+    console.error("deleteAllSupplierProductsAction error:", error);
+    return { success: false, error: error.message || "전체 상품 삭제 중 오류가 발생했습니다." };
   }
 }

@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import { Button } from "@/components/common/Button";
 import { Panel } from "@/components/common/Panel";
 import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
-import { uploadSupplierProductsAction, deleteSupplierProductAction } from "@/app/actions/product.actions";
+import { uploadSupplierProductsAction, deleteSupplierProductAction, deleteAllSupplierProductsAction } from "@/app/actions/product.actions";
 import { useRouter } from "next/navigation";
 
 interface ProductListClientProps {
@@ -137,6 +137,25 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (!confirm("모든 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) return;
+    
+    // 안전을 위해 한번 더 확인
+    const passcode = prompt("정말로 전체 삭제를 진행하려면 '삭제' 라고 입력해주세요.");
+    if (passcode !== "삭제") {
+      alert("전체 삭제가 취소되었습니다.");
+      return;
+    }
+    
+    const result = await deleteAllSupplierProductsAction();
+    if (result.success) {
+      alert("모든 상품이 삭제되었습니다.");
+      router.refresh();
+    } else {
+      alert(`삭제 오류: ${result.error}`);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 mt-6">
       <Panel>
@@ -154,6 +173,14 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
               ref={fileInputRef}
               onChange={handleFileChange}
             />
+            <Button 
+              variant="outline" 
+              icon="delete_sweep" 
+              onClick={handleDeleteAll}
+              className="border-red-300 text-red-500 hover:bg-red-50"
+            >
+              전체삭제
+            </Button>
             <Button 
               variant="outline" 
               icon="upload" 

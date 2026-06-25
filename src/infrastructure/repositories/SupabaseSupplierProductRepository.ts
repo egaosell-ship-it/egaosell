@@ -63,4 +63,24 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       throw new Error("상품을 삭제하는 중 오류가 발생했습니다.");
     }
   }
+
+  public async deleteAll(): Promise<void> {
+    const supabase = await createClient();
+    
+    // user_id 를 가져와서 해당 사용자의 전체 데이터만 삭제
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      throw new Error("인증된 사용자가 아닙니다.");
+    }
+
+    const { error } = await supabase
+      .from("supplier_products")
+      .delete()
+      .eq("user_id", userData.user.id);
+      
+    if (error) {
+      console.error("Supabase deleteAll error:", error);
+      throw new Error("전체 상품을 삭제하는 중 오류가 발생했습니다.");
+    }
+  }
 }
