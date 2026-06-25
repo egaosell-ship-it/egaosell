@@ -325,8 +325,6 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
   return (
     <div className="flex flex-col gap-4 mt-6">
       <Panel>
-        <h2 className="text-xl font-bold text-on-surface mb-2">공급사 상품 목록</h2>
-        
         {/* 필터 영역 */}
         <div className="mb-6 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant text-sm">
           <div className="flex flex-wrap gap-2 items-center mb-3">
