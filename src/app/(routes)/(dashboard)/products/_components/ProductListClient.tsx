@@ -16,9 +16,10 @@ import { useRouter } from "next/navigation";
 
 interface ProductListClientProps {
   initialProducts: SupplierProductProps[];
+  mainBusinessName: string;
 }
 
-export function ProductListClient({ initialProducts }: ProductListClientProps) {
+export function ProductListClient({ initialProducts, mainBusinessName }: ProductListClientProps) {
   const [perPage, setPerPage] = useState("100");
   const [currentPage, setCurrentPage] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
@@ -325,6 +326,8 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
   return (
     <div className="flex flex-col gap-4 mt-6">
       <Panel>
+        <h2 className="text-xl font-bold text-on-surface mb-2">공급사 상품 목록({mainBusinessName})</h2>
+        
         {/* 필터 영역 */}
         <div className="mb-6 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant text-sm">
           <div className="flex flex-wrap gap-2 items-center mb-3">
@@ -425,6 +428,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             <thead>
               <tr className="bg-surface-container-low border-b border-outline-variant">
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">번호</th>
+                <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">상호</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">네이버상품번호</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">사진</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">공급사명</th>
@@ -443,6 +447,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
               {displayedProducts.map((product, idx) => (
                 <tr key={product.id || idx} className="hover:bg-surface-container-low transition-colors">
                   <td className="py-2 px-4 text-center">{idx + 1 + startIndex}</td>
+                  <td className="py-2 px-4 font-medium text-on-surface">{mainBusinessName}</td>
                   <td className="py-2 px-4 font-medium text-primary">
                     {product.naver_product_id ? (
                       <a href={`https://smartstore.naver.com/actionrun/products/${product.naver_product_id}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
