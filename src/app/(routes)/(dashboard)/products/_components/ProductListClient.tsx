@@ -24,6 +24,19 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
     alert("복사되었습니다!");
   };
 
+  const handleDownloadTemplate = () => {
+    const templateData = [
+      ["상품번호(스마트스토어)", "판매자상품코드", "채널", "할인가", "소분류", "브랜드명", "대표이미지 URL", "상품등록일"],
+      ["13637842053", "6500-공급사2[품명2]", "스마트스토어", "16900", "슬리퍼", "없음", "http://shop1.phinf.naver.net/20260619_296/17818381673571nPnc_JPEG/115971032481416032_1618169434.JPG", "2026-06-19 13:13"],
+      ["13637721027", "29000-공급사1[품명1]", "스마트스토어", "53900", "샌들", "나이키", "http://shop1.phinf.naver.net/20260619_227/1781852554468rIFEo_JPEG/115985388442584533_1797924226.jpg", "2026-06-19 11:39"]
+    ];
+    
+    const worksheet = XLSX.utils.aoa_to_sheet(templateData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "엑셀양식.xlsx");
+  };
+
   const limit = parseInt(perPage, 10);
   const totalPages = Math.ceil(initialProducts.length / limit);
   const startIndex = (currentPage - 1) * limit;
@@ -237,6 +250,13 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             >
               {isUploading ? "업로드 중..." : "엑셀업로드"}
             </Button>
+            <Button 
+              variant="outline" 
+              icon="download"
+              onClick={handleDownloadTemplate}
+            >
+              엑셀업로드양식
+            </Button>
             <Button variant="outline" icon="download">
               엑셀다운로드
             </Button>
@@ -330,7 +350,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                   </td>
                   <td className="py-2 px-4 text-center">
                     <Button variant="ghost" onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 text-sm py-1 px-2">
-                      삭제
+                      수정삭제
                     </Button>
                   </td>
                 </tr>
