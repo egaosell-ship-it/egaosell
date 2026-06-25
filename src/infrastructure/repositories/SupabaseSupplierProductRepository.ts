@@ -77,8 +77,36 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       
     if (error) {
       console.error("Supabase delete error:", error);
-      throw new Error("상품을 삭제하는 중 오류가 발생했습니다.");
+      throw new Error(`상품 삭제 중 오류가 발생했습니다: ${error.message}`);
     }
+  }
+
+  async update(id: string, data: Partial<SupplierProductProps>): Promise<SupplierProduct> {
+    const supabase = await createClient();
+    const userData = await supabase.auth.getUser();
+    
+    if (!userData.data.user) {
+      throw new Error("인증되지 않은 사용자입니다.");
+    }
+
+    const { data: updatedData, error } = await supabase
+      .from("supplier_products")
+      .update({ ...data, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", userData.data.user.id) // 본인 것만 수정
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase update error:", error);
+      throw new Error(`상품 수정 중 오류가 발생했습니다: ${error.message}`);
+    }
+
+    if (!updatedData) {
+      throw new Error("상품을 찾을 수 없거나 수정 권한이 없습니다.");
+    }
+
+    return new SupplierProduct(updatedData as any);
   }
 
   public async deleteAll(): Promise<void> {

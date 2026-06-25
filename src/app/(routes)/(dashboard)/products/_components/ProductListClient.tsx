@@ -5,7 +5,13 @@ import * as XLSX from "xlsx";
 import { Button } from "@/components/common/Button";
 import { Panel } from "@/components/common/Panel";
 import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
-import { uploadSupplierProductsAction, deleteSupplierProductAction, deleteAllSupplierProductsAction, checkDuplicateSupplierProductsAction } from "@/app/actions/product.actions";
+import { 
+  uploadSupplierProductsAction, 
+  deleteSupplierProductAction, 
+  deleteAllSupplierProductsAction, 
+  checkDuplicateSupplierProductsAction,
+  updateSupplierProductAction
+} from "@/app/actions/product.actions";
 import { useRouter } from "next/navigation";
 
 interface ProductListClientProps {
@@ -17,6 +23,12 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // 수정 팝업 관련 상태
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<SupplierProductProps | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
   const router = useRouter();
 
   const handleCopy = (text: string) => {
@@ -198,6 +210,46 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
     }
   };
 
+  const handleEditClick = (product: SupplierProductProps) => {
+    setEditingProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsEditModalOpen(false);
+    setEditingProduct(null);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (!editingProduct) return;
+    const { name, value, type } = e.target;
+    
+    if (type === 'radio') {
+      const radioValue = (e.target as HTMLInputElement).value;
+      setEditingProduct({ ...editingProduct, [name]: radioValue === 'true' });
+    } else if (type === 'number') {
+      setEditingProduct({ ...editingProduct, [name]: Number(value) });
+    } else {
+      setEditingProduct({ ...editingProduct, [name]: value });
+    }
+  };
+
+  const handleEditSave = async () => {
+    if (!editingProduct || !editingProduct.id) return;
+    setIsSaving(true);
+    
+    const result = await updateSupplierProductAction(editingProduct.id, editingProduct);
+    if (result.success) {
+      alert("수정되었습니다.");
+      setIsEditModalOpen(false);
+      setEditingProduct(null);
+      router.refresh();
+    } else {
+      alert(`수정 중 오류가 발생했습니다: ${result.error}`);
+    }
+    setIsSaving(false);
+  };
+
   const handleDeleteAll = async () => {
     if (!confirm("모든 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) return;
     
@@ -349,9 +401,14 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                     {product.product_registered_at ? new Date(product.product_registered_at).toLocaleDateString() : '-'}
                   </td>
                   <td className="py-2 px-4 text-center">
-                    <Button variant="ghost" onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 text-sm py-1 px-2">
-                      수정삭제
-                    </Button>
+                    <div className="flex items-center justify-center gap-1">
+                      <Button variant="ghost" onClick={() => handleEditClick(product)} className="text-primary hover:text-primary/80 hover:bg-primary/10 text-sm py-1 px-2">
+                        수정
+                      </Button>
+                      <Button variant="ghost" onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 text-sm py-1 px-2">
+                        삭제
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -391,6 +448,89 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
           </div>
         )}
       </Panel>
+
+      {/* 수정 모달 팝업 */}
+      {isEditModalOpen && editingProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-lg font-bold">상품 수정</h2>
+              <button onClick={handleModalClose} className="text-gray-500 hover:text-black">
+                <span className="material-icons-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="p-4 overflow-y-auto flex-1 space-y-4">
+              {/* 사용여부 라디오 버튼 */}
+              <div>
+                <label className="block text-sm font-semibold mb-1 text-gray-700">사용여부</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-1">
+                    <input 
+                      type="radio" 
+                      name="is_used" 
+                      value="true" 
+                      checked={editingProduct.is_used === true} 
+                      onChange={handleEditChange}
+                    /> YES
+                  </label>
+                  <label className="flex items-center gap-1">
+                    <input 
+                      type="radio" 
+                      name="is_used" 
+                      value="false" 
+                      checked={editingProduct.is_used === false} 
+                      onChange={handleEditChange}
+                    /> NO
+                  </label>
+                </div>
+              </div>
+
+              {/* 네이버상품번호 (수정 불가) */}
+              <div>
+                <label className="block text-sm font-semibold mb-1 text-gray-700">네이버상품번호</label>
+                <input 
+                  type="text" 
+                  value={editingProduct.naver_product_id || ''} 
+                  readOnly 
+                  className="w-full border rounded p-2 bg-gray-100 text-gray-500"
+                />
+              </div>
+
+              {/* 입력 항목들 */}
+              {[
+                { label: '공급가', name: 'supply_price', type: 'number' },
+                { label: '공급사명', name: 'supplier_name', type: 'text' },
+                { label: '공급상품명', name: 'supply_product_name', type: 'text' },
+                { label: '판매가격', name: 'sell_price', type: 'number' },
+                { label: '소분류', name: 'sub_category', type: 'text' },
+                { label: '브랜드명', name: 'brand_name', type: 'text' },
+                { label: '대표이미지 URL', name: 'image_url', type: 'text' },
+              ].map((field) => (
+                <div key={field.name}>
+                  <label className="block text-sm font-semibold mb-1 text-gray-700">{field.label}</label>
+                  <input 
+                    type={field.type} 
+                    name={field.name}
+                    value={(editingProduct as any)[field.name] || ''} 
+                    onChange={handleEditChange}
+                    className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:border-primary"
+                  />
+                </div>
+              ))}
+            </div>
+            
+            <div className="p-4 border-t flex justify-end gap-2 bg-gray-50 rounded-b-lg">
+              <Button variant="outline" onClick={handleModalClose} disabled={isSaving}>
+                취소
+              </Button>
+              <Button onClick={handleEditSave} disabled={isSaving}>
+                {isSaving ? "저장 중..." : "저장"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

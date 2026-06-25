@@ -20,6 +20,13 @@ export interface ISupplierProductRepository {
   delete(id: string): Promise<void>;
 
   /**
+   * 상품 1개를 수정합니다.
+   * @param id 수정할 상품 ID
+   * @param data 수정할 상품 데이터
+   */
+  update(id: string, data: Partial<SupplierProductProps>): Promise<SupplierProduct>;
+
+  /**
    * 등록된 전체 상품을 삭제합니다.
    */
   deleteAll(): Promise<void>;

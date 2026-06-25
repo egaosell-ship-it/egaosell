@@ -4,14 +4,18 @@ import { revalidatePath } from "next/cache";
 import { CreateSupplierProductsUseCase } from "@/core/application/use-cases/product/CreateSupplierProductsUseCase";
 import { GetSupplierProductsUseCase } from "@/core/application/use-cases/product/GetSupplierProductsUseCase";
 import { DeleteAllSupplierProductsUseCase } from "@/core/application/use-cases/product/DeleteAllSupplierProductsUseCase";
+import { UpdateSupplierProductUseCase } from "@/core/application/use-cases/product/UpdateSupplierProductUseCase";
 import { SupabaseSupplierProductRepository } from "@/infrastructure/repositories/SupabaseSupplierProductRepository";
 import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
 
-// Composition Root
+// 1. Repository 구현체 생성
 const repository = new SupabaseSupplierProductRepository();
+
+// 2. Use Cases 생성 (의존성 주입)
 const createSupplierProductsUseCase = new CreateSupplierProductsUseCase(repository);
 const getSupplierProductsUseCase = new GetSupplierProductsUseCase(repository);
 const deleteAllSupplierProductsUseCase = new DeleteAllSupplierProductsUseCase(repository);
+const updateSupplierProductUseCase = new UpdateSupplierProductUseCase(repository);
 
 export async function uploadSupplierProductsAction(products: SupplierProductProps[]) {
   try {
@@ -67,5 +71,16 @@ export async function checkDuplicateSupplierProductsAction(naverProductIds: stri
   } catch (error: any) {
     console.error("checkDuplicateSupplierProductsAction error:", error);
     return { success: false, error: error.message || "중복 검사 중 오류가 발생했습니다.", duplicates: [] };
+  }
+}
+
+export async function updateSupplierProductAction(id: string, data: Partial<SupplierProductProps>) {
+  try {
+    await updateSupplierProductUseCase.execute(id, data);
+    revalidatePath("/products");
+    return { success: true };
+  } catch (error: any) {
+    console.error("updateSupplierProductAction error:", error);
+    return { success: false, error: error.message || "상품 수정 중 오류가 발생했습니다." };
   }
 }
