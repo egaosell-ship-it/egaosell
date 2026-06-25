@@ -59,11 +59,11 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
 
       const newColumns = [
         columns[0], // 수령인명
-        columns[17], // 수령인휴대폰
+        columns[18], // 수령인휴대폰 자리에 수령인전화번호 입력
         columns[20], // 우편번호
         columns[21].trim(), // 주소
         columns[22], // 배송시요구사항
-        "", // 수령인전화번호(연락처2) 빈칸처리 (사용자 요구사항)
+        columns[17], // 수령인전화번호 자리에 수령인휴대폰 입력
         `${productCode}${columns[7]}`.trim(), // 상품명
         columns[6]  // 수량
       ];
