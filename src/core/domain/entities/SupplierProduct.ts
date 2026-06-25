@@ -1,6 +1,7 @@
 export interface SupplierProductProps {
   id?: string;
   user_id?: string;
+  business_id?: string | null;
   naver_product_id?: string | null;
   image_url?: string | null;
   supplier_name?: string | null;
@@ -20,6 +21,7 @@ export interface SupplierProductProps {
 export class SupplierProduct {
   public id?: string;
   public user_id?: string;
+  public business_id: string | null;
   public naver_product_id: string | null;
   public image_url: string | null;
   public supplier_name: string | null;
@@ -38,6 +40,7 @@ export class SupplierProduct {
   constructor(props: SupplierProductProps) {
     this.id = props.id;
     this.user_id = props.user_id;
+    this.business_id = props.business_id ?? null;
     this.naver_product_id = props.naver_product_id ?? null;
     this.image_url = props.image_url ?? null;
     this.supplier_name = props.supplier_name ?? null;
@@ -66,6 +69,7 @@ export class SupplierProduct {
   public toJSON() {
     const obj: any = {
       user_id: this.user_id,
+      business_id: this.business_id,
       naver_product_id: this.naver_product_id,
       image_url: this.image_url,
       supplier_name: this.supplier_name,

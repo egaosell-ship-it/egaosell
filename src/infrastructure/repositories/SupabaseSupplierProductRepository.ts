@@ -45,13 +45,17 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
     return data.map(item => new SupplierProduct(item as any));
   }
   
-  public async findAll(options?: { limit?: number; offset?: number }): Promise<SupplierProduct[]> {
+  public async findAll(options?: { limit?: number; offset?: number; businessId?: string | null }): Promise<SupplierProduct[]> {
     const supabase = await createClient();
     
     let query = supabase
       .from("supplier_products")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (options?.businessId) {
+      query = query.eq("business_id", options.businessId);
+    }
       
     if (options?.limit) {
       query = query.limit(options.limit);
@@ -109,7 +113,7 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
     return new SupplierProduct(updatedData as any);
   }
 
-  public async deleteAll(): Promise<void> {
+  public async deleteAll(businessId?: string | null): Promise<void> {
     const supabase = await createClient();
     
     // user_id 를 가져와서 해당 사용자의 전체 데이터만 삭제
@@ -118,10 +122,16 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       throw new Error("인증된 사용자가 아닙니다.");
     }
 
-    const { error } = await supabase
+    let query = supabase
       .from("supplier_products")
       .delete()
       .eq("user_id", userData.user.id);
+
+    if (businessId) {
+      query = query.eq("business_id", businessId);
+    }
+
+    const { error } = await query;
       
     if (error) {
       console.error("Supabase deleteAll error:", error);
@@ -129,7 +139,7 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
     }
   }
 
-  public async findDuplicatesByNaverIds(naverProductIds: string[]): Promise<string[]> {
+  public async findDuplicatesByNaverIds(naverProductIds: string[], businessId?: string | null): Promise<string[]> {
     if (!naverProductIds || naverProductIds.length === 0) return [];
 
     const supabase = await createClient();
@@ -139,11 +149,17 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       throw new Error("인증된 사용자가 아닙니다.");
     }
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("supplier_products")
       .select("naver_product_id")
       .eq("user_id", userData.user.id)
       .in("naver_product_id", naverProductIds);
+
+    if (businessId) {
+      query = query.eq("business_id", businessId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Supabase findDuplicates error:", error);

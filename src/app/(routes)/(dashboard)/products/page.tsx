@@ -5,21 +5,34 @@ import { createClient } from "@/infrastructure/config/supabase/server";
 import { SupabaseBusinessRepository } from "@/infrastructure/repositories/SupabaseBusinessRepository";
 import { GetBusinessesUseCase } from "@/core/application/use-cases/business/GetBusinessesUseCase";
 
-export default async function ProductsPage() {
-  const result = await getSupplierProductsAction();
+interface ProductsPageProps {
+  searchParams: Promise<{ businessId?: string }>;
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const resolvedParams = await searchParams;
+  const businessId = resolvedParams.businessId || null;
+
+  const result = await getSupplierProductsAction(undefined, businessId);
   const initialProducts = result.success && result.data ? result.data : [];
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let mainBusinessName = "";
+  let selectedBusinessName = "";
   if (user) {
     const repository = new SupabaseBusinessRepository();
     const useCase = new GetBusinessesUseCase(repository);
     const businesses = await useCase.execute(user.id);
-    const mainBusiness = businesses.find((b: any) => b.isMain);
-    if (mainBusiness) {
-      mainBusinessName = mainBusiness.companyName;
+    
+    if (businessId) {
+      const selected = businesses.find((b: any) => b.id === businessId);
+      if (selected) selectedBusinessName = selected.companyName;
+    } else {
+      const mainBusiness = businesses.find((b: any) => b.isMain);
+      if (mainBusiness) {
+        selectedBusinessName = mainBusiness.companyName;
+      }
     }
   }
 
@@ -32,7 +45,8 @@ export default async function ProductsPage() {
       
       <ProductListClient 
         initialProducts={initialProducts} 
-        mainBusinessName={mainBusinessName}
+        mainBusinessName={selectedBusinessName}
+        businessId={businessId}
       />
     </>
   );

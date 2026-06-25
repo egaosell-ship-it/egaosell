@@ -11,7 +11,7 @@ export interface ISupplierProductRepository {
    * 등록된 전체 상품 목록을 조회합니다.
    * @param options 페이지네이션 등의 추가 옵션 (추후 확장용)
    */
-  findAll(options?: { limit?: number; offset?: number }): Promise<SupplierProduct[]>;
+  findAll(options?: { limit?: number; offset?: number; businessId?: string | null }): Promise<SupplierProduct[]>;
   
   /**
    * 상품 1개를 삭제합니다.
@@ -29,11 +29,11 @@ export interface ISupplierProductRepository {
   /**
    * 등록된 전체 상품을 삭제합니다.
    */
-  deleteAll(): Promise<void>;
+  deleteAll(businessId?: string | null): Promise<void>;
 
   /**
    * 주어진 네이버 상품 ID 배열 중, 현재 사용자의 DB에 이미 등록되어 있는 ID들의 목록을 반환합니다.
    * @param naverProductIds 중복 여부를 검사할 네이버 상품 ID 배열
    */
-  findDuplicatesByNaverIds(naverProductIds: string[]): Promise<string[]>;
+  findDuplicatesByNaverIds(naverProductIds: string[], businessId?: string | null): Promise<string[]>;
 }

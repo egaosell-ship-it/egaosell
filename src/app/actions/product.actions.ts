@@ -17,9 +17,15 @@ const getSupplierProductsUseCase = new GetSupplierProductsUseCase(repository);
 const deleteAllSupplierProductsUseCase = new DeleteAllSupplierProductsUseCase(repository);
 const updateSupplierProductUseCase = new UpdateSupplierProductUseCase(repository);
 
-export async function uploadSupplierProductsAction(products: SupplierProductProps[]) {
+export async function uploadSupplierProductsAction(products: SupplierProductProps[], businessId?: string) {
   try {
-    await createSupplierProductsUseCase.execute(products);
+    // 상품마다 비즈니스 ID 부여
+    const productsWithBusinessId = products.map(p => ({
+      ...p,
+      business_id: businessId || null
+    }));
+
+    await createSupplierProductsUseCase.execute(productsWithBusinessId);
     
     // 업로드 후 상품 목록 페이지 갱신
     revalidatePath("/products");
@@ -31,10 +37,10 @@ export async function uploadSupplierProductsAction(products: SupplierProductProp
   }
 }
 
-export async function getSupplierProductsAction(limit?: number) {
+export async function getSupplierProductsAction(limit?: number, businessId?: string | null) {
   try {
     // 순환 참조 및 직렬화 문제 방지를 위해 toJSON 호출
-    const products = await repository.findAll({ limit });
+    const products = await repository.findAll({ limit, businessId });
     return { success: true, data: products.map(p => p.toJSON()) };
   } catch (error: any) {
     console.error("getSupplierProductsAction error:", error);
@@ -53,9 +59,9 @@ export async function deleteSupplierProductAction(id: string) {
   }
 }
 
-export async function deleteAllSupplierProductsAction() {
+export async function deleteAllSupplierProductsAction(businessId?: string | null) {
   try {
-    await deleteAllSupplierProductsUseCase.execute();
+    await repository.deleteAll(businessId);
     revalidatePath("/products");
     return { success: true };
   } catch (error: any) {

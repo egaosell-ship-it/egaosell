@@ -17,9 +17,10 @@ import { useRouter } from "next/navigation";
 interface ProductListClientProps {
   initialProducts: SupplierProductProps[];
   mainBusinessName: string;
+  businessId: string | null;
 }
 
-export function ProductListClient({ initialProducts, mainBusinessName }: ProductListClientProps) {
+export function ProductListClient({ initialProducts, mainBusinessName, businessId }: ProductListClientProps) {
   const [perPage, setPerPage] = useState("100");
   const [currentPage, setCurrentPage] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
@@ -226,7 +227,7 @@ export function ProductListClient({ initialProducts, mainBusinessName }: Product
           }
 
           // 서버 액션 호출 (DB 인서트)
-          const result = await uploadSupplierProductsAction(newProducts);
+          const result = await uploadSupplierProductsAction(newProducts, businessId || undefined);
           
           if (result.success) {
             alert(`${newProducts.length}건의 상품이 성공적으로 등록되었습니다.`);
