@@ -129,7 +129,7 @@ export default async function OrderConversionPage({ searchParams }: PageProps) {
                     !isActive && 'text-on-surface-variant hover:text-on-surface hover:border-outline'
                   }`}
                 >
-                  {store.platformName === '네이버' ? '스마트스토어' : store.platformName}({store.siteName})
+                  {store.platformName}({store.siteName})
                 </Link>
               );
             })

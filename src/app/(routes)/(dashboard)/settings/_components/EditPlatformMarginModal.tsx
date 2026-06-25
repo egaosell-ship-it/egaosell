@@ -64,7 +64,7 @@ export default function EditPlatformMarginModal({ businesses, margin }: Props) {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">플랫폼</label>
-              <input type="text" name="platformName" required defaultValue={margin.platformName} className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="예: 쿠팡, 네이버 스마트스토어" />
+              <input type="text" name="platformName" required defaultValue={margin.platformName} className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full" placeholder="예: 쿠팡, 네이버" />
             </div>
 
             <div className="flex flex-col gap-1.5">
