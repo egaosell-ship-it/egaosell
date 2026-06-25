@@ -40,8 +40,14 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     const isCoupang = currentStore?.platformName?.includes("쿠팡");
     const isToss = currentStore?.platformName?.includes("토스");
     const isEsm = currentStore?.platformName?.includes("ESM");
+    
+    let newColumns: string[] = [];
+    const promoCols: string[] = [];
+    if (currentStore?.invoicePromo1) promoCols.push(currentStore.invoicePromo1);
+    if (currentStore?.invoicePromo2) promoCols.push(currentStore.invoicePromo2);
 
-    if (isEsm && columns.length >= 23) {
+    if (isEsm) {
+      if (columns.length !== 23) throw new Error("ESM 데이터에 오류가 있습니다.");
       let productCode = columns[15];
       if (currentSetting?.supplierNameDelimiter1) {
         const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -62,17 +68,10 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
         columns[6]  // 수량
       ];
 
-      const promo1 = currentStore?.invoicePromo1 || "";
-      const promo2 = currentStore?.invoicePromo2 || "";
-      if (promo1 || promo2) {
-        newColumns.push(promo1);
-        if (promo2) {
-          newColumns.push(promo2);
-        }
-      }
-      return newColumns.join("\t");
+      newColumns.push(...promoCols);
 
-    } else if (isToss && columns.length >= 13) {
+    } else if (isToss) {
+      if (columns.length !== 13) throw new Error("토스 데이터에 오류가 있습니다.");
       let productCode = columns[3];
       if (currentSetting?.supplierNameDelimiter1) {
         const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -90,7 +89,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
       productCode = `${prefix}${productCode}`;
       const optionName = columns[0].replace(/,/g, '');
 
-      const newColumns = [
+      newColumns = [
         columns[8], // 수령인명
         columns[9], // 수령인연락처
         columns[10], // 우편번호
@@ -100,18 +99,13 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
         `${productCode}${optionName}`.trim(), // 상품명
         columns[1]  // 수량
       ];
+      newColumns.push(...promoCols);
 
-      const promo1 = currentStore?.invoicePromo1 || "";
-      const promo2 = currentStore?.invoicePromo2 || "";
-      if (promo1 || promo2) {
-        newColumns.push(promo1);
-        if (promo2) {
-          newColumns.push(promo2);
-        }
-      }
-      return newColumns.join("\t");
-
-    } else if (isCoupang && columns.length >= 8) {
+    } else if (isCoupang) {
+      if (columns.length !== 8) throw new Error("쿠팡 데이터에 오류가 있습니다.");
+      if (columns[2].length >= 4) throw new Error("쿠팡 데이터에 오류가 있습니다.");
+      if (columns[4].length >= 16) throw new Error("쿠팡 데이터에 오류가 있습니다.");
+      if (columns[5].length >= 7) throw new Error("쿠팡 데이터에 오류가 있습니다.");
       let productCode = columns[0];
       if (currentSetting?.supplierNameDelimiter1) {
         const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -121,7 +115,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
       }
       productCode = `${prefix}${productCode}`;
 
-      const newColumns = [
+      newColumns = [
         columns[3], // 수취인명
         columns[4], // 수취인연락처1
         columns[5], // 우편번호
@@ -131,18 +125,13 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
         `${productCode} ${columns[1]}`.trim(), // 상품명
         columns[2]  // 수량
       ];
+      newColumns.push(...promoCols);
 
-      const promo1 = currentStore?.invoicePromo1 || "";
-      const promo2 = currentStore?.invoicePromo2 || "";
-      if (promo1 || promo2) {
-        newColumns.push(promo1);
-        if (promo2) {
-          newColumns.push(promo2);
-        }
-      }
-      return newColumns.join("\t");
-
-    } else if (!isCoupang && !isToss && !isEsm && columns.length >= 10) {
+    } else if (!isCoupang && !isToss && !isEsm) { // 네이버
+      if (columns.length !== 10) throw new Error("네이버 데이터에 오류가 있습니다.");
+      if (columns[2].length >= 7) throw new Error("네이버 데이터에 오류가 있습니다.");
+      if (columns[1].length >= 15 || columns[6].length >= 15) throw new Error("네이버 데이터에 오류가 있습니다.");
+      if (columns[9].length >= 4) throw new Error("네이버 데이터에 오류가 있습니다.");
       let productCode = columns[7];
       if (currentSetting?.supplierNameDelimiter1) {
         const delimIndex = productCode.indexOf(currentSetting.supplierNameDelimiter1);
@@ -152,7 +141,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
       }
       productCode = `${prefix}${productCode}`;
       
-      const newColumns = [
+      newColumns = [
         columns[0], // 수취인명
         columns[1], // 수취인연락처1
         columns[2], // 우편번호
@@ -162,19 +151,17 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
         `${productCode} ${columns[8]}`.trim(), // 상품명
         columns[9]  // 수량
       ];
-      
-      const promo1 = currentStore?.invoicePromo1 || "";
-      const promo2 = currentStore?.invoicePromo2 || "";
-      if (promo1 || promo2) {
-        newColumns.push(promo1);
-        if (promo2) {
-          newColumns.push(promo2);
-        }
-      }
-      return newColumns.join("\t");
+      newColumns.push(...promoCols);
+    } else {
+      return line;
     }
     
-    return line;
+    // 공통 수령인명 1음절 괄호 처리
+    if (newColumns.length > 0 && newColumns[0].length === 1) {
+      newColumns[0] = `(${newColumns[0]})`;
+    }
+
+    return newColumns.join("\t");
   }).filter((line): line is string => line !== null && line.trim() !== "");
 
   return convertedLines;

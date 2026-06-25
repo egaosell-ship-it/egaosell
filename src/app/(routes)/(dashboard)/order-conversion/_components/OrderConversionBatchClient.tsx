@@ -36,21 +36,25 @@ export function OrderConversionBatchClient({ ownedStores, productCodeSettings, m
   const handleConversion = () => {
     let allConvertedLines: string[] = [];
 
-    ownedStores.forEach(store => {
-      const storeId = store.id || "";
-      const text = texts[storeId];
-      if (!text || !text.trim()) return;
+    try {
+      ownedStores.forEach(store => {
+        const storeId = store.id || "";
+        const text = texts[storeId];
+        if (!text || !text.trim()) return;
 
-      const currentSetting = productCodeSettings.find(s => s.platformName === store.platformName);
-      const convertedLines = convertOrderData(text, store, currentSetting);
-      
-      allConvertedLines = [...allConvertedLines, ...convertedLines];
-    });
+        const currentSetting = productCodeSettings.find(s => s.platformName === store.platformName);
+        const convertedLines = convertOrderData(text, store, currentSetting);
+        
+        allConvertedLines = [...allConvertedLines, ...convertedLines];
+      });
 
-    if (allConvertedLines.length === 0) return;
+      if (allConvertedLines.length === 0) return;
 
-    setCombinedResult(allConvertedLines.join("\n"));
-    setIsConverted(true);
+      setCombinedResult(allConvertedLines.join("\n"));
+      setIsConverted(true);
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   const handleRevert = () => {

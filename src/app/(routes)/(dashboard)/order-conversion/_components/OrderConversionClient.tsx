@@ -29,10 +29,13 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
     if (!text.trim()) return;
     originalTextRef.current = text;
 
-    const convertedLines = convertOrderData(text, currentStore, currentSetting);
-
-    setText(convertedLines.join("\n"));
-    setIsConverted(true);
+    try {
+      const convertedLines = convertOrderData(text, currentStore, currentSetting);
+      setText(convertedLines.join("\n"));
+      setIsConverted(true);
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   const handleRevert = () => {
