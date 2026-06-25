@@ -57,7 +57,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
       }
       productCode = `${prefix}${productCode}`;
 
-      const newColumns = [
+      newColumns = [
         columns[0] || "", // 수령인명
         columns[18] || "", // 수령인전화번호
         columns[20] || "", // 우편번호
