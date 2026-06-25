@@ -63,7 +63,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
         columns[20], // 우편번호
         columns[21].trim(), // 주소
         columns[22], // 배송시요구사항
-        columns[18], // 수령인전화번호(연락처2)
+        "", // 수령인전화번호(연락처2) 빈칸처리 (사용자 요구사항)
         `${productCode}${columns[7]}`.trim(), // 상품명
         columns[6]  // 수량
       ];
