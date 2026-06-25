@@ -15,6 +15,7 @@ interface DashboardNavProps {
 export default function DashboardNav({ businesses = [], margins = [] }: DashboardNavProps) {
   const pathname = usePathname();
   const [isOrderConversionModalOpen, setIsOrderConversionModalOpen] = useState(false);
+  const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
 
   const sortedBusinesses = [...businesses].sort((a, b) => {
     if (a.isMain && !b.isMain) return -1;
@@ -45,13 +46,16 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
             const isActive = pathname === link.href;
 
             // 주문 변환 클릭 시 모달 띄우기 특별 처리
-            if (link.name === '주문 변환') {
+            if (link.name === '주문 변환' || link.name === '상품 목록') {
+              const isOrderConversion = link.name === '주문 변환';
+              const setModalOpen = isOrderConversion ? setIsOrderConversionModalOpen : setIsProductsModalOpen;
+
               return (
                 <div key={link.name} className="h-full flex items-center">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      setIsOrderConversionModalOpen(true);
+                      setModalOpen(true);
                     }}
                     className={`flex items-center h-full px-3 border-b-2 transition-colors duration-200 text-[11px] font-medium cursor-pointer ${
                       isActive
@@ -80,24 +84,6 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
                     {link.name}
                   </Link>
 
-                  {/* 1 Depth: 사업자 목록 */}
-                  <div className="absolute top-full left-0 hidden group-hover:block w-48 bg-surface-container-lowest border border-outline-variant rounded-md shadow-lg py-2 mt-0 z-[60]">
-                    {sortedBusinesses.length === 0 ? (
-                      <div className="px-4 py-2 text-xs text-on-surface-variant">등록된 상호가 없습니다.</div>
-                    ) : (
-                      sortedBusinesses.map((biz) => {
-                        return (
-                          <Link 
-                            key={biz.id} 
-                            href={`${link.href}?businessId=${biz.id}`}
-                            className="block px-4 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low transition-colors"
-                          >
-                            {biz.companyName} {biz.isMain && '(★)'}
-                          </Link>
-                        );
-                      })
-                    )}
-                  </div>
                 </div>
               );
             }
@@ -184,6 +170,45 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
             <div className="flex justify-center mt-2">
               <button
                 onClick={() => setIsOrderConversionModalOpen(false)}
+                className="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-md text-sm font-medium transition-colors"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 상품 목록 모달 팝업 */}
+      {isProductsModalOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-xl shadow-2xl p-6 w-[400px] border border-outline-variant max-w-[90vw]">
+            <h2 className="text-title-md font-bold text-on-surface mb-6 text-center">상호를 선택해주세요!</h2>
+            
+            {sortedBusinesses.length === 0 ? (
+              <div className="text-center text-secondary py-4">등록된 사업자(상호)가 없습니다.</div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-on-surface mb-6">
+                {sortedBusinesses.map((biz, idx) => (
+                  <div key={biz.id} className="flex items-center">
+                    <Link
+                      href={`/products?businessId=${biz.id}`}
+                      onClick={() => setIsProductsModalOpen(false)}
+                      className="text-primary hover:text-primary-fixed-variant hover:underline font-semibold transition-colors whitespace-nowrap"
+                    >
+                      {biz.companyName} {biz.isMain ? '(★)' : ''}
+                    </Link>
+                    {idx < sortedBusinesses.length - 1 && (
+                      <span className="mx-2 text-outline-variant">|</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex justify-center mt-2">
+              <button
+                onClick={() => setIsProductsModalOpen(false)}
                 className="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-md text-sm font-medium transition-colors"
               >
                 닫기
