@@ -23,4 +23,10 @@ export interface ISupplierProductRepository {
    * 등록된 전체 상품을 삭제합니다.
    */
   deleteAll(): Promise<void>;
+
+  /**
+   * 주어진 네이버 상품 ID 배열 중, 현재 사용자의 DB에 이미 등록되어 있는 ID들의 목록을 반환합니다.
+   * @param naverProductIds 중복 여부를 검사할 네이버 상품 ID 배열
+   */
+  findDuplicatesByNaverIds(naverProductIds: string[]): Promise<string[]>;
 }

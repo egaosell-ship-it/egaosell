@@ -83,4 +83,28 @@ export class SupabaseSupplierProductRepository implements ISupplierProductReposi
       throw new Error("전체 상품을 삭제하는 중 오류가 발생했습니다.");
     }
   }
+
+  public async findDuplicatesByNaverIds(naverProductIds: string[]): Promise<string[]> {
+    if (!naverProductIds || naverProductIds.length === 0) return [];
+
+    const supabase = await createClient();
+    
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      throw new Error("인증된 사용자가 아닙니다.");
+    }
+
+    const { data, error } = await supabase
+      .from("supplier_products")
+      .select("naver_product_id")
+      .eq("user_id", userData.user.id)
+      .in("naver_product_id", naverProductIds);
+
+    if (error) {
+      console.error("Supabase findDuplicates error:", error);
+      throw new Error("상품 중복 여부를 검사하는 중 오류가 발생했습니다.");
+    }
+
+    return data.map(item => item.naver_product_id).filter(Boolean) as string[];
+  }
 }

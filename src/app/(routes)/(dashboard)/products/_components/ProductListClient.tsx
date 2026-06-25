@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import { Button } from "@/components/common/Button";
 import { Panel } from "@/components/common/Panel";
 import { SupplierProductProps } from "@/core/domain/entities/SupplierProduct";
-import { uploadSupplierProductsAction, deleteSupplierProductAction, deleteAllSupplierProductsAction } from "@/app/actions/product.actions";
+import { uploadSupplierProductsAction, deleteSupplierProductAction, deleteAllSupplierProductsAction, checkDuplicateSupplierProductsAction } from "@/app/actions/product.actions";
 import { useRouter } from "next/navigation";
 
 interface ProductListClientProps {
@@ -14,12 +14,26 @@ interface ProductListClientProps {
 
 export function ProductListClient({ initialProducts }: ProductListClientProps) {
   const [perPage, setPerPage] = useState("100");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // "100개 보기" 등을 프론트엔드에서 간단히 페이징 처리하는 용도
-  const displayedProducts = initialProducts.slice(0, parseInt(perPage, 10));
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert("복사되었습니다!");
+  };
+
+  const limit = parseInt(perPage, 10);
+  const totalPages = Math.ceil(initialProducts.length / limit);
+  const startIndex = (currentPage - 1) * limit;
+  const displayedProducts = initialProducts.slice(startIndex, startIndex + limit);
+
+  // perPage 가 바뀔 때 1페이지로 리셋
+  const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPerPage(e.target.value);
+    setCurrentPage(1);
+  };
 
   const handleFileUploadClick = () => {
     fileInputRef.current?.click();
@@ -54,13 +68,28 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
 
             const naver_product_id = row[0] ? String(row[0]) : null;
             const originalProductName = row[1] ? String(row[1]) : "";
-            const registered_platform = row[2] ? String(row[2]) : null;
+            
+            let registered_platform = row[2] ? String(row[2]) : null;
+            if (registered_platform === "스마트스토어") {
+              registered_platform = "네이버";
+            }
+            
             const sellPriceRaw = row[3] ? parseInt(String(row[3]).replace(/,/g, ''), 10) : 0;
             const sell_price = isNaN(sellPriceRaw) ? 0 : sellPriceRaw;
             const sub_category = row[4] ? String(row[4]) : null;
             const brand_name = row[5] ? String(row[5]) : null;
             const image_url = row[6] ? String(row[6]) : null;
-            // row[7]은 상품등록일이나 보통 DB created_at을 사용하므로 제외하거나 보조로 사용
+            // 엑셀의 '상품등록일' 을 product_registered_at 으로 저장
+            let product_registered_at: string | null = null;
+            if (row[7]) {
+              const dateStr = String(row[7]).replace(/\./g, '-');
+              const d = new Date(dateStr);
+              if (!isNaN(d.getTime())) {
+                product_registered_at = d.toISOString();
+              } else {
+                product_registered_at = dateStr;
+              }
+            }
             
             // "공급가-공급사명[공급상품명]" 형식 파싱 (예: "5800-엘유티[아린]")
             let supply_price = 0;
@@ -87,6 +116,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
               supply_price,
               sub_category,
               registered_platform,
+              product_registered_at,
               // net_profit 은 백엔드(Entity)에서 자동 계산됨
               is_used: true
             });
@@ -96,6 +126,17 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             alert("저장할 데이터가 없습니다.");
             setIsUploading(false);
             return;
+          }
+
+          // 네이버 상품 번호 중복 검사
+          const naverProductIds = newProducts.map(p => p.naver_product_id).filter(Boolean) as string[];
+          if (naverProductIds.length > 0) {
+            const checkResult = await checkDuplicateSupplierProductsAction(naverProductIds);
+            if (checkResult.success && checkResult.duplicates && checkResult.duplicates.length > 0) {
+              alert(`이미 등록되어 있는 동일한 상품이 ${checkResult.duplicates.length}개 존재합니다. 업로드를 취소합니다.`);
+              setIsUploading(false);
+              return;
+            }
           }
 
           // 서버 액션 호출 (DB 인서트)
@@ -222,29 +263,45 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">소분류</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider">등록플랫폼/순이익</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">사용여부</th>
+                <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">등록날짜</th>
                 <th className="py-3 px-4 text-xs font-semibold text-secondary uppercase tracking-wider text-center">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant text-sm text-on-surface bg-surface-container-lowest">
               {displayedProducts.map((product, idx) => (
                 <tr key={product.id || idx} className="hover:bg-surface-container-low transition-colors">
-                  <td className="py-2 px-4 text-center">{idx + 1}</td>
-                  <td className="py-2 px-4 font-medium text-primary">{product.naver_product_id}</td>
+                  <td className="py-2 px-4 text-center">{idx + 1 + startIndex}</td>
+                  <td className="py-2 px-4 font-medium text-primary">
+                    {product.naver_product_id ? (
+                      <a href={`https://smartstore.naver.com/actionrun/products/${product.naver_product_id}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                        {product.naver_product_id}
+                      </a>
+                    ) : '-'}
+                  </td>
                   <td className="py-2 px-4 flex justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {product.image_url ? (
-                      <img 
-                        src={`/api/proxy-image?url=${encodeURIComponent(product.image_url)}`} 
-                        alt="상품 이미지" 
-                        className="w-10 h-10 object-cover border border-outline-variant rounded" 
-                      />
+                      <a href={product.image_url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                        <img 
+                          src={`/api/proxy-image?url=${encodeURIComponent(product.image_url)}`} 
+                          alt="상품 이미지" 
+                          className="w-10 h-10 object-cover border border-outline-variant rounded" 
+                        />
+                      </a>
                     ) : (
                       <div className="w-10 h-10 bg-surface-variant rounded border border-outline-variant" />
                     )}
                   </td>
                   <td className="py-2 px-4">{product.supplier_name}</td>
                   <td className="py-2 px-4">{product.brand_name}</td>
-                  <td className="py-2 px-4 font-medium truncate max-w-[250px]" title={product.supply_product_name}>{product.supply_product_name}</td>
+                  <td className="py-2 px-4 font-medium truncate max-w-[250px]" title="클릭하여 복사">
+                    <div 
+                      onClick={() => handleCopy(product.supply_product_name)} 
+                      className="cursor-pointer hover:underline text-on-surface"
+                    >
+                      {product.supply_product_name}
+                    </div>
+                  </td>
                   <td className="py-2 px-4 text-right">₩{product.supply_price?.toLocaleString()}</td>
                   <td className="py-2 px-4 text-right font-semibold text-error">₩{product.sell_price?.toLocaleString()}</td>
                   <td className="py-2 px-4">{product.sub_category}</td>
@@ -261,28 +318,51 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                       {product.is_used !== false ? 'Y' : 'N'}
                     </span>
                   </td>
+                  <td className="py-2 px-4 text-center text-sm text-secondary">
+                    {product.product_registered_at ? new Date(product.product_registered_at).toLocaleDateString() : '-'}
+                  </td>
                   <td className="py-2 px-4 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <button className="text-primary hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-primary/10 transition-colors">수정</button>
-                      <button 
-                        onClick={() => handleDelete(product.id)}
-                        className="text-error hover:underline text-xs font-medium px-2 py-1 rounded hover:bg-error/10 transition-colors"
-                      >
-                        삭제
-                      </button>
-                    </div>
+                    <Button variant="ghost" onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 text-sm py-1 px-2">
+                      삭제
+                    </Button>
                   </td>
                 </tr>
               ))}
+              {displayedProducts.length === 0 && (
+                <tr>
+                  <td colSpan={13} className="py-8 text-center text-secondary">
+                    등록된 상품이 없습니다. 엑셀을 업로드해주세요.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-          
-          {displayedProducts.length === 0 && (
-            <div className="py-12 text-center text-secondary">
-              등록된 상품이 없습니다. 엑셀을 업로드하여 데이터를 추가해보세요.
-            </div>
-          )}
         </div>
+
+        {/* 페이지네이션 (간단 구현) */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6 gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              이전
+            </Button>
+            <div className="flex items-center gap-1 px-4">
+              <span className="font-semibold text-primary">{currentPage}</span>
+              <span className="text-secondary">/</span>
+              <span className="text-secondary">{totalPages}</span>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              다음
+            </Button>
+          </div>
+        )}
       </Panel>
     </div>
   );

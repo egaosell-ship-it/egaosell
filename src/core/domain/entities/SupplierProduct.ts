@@ -12,6 +12,7 @@ export interface SupplierProductProps {
   registered_platform?: string | null;
   net_profit?: number | null;
   is_used?: boolean;
+  product_registered_at?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -30,6 +31,7 @@ export class SupplierProduct {
   public registered_platform: string | null;
   public net_profit: number | null;
   public is_used: boolean;
+  public product_registered_at: string | null;
   public created_at?: string;
   public updated_at?: string;
 
@@ -56,6 +58,7 @@ export class SupplierProduct {
     }
 
     this.is_used = props.is_used ?? true;
+    this.product_registered_at = props.product_registered_at ?? null;
     this.created_at = props.created_at;
     this.updated_at = props.updated_at;
   }
@@ -74,6 +77,7 @@ export class SupplierProduct {
       registered_platform: this.registered_platform,
       net_profit: this.net_profit,
       is_used: this.is_used,
+      product_registered_at: this.product_registered_at,
     };
 
     if (this.id !== undefined) obj.id = this.id;

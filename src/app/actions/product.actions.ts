@@ -59,3 +59,13 @@ export async function deleteAllSupplierProductsAction() {
     return { success: false, error: error.message || "전체 상품 삭제 중 오류가 발생했습니다." };
   }
 }
+
+export async function checkDuplicateSupplierProductsAction(naverProductIds: string[]) {
+  try {
+    const duplicates = await repository.findDuplicatesByNaverIds(naverProductIds);
+    return { success: true, duplicates };
+  } catch (error: any) {
+    console.error("checkDuplicateSupplierProductsAction error:", error);
+    return { success: false, error: error.message || "중복 검사 중 오류가 발생했습니다.", duplicates: [] };
+  }
+}
