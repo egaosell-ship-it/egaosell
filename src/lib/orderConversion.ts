@@ -32,7 +32,8 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     
     let prefix = "";
     if (currentStore) {
-      const platformStr = currentStore.platformName || "";
+      const rawPlatformStr = currentStore.platformName || "";
+      const platformStr = rawPlatformStr === "네이버" ? "스마트스토어" : rawPlatformStr;
       const siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
       prefix = `${platformStr}${siteStr}`;
     }
@@ -40,6 +41,7 @@ export function convertOrderData(text: string, currentStore: OwnedStoreProps | n
     const isCoupang = currentStore?.platformName?.includes("쿠팡");
     const isToss = currentStore?.platformName?.includes("토스");
     const isEsm = currentStore?.platformName?.includes("ESM");
+    // 기존 네이버 파싱 로직은 else 블록을 타므로 이대로 유지합니다.
 
     if (isEsm && columns.length >= 23) {
       let productCode = columns[15];

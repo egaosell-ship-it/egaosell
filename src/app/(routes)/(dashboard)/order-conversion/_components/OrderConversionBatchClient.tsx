@@ -131,13 +131,13 @@ export function OrderConversionBatchClient({ ownedStores, productCodeSettings, m
                 <div className="flex items-center gap-2 mb-2 px-1">
                   <span className="material-symbols-outlined text-[18px]" style={{ color: currentColor }}>storefront</span>
                   <span className="text-sm font-bold text-on-surface">
-                    {store.platformName}({store.siteName})
+                    {store.platformName === '네이버' ? '스마트스토어' : store.platformName}({store.siteName})
                   </span>
                 </div>
                 <div className="flex flex-col border border-outline-variant rounded-md overflow-hidden shadow-sm h-[150px]" style={{ backgroundColor: hexToRgba(currentColor, 0.05) }}>
                   <textarea 
                     className="flex-1 w-full p-3 text-sm text-on-surface bg-transparent resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder={`${store.platformName} 주문 데이터를 붙여넣으세요...`}
+                    placeholder={`${store.platformName === '네이버' ? '스마트스토어' : store.platformName} 주문 데이터를 붙여넣으세요...`}
                     value={texts[storeId] || ""}
                     onChange={(e) => handleChange(storeId, e.target.value)}
                   />

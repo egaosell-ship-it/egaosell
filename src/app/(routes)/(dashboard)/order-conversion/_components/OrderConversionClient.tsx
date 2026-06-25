@@ -62,7 +62,8 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
     let platformStr = "플랫폼미상";
     let siteStr = "";
     if (currentStore) {
-      platformStr = currentStore.platformName || "플랫폼미상";
+      const rawPlatform = currentStore.platformName || "플랫폼미상";
+      platformStr = rawPlatform === "네이버" ? "스마트스토어" : rawPlatform;
       siteStr = currentStore.siteName ? currentStore.siteName.substring(0, 2) : "";
     }
 
@@ -90,7 +91,7 @@ export function OrderConversionClient({ currentStore, currentColor, currentSetti
       <div className="flex items-center gap-2 mb-3 px-1">
         <span className="material-symbols-outlined text-[20px]" style={{ color: currentColor }}>storefront</span>
         <span className="text-sm font-bold text-on-surface">
-          {currentStore ? `${currentStore.platformName}(${currentStore.siteName})` : "스토어 미지정"}
+          {currentStore ? `${currentStore.platformName === '네이버' ? '스마트스토어' : currentStore.platformName}(${currentStore.siteName})` : "스토어 미지정"}
         </span>
         <span className="text-xs text-on-surface-variant">스토어 주문 데이터 변환</span>
       </div>
