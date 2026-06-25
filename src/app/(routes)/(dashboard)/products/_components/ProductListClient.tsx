@@ -401,13 +401,19 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                     {product.product_registered_at ? new Date(product.product_registered_at).toLocaleDateString() : '-'}
                   </td>
                   <td className="py-2 px-4 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Button variant="ghost" onClick={() => handleEditClick(product)} className="text-primary hover:text-primary/80 hover:bg-primary/10 text-sm py-1 px-2">
+                    <div className="flex items-center justify-center">
+                      <button 
+                        onClick={() => handleEditClick(product)} 
+                        className="text-primary hover:text-primary-fixed-variant text-xs font-medium mr-2 cursor-pointer"
+                      >
                         수정
-                      </Button>
-                      <Button variant="ghost" onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 text-sm py-1 px-2">
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(product.id)} 
+                        className="text-error hover:text-error/80 text-xs font-medium cursor-pointer disabled:cursor-not-allowed"
+                      >
                         삭제
-                      </Button>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -451,49 +457,52 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
 
       {/* 수정 모달 팝업 */}
       {isEditModalOpen && editingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] flex flex-col">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-bold">상품 수정</h2>
-              <button onClick={handleModalClose} className="text-gray-500 hover:text-black">
-                <span className="material-icons-outlined">close</span>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-surface-container-lowest rounded-xl shadow-lg w-[90vw] sm:w-[450px] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface shrink-0">
+              <h3 className="text-lg font-bold text-on-surface whitespace-nowrap">상품 수정</h3>
+              <button onClick={handleModalClose} className="text-on-surface-variant hover:text-error transition-colors flex items-center justify-center rounded-full p-1 hover:bg-error/10">
+                <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
             
-            <div className="p-4 overflow-y-auto flex-1 space-y-4">
+            <div className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[65vh]">
               {/* 사용여부 라디오 버튼 */}
-              <div>
-                <label className="block text-sm font-semibold mb-1 text-gray-700">사용여부</label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-1">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">사용여부</label>
+                <div className="flex gap-4 items-center h-[42px]">
+                  <label className="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                     <input 
                       type="radio" 
                       name="is_used" 
                       value="true" 
                       checked={editingProduct.is_used === true} 
                       onChange={handleEditChange}
+                      className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                     /> YES
                   </label>
-                  <label className="flex items-center gap-1">
+                  <label className="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                     <input 
                       type="radio" 
                       name="is_used" 
                       value="false" 
                       checked={editingProduct.is_used === false} 
                       onChange={handleEditChange}
+                      className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                     /> NO
                   </label>
                 </div>
               </div>
 
               {/* 네이버상품번호 (수정 불가) */}
-              <div>
-                <label className="block text-sm font-semibold mb-1 text-gray-700">네이버상품번호</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">네이버상품번호</label>
                 <input 
                   type="text" 
                   value={editingProduct.naver_product_id || ''} 
                   readOnly 
-                  className="w-full border rounded p-2 bg-gray-100 text-gray-500"
+                  className="border border-outline-variant rounded p-2.5 text-sm bg-surface-container-low text-on-surface-variant w-full outline-none"
                 />
               </div>
 
@@ -507,23 +516,29 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
                 { label: '브랜드명', name: 'brand_name', type: 'text' },
                 { label: '대표이미지 URL', name: 'image_url', type: 'text' },
               ].map((field) => (
-                <div key={field.name}>
-                  <label className="block text-sm font-semibold mb-1 text-gray-700">{field.label}</label>
+                <div key={field.name} className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-on-surface-variant whitespace-nowrap">{field.label}</label>
                   <input 
                     type={field.type} 
                     name={field.name}
                     value={(editingProduct as any)[field.name] || ''} 
                     onChange={handleEditChange}
-                    className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:border-primary"
+                    className="border border-outline-variant rounded p-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-surface transition-all w-full"
                   />
                 </div>
               ))}
             </div>
             
-            <div className="p-4 border-t flex justify-end gap-2 bg-gray-50 rounded-b-lg">
-              <Button variant="outline" onClick={handleModalClose} disabled={isSaving}>
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-outline-variant flex justify-end gap-2 bg-surface-container-low shrink-0">
+              <button 
+                type="button"
+                onClick={handleModalClose} 
+                disabled={isSaving}
+                className="px-4 py-2 rounded text-sm font-medium border border-outline-variant text-on-surface hover:bg-surface-container-lowest active:scale-95 transition-all whitespace-nowrap disabled:opacity-50 cursor-pointer"
+              >
                 취소
-              </Button>
+              </button>
               <Button onClick={handleEditSave} disabled={isSaving}>
                 {isSaving ? "저장 중..." : "저장"}
               </Button>
