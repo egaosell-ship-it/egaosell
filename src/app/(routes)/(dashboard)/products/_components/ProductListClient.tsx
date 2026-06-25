@@ -24,6 +24,10 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // 필터 상태
+  const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+
   // 수정 팝업 관련 상태
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<SupplierProductProps | null>(null);
@@ -49,10 +53,59 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
     XLSX.writeFile(workbook, "엑셀양식.xlsx");
   };
 
+  const handleExportExcel = () => {
+    const header = ["상품번호(스마트스토어)", "판매자상품코드", "채널", "할인가", "소분류", "브랜드명", "대표이미지 URL", "상품등록일"];
+    
+    const rows = filteredProducts.map(p => {
+      // "2026-06-19 13:52" 형태로 포맷팅
+      let formattedDate = "";
+      if (p.product_registered_at) {
+        const d = new Date(p.product_registered_at);
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        formattedDate = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+
+      return [
+        p.naver_product_id || "",
+        `${p.supply_price}-${p.supplier_name}[${p.supply_product_name}]`,
+        p.registered_platform || "",
+        p.sell_price || 0,
+        p.sub_category || "",
+        p.brand_name || "없음",
+        p.image_url || "",
+        formattedDate
+      ];
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}${(today.getMonth()+1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+    XLSX.writeFile(workbook, `상품목록-${dateStr}.xlsx`);
+  };
+
+  // 필터 적용
+  const filteredProducts = initialProducts.filter(p => {
+    if (selectedSupplier && p.supplier_name !== selectedSupplier) return false;
+    if (selectedBrand && p.brand_name !== selectedBrand) return false;
+    return true;
+  });
+
   const limit = parseInt(perPage, 10);
-  const totalPages = Math.ceil(initialProducts.length / limit);
+  const totalPages = Math.ceil(filteredProducts.length / limit);
+  // 현재 페이지가 전체 페이지보다 크면 방어
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(1);
+  }
+
   const startIndex = (currentPage - 1) * limit;
-  const displayedProducts = initialProducts.slice(startIndex, startIndex + limit);
+  const displayedProducts = filteredProducts.slice(startIndex, startIndex + limit);
+
+  // 필터 목록 추출
+  const uniqueSuppliers = Array.from(new Set(initialProducts.map(p => p.supplier_name).filter(Boolean))) as string[];
+  const uniqueBrands = Array.from(new Set(initialProducts.map(p => p.brand_name).filter(Boolean))) as string[];
 
   // perPage 가 바뀔 때 1페이지로 리셋
   const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -272,10 +325,52 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
   return (
     <div className="flex flex-col gap-4 mt-6">
       <Panel>
+        <h2 className="text-xl font-bold text-on-surface mb-2">공급사 상품 목록</h2>
+        
+        {/* 필터 영역 */}
+        <div className="mb-6 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant text-sm">
+          <div className="flex flex-wrap gap-2 items-center mb-3">
+            <span className="font-bold text-on-surface w-16">공급사:</span>
+            <button 
+              onClick={() => { setSelectedSupplier(null); setCurrentPage(1); }}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedSupplier === null ? 'bg-primary text-white' : 'text-secondary bg-surface-variant hover:bg-surface-variant/80'}`}
+            >
+              전체
+            </button>
+            {uniqueSuppliers.map(sup => (
+              <button 
+                key={sup}
+                onClick={() => { setSelectedSupplier(sup); setCurrentPage(1); }}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedSupplier === sup ? 'bg-primary text-white' : 'text-secondary bg-surface-variant hover:bg-surface-variant/80'}`}
+              >
+                {sup}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="font-bold text-on-surface w-16">브랜드:</span>
+            <button 
+              onClick={() => { setSelectedBrand(null); setCurrentPage(1); }}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedBrand === null ? 'bg-primary text-white' : 'text-secondary bg-surface-variant hover:bg-surface-variant/80'}`}
+            >
+              전체
+            </button>
+            {uniqueBrands.map(br => (
+              <button 
+                key={br}
+                onClick={() => { setSelectedBrand(br); setCurrentPage(1); }}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedBrand === br ? 'bg-primary text-white' : 'text-secondary bg-surface-variant hover:bg-surface-variant/80'}`}
+              >
+                {br}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* 상단 컨트롤 영역 */}
         <div className="flex justify-between items-center mb-4">
           <div className="text-sm font-semibold text-on-surface">
-            총 <span className="text-primary font-bold">{initialProducts.length.toLocaleString()}</span>개의 상품
+            총 <span className="text-primary font-bold">{filteredProducts.length.toLocaleString()}</span>개의 상품
           </div>
           
           <div className="flex items-center gap-2">
@@ -309,7 +404,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
             >
               엑셀업로드양식
             </Button>
-            <Button variant="outline" icon="download">
+            <Button variant="outline" icon="download" onClick={handleExportExcel}>
               엑셀다운로드
             </Button>
             
@@ -429,31 +524,48 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
           </table>
         </div>
 
-        {/* 페이지네이션 (간단 구현) */}
+        {/* 페이지네이션 */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-6 gap-2">
-            <Button
-              variant="outline"
+          <div className="flex justify-center mt-6 gap-1 items-center">
+            <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="px-3 py-1 text-sm font-medium text-secondary hover:text-primary disabled:opacity-50 disabled:hover:text-secondary cursor-pointer"
             >
               이전
-            </Button>
-            <div className="flex items-center gap-1 px-4">
-              <span className="font-semibold text-primary">{currentPage}</span>
-              <span className="text-secondary">/</span>
-              <span className="text-secondary">{totalPages}</span>
-            </div>
-            <Button
-              variant="outline"
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                onClick={() => setCurrentPage(p)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors cursor-pointer ${
+                  currentPage === p 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'text-secondary hover:bg-surface-variant'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
+              className="px-3 py-1 text-sm font-medium text-secondary hover:text-primary disabled:opacity-50 disabled:hover:text-secondary cursor-pointer"
             >
               다음
-            </Button>
+            </button>
           </div>
         )}
       </Panel>
+
+      {/* 맨 위로 스크롤 버튼 (고정) */}
+      <button 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all cursor-pointer"
+        title="맨 위로"
+      >
+        <span className="material-symbols-outlined">arrow_upward</span>
+      </button>
 
       {/* 수정 모달 팝업 */}
       {isEditModalOpen && editingProduct && (
