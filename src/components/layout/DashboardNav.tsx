@@ -25,10 +25,10 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
 
   const navLinks = [
     { name: '대시보드', href: '/' },
-    { name: '주문 변환', href: '/order-conversion' },
-    { name: '주문 수집', href: '/order-collection' },
-    { name: '상품 목록', href: '/products' },
-    { name: '상품 수집', href: '/crawling' },
+    { name: '주문변환', href: '/order-conversion' },
+    { name: '주문수집', href: '/order-collection' },
+    { name: '상품목록', href: '/products' },
+    { name: '상품수집', href: '/crawling' },
     { name: '마진 계산기', href: '/calculator' },
     { name: '커뮤니티', href: '/board' },
   ];
@@ -45,9 +45,9 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
 
-            // 주문 변환 클릭 시 모달 띄우기 특별 처리
-            if (link.name === '주문 변환' || link.name === '상품 목록') {
-              const isOrderConversion = link.name === '주문 변환';
+            // 주문변환 클릭 시 모달 띄우기 특별 처리
+            if (link.name === '주문변환' || link.name === '상품목록') {
+              const isOrderConversion = link.name === '주문변환';
               const setModalOpen = isOrderConversion ? setIsOrderConversionModalOpen : setIsProductsModalOpen;
 
               return (
