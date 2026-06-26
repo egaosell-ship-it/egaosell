@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/common/Button';
 
 interface CoupangProductListClientProps {
   initialProducts: any[];
@@ -28,11 +26,12 @@ export function CoupangProductListClient({ initialProducts, mainBusinessName, bu
       {/* Search and Action Bar */}
       <div className="flex items-center justify-between p-4 bg-surface-container-lowest border-b border-outline-variant flex-shrink-0">
         <div className="flex items-center gap-2">
-          <Input
+          <input
+            type="text"
             placeholder="상품명 또는 관리코드 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-[300px] h-9 text-sm"
+            className="w-[300px] h-9 text-sm px-3 border border-outline-variant rounded-md bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <span className="text-xs text-on-surface-variant ml-2">
             검색 결과: <strong className="text-primary">{filteredProducts.length}</strong>건
@@ -40,7 +39,7 @@ export function CoupangProductListClient({ initialProducts, mainBusinessName, bu
         </div>
         <div className="flex items-center gap-2">
           {/* 빈 액션 영역 */}
-          <Button variant="outline" className="h-9 text-sm">
+          <Button variant="secondary" className="h-9 text-sm px-4">
             옵션 버튼
           </Button>
         </div>
