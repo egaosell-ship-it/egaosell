@@ -34,6 +34,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
     { name: '마진 계산기', href: '/calculator' },
     { name: '커뮤니티', href: '/board' },
     { name: '테스트(쿠팡)', href: '/test' },
+    { name: '테스트(네이버)', href: '/test-naver' },
   ];
 
   return (
