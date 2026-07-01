@@ -31,7 +31,9 @@ export class CoupangApiService {
    */
   private generateAuthorizationHeader(method: string, uri: string): string {
     const datetime = this.getCoupangDateString();
-    const message = datetime + method + uri;
+    // 쿠팡 규격: URI에 포함된 쿼리스트링 시작문자(?)는 제외하고 문자열 연결
+    const signatureUri = uri.replace('?', '');
+    const message = datetime + method + signatureUri;
     const signature = crypto.createHmac('sha256', this.secretKey).update(message).digest('hex');
     
     return `CEA algorithm=HmacSHA256, access-key=${this.accessKey}, signed-date=${datetime}, signature=${signature}`;
