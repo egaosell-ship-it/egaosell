@@ -33,6 +33,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
     { name: '상품수집', href: '/crawling' },
     { name: '마진 계산기', href: '/calculator' },
     { name: '커뮤니티', href: '/board' },
+    { name: '테스트', href: '/test' },
   ];
 
   return (
