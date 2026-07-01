@@ -18,6 +18,7 @@ export async function testNaverApiAction() {
       .select('*')
       .eq('user_id', user.id)
       .eq('app_secret', 'Qfnt57DVAJSsHrgrY35sH')
+      .limit(1)
       .single();
 
     if (error || !naverApi) {
