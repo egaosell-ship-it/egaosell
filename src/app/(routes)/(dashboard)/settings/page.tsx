@@ -3,6 +3,7 @@ import BusinessInfoTab from './_components/BusinessInfoTab';
 import BrandListTab from './_components/BrandListTab';
 import PlatformMarginTab from './_components/PlatformMarginTab';
 import CoupangApiTab from './_components/CoupangApiTab';
+import NaverApiTab from './_components/NaverApiTab';
 import OwnedStoresTab from './_components/OwnedStoresTab';
 import ProductCodeSettingsTab from './_components/ProductCodeSettingsTab';
 
@@ -44,6 +45,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     { id: 'margins', name: '플랫폼마진세팅' },
     { id: 'owned-stores', name: '보유스토어' },
     { id: 'coupang-api', name: '쿠팡API' },
+    { id: 'naver-api', name: '네이버api' },
     { id: 'product-code', name: '상품코드설정' },
   ];
 
@@ -82,6 +84,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         {currentTab === 'margins' && <PlatformMarginTab />}
         {currentTab === 'owned-stores' && <OwnedStoresTab />}
         {currentTab === 'coupang-api' && <CoupangApiTab />}
+        {currentTab === 'naver-api' && <NaverApiTab />}
         {currentTab === 'product-code' && <ProductCodeSettingsTab settings={productCodeSettings} margins={margins} />}
       </div>
     </div>
