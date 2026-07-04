@@ -48,12 +48,14 @@ export async function POST(req: NextRequest) {
       .from('supplier_products')
       .insert([
         {
-          name: productData.productName,
-          price: productData.price,
+          user_id: user.id,
+          supply_product_name: productData.productName,
+          supply_price: productData.price,
           image_url: productData.imageUrl,
-          supplier: productData.platform,
-          original_url: productData.productUrl,
-          // 필수 컬럼들이 더 있다면 추가 (is_collected 등)
+          supplier_name: productData.platform,
+          registered_platform: productData.platform,
+          // original_url 컬럼이 스키마에 없다면 제외하거나 구조에 맞게 매핑 (현재 스키마에는 original_url이 없음. 필요시 naver_product_id 등을 사용하거나 추후 스키마 추가)
+          // 여기서는 스키마에 정의된 필수/주요 컬럼만 삽입합니다.
         }
       ]);
 
