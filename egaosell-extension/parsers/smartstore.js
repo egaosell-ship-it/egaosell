@@ -10,14 +10,24 @@ window.EgaoParsers.smartstore = {
     try {
       const currentUrl = window.location.href;
 
-      // 1. 상품명
-      const titleEl = document.querySelector('h3._22kNQuEXmb');
-      const title = titleEl ? titleEl.innerText.trim() : '';
+      // 1. 상품명 (og:title 메타태그를 최우선으로, 없으면 범용 클래스 시도)
+      let title = '';
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        title = ogTitle.getAttribute('content');
+      }
+      if (!title) {
+        const titleEl = document.querySelector('h3._22kNQuEXmb') || document.querySelector('h3.title') || document.querySelector('.prod-buy-header__title');
+        title = titleEl ? titleEl.innerText.trim() : '제목을 찾을 수 없음';
+      }
 
-      // 2. 가격
-      const priceEl = document.querySelector('span._1LY7DqCnwR');
-      let priceText = priceEl ? priceEl.innerText : '0';
-      const price = parseInt(priceText.replace(/[^0-9]/g, ''), 10);
+      // 2. 가격 (마찬가지로 안전하게 파싱)
+      let price = 0;
+      const priceEl = document.querySelector('span._1LY7DqCnwR') || document.querySelector('.price_real') || document.querySelector('strong.price');
+      if (priceEl) {
+        const priceText = priceEl.innerText || priceEl.textContent;
+        price = parseInt(priceText.replace(/[^0-9]/g, ''), 10) || 0;
+      }
 
       // 3. 썸네일 이미지
       const imgEl = document.querySelector('div._23tQ11TngD img');
