@@ -45,8 +45,8 @@ function isSmartstoreProductPage(url) {
   return /smartstore\.naver\.com\/[^\/]+\/products\/\d+/.test(url) || /brand\.naver\.com\/[^\/]+\/products\/\d+/.test(url);
 }
 
-// 화면에 플로팅 버튼 주입
-function injectFloatingButton(accessToken) {
+// 화면에 플로팅 버튼 주입 (로그인 상태를 인자로 받지 않음)
+function injectFloatingButton() {
   if (document.getElementById(FLOATING_BTN_ID)) return; // 이미 존재하면 무시
 
   const btn = document.createElement("button");
@@ -76,30 +76,38 @@ function injectFloatingButton(accessToken) {
 
   // 클릭 이벤트
   btn.addEventListener("click", () => {
-    btn.innerText = "수집 중...";
-    btn.disabled = true;
-    
-    const productData = parseProductData();
-    if (!productData) {
-      alert("상품 정보를 파싱할 수 없습니다.");
-      resetButton(btn);
-      return;
-    }
+    // 먼저 로그인 상태를 확인합니다.
+    chrome.runtime.sendMessage({ action: "CHECK_LOGIN_STATUS" }, (response) => {
+      if (!response || !response.isLoggedIn || !response.accessToken) {
+        alert("EgaoSell에 로그인되어 있지 않습니다! 브라우저 우측 상단의 확장 프로그램(팝업) 아이콘을 눌러 로그인해 주세요.");
+        return;
+      }
 
-    // Background로 데이터 전송 위임
-    chrome.runtime.sendMessage({
-      action: "SEND_TO_EGAOSELL",
-      payload: {
-        token: accessToken,
-        productData: productData
+      btn.innerText = "수집 중...";
+      btn.disabled = true;
+      
+      const productData = parseProductData();
+      if (!productData) {
+        alert("상품 정보를 파싱할 수 없습니다.");
+        resetButton(btn);
+        return;
       }
-    }, (apiResponse) => {
-      if (apiResponse && apiResponse.success) {
-        alert("EgaoSell로 상품 수집이 완료되었습니다!");
-      } else {
-        alert(`전송 실패: ${apiResponse?.error || '알 수 없는 오류'}`);
-      }
-      resetButton(btn);
+
+      // Background로 데이터 전송 위임
+      chrome.runtime.sendMessage({
+        action: "SEND_TO_EGAOSELL",
+        payload: {
+          token: response.accessToken,
+          productData: productData
+        }
+      }, (apiResponse) => {
+        if (apiResponse && apiResponse.success) {
+          alert("EgaoSell로 상품 수집이 완료되었습니다!");
+        } else {
+          alert(`전송 실패: ${apiResponse?.error || '알 수 없는 오류'}`);
+        }
+        resetButton(btn);
+      });
     });
   });
 
@@ -121,14 +129,8 @@ function checkAndRenderButton() {
   const currentUrl = window.location.href;
   
   if (isSmartstoreProductPage(currentUrl)) {
-    // 상품 페이지라면 로그인 상태 확인 요청
-    chrome.runtime.sendMessage({ action: "CHECK_LOGIN_STATUS" }, (response) => {
-      if (response && response.isLoggedIn && response.accessToken) {
-        injectFloatingButton(response.accessToken);
-      } else {
-        removeFloatingButton();
-      }
-    });
+    // 상품 페이지라면 무조건 버튼을 그립니다. (로그인은 클릭 시 검사)
+    injectFloatingButton();
   } else {
     // 상품 페이지가 아니면 제거
     removeFloatingButton();
