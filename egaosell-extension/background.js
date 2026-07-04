@@ -1,6 +1,6 @@
 // background.js
 
-const API_URL = "http://localhost:3000/api/extension/collect";
+const API_URL = "http://127.0.0.1:3000/api/extension/collect";
 const SUPABASE_STORAGE_KEY = "sb-wbfreqorkvntlboynxbp-auth-token";
 
 // SPA 라우팅 감지하여 Content Script에 알림
