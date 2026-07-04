@@ -2,7 +2,7 @@
 const SUPABASE_URL = "https://wbfreqorkvntlboynxbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_kPL7QJcbG_ZHjuOjtXl5Ng_6dA6uMKg";
 
-let supabase;
+let supabaseClient;
 
 try {
   // supabase-js 글로벌 객체 확인
@@ -10,7 +10,7 @@ try {
     throw new Error("supabase 라이브러리가 로드되지 않았습니다.");
   }
   
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       persistSession: true,
       // Chrome Extension의 storage 사용
@@ -59,9 +59,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 세션 확인
   const checkSession = async () => {
-    if (!supabase) return; // 초기화 실패 시 중단
+    if (!supabaseClient) return; // 초기화 실패 시 중단
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
       
       if (error) {
         console.error("Get session API error:", error);
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginBtn.disabled = true;
     loginBtn.textContent = '로그인 중...';
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password,
     });
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 로그아웃 처리
   logoutBtn.addEventListener('click', async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     showSection(loginSection);
     emailInput.value = '';
     passwordInput.value = '';
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       // 1. 세션 가져오기 (API 호출용 토큰)
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) {
         showCollectStatus('세션이 만료되었습니다. 다시 로그인해주세요.', false);
         showSection(loginSection);
