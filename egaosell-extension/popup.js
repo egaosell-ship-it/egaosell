@@ -2,25 +2,38 @@
 const SUPABASE_URL = "https://wbfreqorkvntlboynxbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_kPL7QJcbG_ZHjuOjtXl5Ng_6dA6uMKg";
 
-// supabase-js 글로벌 객체 (CDN에서 로드됨)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    persistSession: true,
-    // Chrome Extension의 storage 사용
-    storage: {
-      getItem: async (key) => {
-        const result = await chrome.storage.local.get(key);
-        return result[key] || null;
-      },
-      setItem: async (key, value) => {
-        await chrome.storage.local.set({ [key]: value });
-      },
-      removeItem: async (key) => {
-        await chrome.storage.local.remove(key);
+let supabase;
+
+try {
+  // supabase-js 글로벌 객체 확인
+  if (!window.supabase) {
+    throw new Error("supabase 라이브러리가 로드되지 않았습니다.");
+  }
+  
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      // Chrome Extension의 storage 사용
+      storage: {
+        getItem: async (key) => {
+          const result = await chrome.storage.local.get(key);
+          return result[key] || null;
+        },
+        setItem: async (key, value) => {
+          await chrome.storage.local.set({ [key]: value });
+        },
+        removeItem: async (key) => {
+          await chrome.storage.local.remove(key);
+        }
       }
     }
-  }
-});
+  });
+} catch (e) {
+  console.error("Supabase Init Error:", e);
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loading-section').innerHTML = `<p style="color:red">초기화 오류: ${e.message}</p>`;
+  });
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const loadingSection = document.getElementById('loading-section');
@@ -46,9 +59,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 세션 확인
   const checkSession = async () => {
+    if (!supabase) return; // 초기화 실패 시 중단
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       
+      if (error) {
+        console.error("Get session API error:", error);
+      }
+
       if (session && session.user) {
         userEmailSpan.textContent = session.user.email;
         showSection(mainSection);
@@ -57,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } catch (err) {
       console.error("Session check error:", err);
-      showSection(loginSection);
+      loadingSection.innerHTML = `<p style="color:red">세션 확인 오류: ${err.message}</p>`;
     }
   };
 
