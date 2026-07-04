@@ -53,18 +53,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let accessToken = null;
 
       // storage.local에 저장된 키들을 순회하며 supabase session 정보가 있는지 찾음
-      // 기본적으로 커스텀 storage setItem 구현에서 키를 그대로 쓰므로 원래 키 모양을 찾아야 함
-      // (popup.js에서 auth.storage로 설정한 키)
       for (const key in items) {
         if (key.includes('-auth-token')) {
           try {
-            const sessionData = items[key];
+            // Supabase 스토리지 어댑터는 value를 문자열로 넘겨줍니다. JSON 파싱이 필요합니다.
+            let sessionData = items[key];
+            if (typeof sessionData === 'string') {
+              sessionData = JSON.parse(sessionData);
+            }
+            
             if (sessionData && sessionData.access_token) {
               isLoggedIn = true;
               accessToken = sessionData.access_token;
               break;
             }
-          } catch(e) {}
+          } catch(e) {
+            console.error("세션 파싱 에러:", e);
+          }
         }
       }
       sendResponse({ isLoggedIn, accessToken });
