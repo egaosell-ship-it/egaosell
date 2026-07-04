@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "egaosell-extension",
+  "version": "1.0.0",
+  "description": "다양한 쇼핑몰(쿠팡, 스마트스토어 등)에서 상품 정보를 크롤링하여 egaosell로 전송합니다.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.coupang.com/*",
+    "*://*.smartstore.naver.com/*",
+    "http://localhost:3000/*",
+    "https://egaosell.vercel.app/*",
+    "https://wbfreqorkvntlboynxbp.supabase.co/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.coupang.com/*",
+        "*://smartstore.naver.com/*",
+        "*://brand.naver.com/*"
+      ],
+      "js": [
+        "parsers/coupang.js",
+        "parsers/smartstore.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
