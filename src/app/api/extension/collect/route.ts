@@ -45,17 +45,17 @@ export async function POST(req: NextRequest) {
     // 크롤링된 상품을 담을 특정 테이블이나 구조에 맞춰야 하나, 여기서는 supplier_products에 삽입 시도
     // 사용자의 실제 DB 구조에 맞게 커스텀 가능
     const { error: insertError } = await supabase
-      .from('supplier_products')
+      .from('product_collected')
       .insert([
         {
           user_id: user.id,
-          supply_product_name: productData.productName,
-          supply_price: productData.price,
-          image_url: productData.imageUrl,
-          supplier_name: productData.platform,
-          registered_platform: productData.platform,
-          // original_url 컬럼이 스키마에 없다면 제외하거나 구조에 맞게 매핑 (현재 스키마에는 original_url이 없음. 필요시 naver_product_id 등을 사용하거나 추후 스키마 추가)
-          // 여기서는 스키마에 정의된 필수/주요 컬럼만 삽입합니다.
+          platform: productData.platform || 'Unknown',
+          product_id: productData.productId || null,
+          product_name: productData.productName,
+          price: productData.price,
+          image_url: productData.imageUrl || null,
+          description: productData.description || null,
+          reviews: productData.reviews || []
         }
       ]);
 
