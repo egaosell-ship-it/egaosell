@@ -1,6 +1,6 @@
 // background.js
 
-const API_URL = "http://127.0.0.1:3000/api/extension/collect";
+const API_URL = "http://localhost:3000/api/extension/collect";
 const SUPABASE_STORAGE_KEY = "sb-wbfreqorkvntlboynxbp-auth-token";
 
 // SPA 라우팅 감지하여 Content Script에 알림
@@ -28,6 +28,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       body: JSON.stringify(productData)
     })
     .then(async (res) => {
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("text/html")) {
+        const errorText = await res.text();
+        console.error("HTML Error Response:", errorText);
+        throw new Error("서버에서 JSON이 아닌 HTML(에러 페이지)을 반환했습니다. EgaoSell 개발 서버 터미널(터미널 창)에 컴파일 에러나 다른 오류가 떠있는지 확인해 주세요!");
+      }
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(`서버 에러 (${res.status}): ${errorText}`);
