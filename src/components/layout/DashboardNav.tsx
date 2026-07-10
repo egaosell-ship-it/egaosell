@@ -30,7 +30,6 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
     { name: '주문수집', href: '/order-collection' },
     { name: '네이버상품목록', href: '/products' },
     { name: '쿠팡상품목록', href: '/coupang-products' },
-    { name: '수집상품목록', href: '/collected-products' },
     { name: '마진 계산기', href: '/calculator' },
     { name: '커뮤니티', href: '/board' },
     { name: '테스트(쿠팡)', href: '/test' },
@@ -134,7 +133,7 @@ export default function DashboardNav({ businesses = [], margins = [] }: Dashboar
           설정
         </Link>
 
-        <Link href="/crawling" className="flex items-center px-2 py-1.5 rounded-md text-[11px] font-medium text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors duration-200">
+        <Link href="/collected-products" className="flex items-center px-2 py-1.5 rounded-md text-[11px] font-medium text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors duration-200">
           <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 0" }}>download</span>
           상품수집
         </Link>

@@ -85,3 +85,23 @@ export async function activateSubscription() {
     return { success: false, error: err.message };
   }
 }
+
+export async function checkSubscriptionAction(): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) return false;
+
+    const { data } = await supabase
+      .from('subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    return data?.status === 'active';
+  } catch (err) {
+    console.error("checkSubscriptionAction Error:", err);
+    return false;
+  }
+}
