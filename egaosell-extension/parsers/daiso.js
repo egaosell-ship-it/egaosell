@@ -11,14 +11,24 @@ window.EgaoParsers.daiso = {
       console.log('[SellerSuite] DaisoMall Parser v2.1 running...');
       const currentUrl = window.location.href;
       
+      // 0. 목표 상품 ID 추출 (SPA 렌더링 갱신 지연 검증용)
+      let targetProductId = '';
+      const hrefMatch = window.location.href.match(/[?&](?:pdNo|goodsNo|p_pdId)=([^&#]+)/);
+      if (hrefMatch && hrefMatch[1]) {
+        targetProductId = hrefMatch[1];
+      } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        targetProductId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo') || '';
+      }
+      
       let title = '';
       let price = 0;
       let imageUrl = '';
       let detailImages = [];
       let description = '';
-      let productId = '';
+      let productId = targetProductId; // 기본적으로 주소창의 ID를 사용
 
-      // 1. 화면 렌더링 요소 추출 최우선 (SPA 캐싱/지연 갱신 방지)
+      // 1. 화면 렌더링 요소 추출 (SPA 갱신 지연 시 엉뚱한 요소가 잡히는 것을 막기 위해 제한적 사용)
       const titleElem = document.querySelector('.goods-title') || document.querySelector('.pd-name') || document.querySelector('.title-box .title') || document.querySelector('p.title') || document.querySelector('.pd-info .title');
       if (titleElem) {
         title = titleElem.innerText.trim();
@@ -41,6 +51,12 @@ window.EgaoParsers.daiso = {
         try {
           const jsonData = JSON.parse(script.innerText);
           if (jsonData['@type'] === 'Product') {
+            // SPA 렌더링 딜레이 방어: JSON-LD의 상품번호가 주소창의 상품번호와 다르면 과거 데이터이므로 무시
+            if (targetProductId && jsonData.sku && jsonData.sku !== targetProductId) {
+              console.log('[EgaoSell] SPA Cache detected! JSON-LD sku does not match URL. Skipping...');
+              continue;
+            }
+
             if (!title) title = jsonData.name || '';
             if (!imageUrl) imageUrl = jsonData.image || '';
             
@@ -74,13 +90,9 @@ window.EgaoParsers.daiso = {
         imageUrl = ogImage ? ogImage.getAttribute('content') : '';
       }
 
-      // 3. Product ID 추출 (URL 파라미터를 최우선으로 하여 중복/빈값 방지)
-      const hrefMatch = window.location.href.match(/[?&](?:pdNo|goodsNo|p_pdId)=([^&#]+)/);
-      if (hrefMatch && hrefMatch[1]) {
-        productId = hrefMatch[1];
-      } else if (!productId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        productId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo') || '';
+      // 3. SPA 렌더링 지연으로 인한 파싱 실패 검증 (강력한 방어 로직)
+      if (!title || !imageUrl || (title.includes('파싱 실패'))) {
+        throw new Error("상품 페이지가 아직 로딩 중이거나 화면이 갱신되지 않았습니다.\n(SPA 렌더링 딜레이)\n1~2초 후 다시 [상품 수집]을 클릭해 주세요!");
       }
 
       let descriptionDetail = null;
