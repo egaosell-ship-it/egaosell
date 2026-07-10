@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return res.json();
     })
     .then((data) => {
-      sendResponse({ success: true, data });
+      sendResponse(data);
     })
     .catch((error) => {
       console.error("API 전송 실패:", error);
