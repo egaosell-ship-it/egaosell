@@ -1,6 +1,7 @@
 import { getCollectedProductByIdAction } from '@/app/actions/collected-product.actions';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { CopyableSection } from '../_components/CopyableSection';
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -56,22 +57,18 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           
           {/* 상품 요약 설명 */}
           {product.description && (
-            <section className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
-              <h2 className="text-title-md font-title-md text-on-surface mb-4">상품 요약 설명</h2>
-              <div className="text-body-md text-on-surface whitespace-pre-wrap leading-relaxed">
-                {product.description}
-              </div>
-            </section>
+            <CopyableSection 
+              title="상품 요약 설명 (description)" 
+              content={product.description} 
+            />
           )}
 
-          {/* 본문 텍스트 (순수 자연어) */}
+          {/* 상품 상세 설명 */}
           {product.descriptionDetail && (
-            <section className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
-              <h2 className="text-title-md font-title-md text-on-surface mb-4">상품 상세 설명 (텍스트)</h2>
-              <div className="text-body-md text-on-surface whitespace-pre-wrap leading-relaxed">
-                {product.descriptionDetail}
-              </div>
-            </section>
+            <CopyableSection 
+              title="상품 상세 설명 (description_detail)" 
+              content={product.descriptionDetail} 
+            />
           )}
 
           {/* 상세 이미지 목록 */}
