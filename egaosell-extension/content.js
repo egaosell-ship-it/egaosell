@@ -5,18 +5,19 @@
 // ---------------------------------------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "EXTRACT_PRODUCT_INFO") {
-    const productData = parseProductData();
-    if (productData) {
-      sendResponse({ success: true, data: productData });
-    } else {
-      sendResponse({ success: false, error: "지원하지 않는 페이지이거나 상품 정보를 찾을 수 없습니다." });
-    }
+    parseProductData().then(productData => {
+      if (productData) {
+        sendResponse({ success: true, data: productData });
+      } else {
+        sendResponse({ success: false, error: "지원하지 않는 페이지이거나 상품 정보를 찾을 수 없습니다." });
+      }
+    });
+    return true; // 비동기 응답 지원
   }
-  return true; // 비동기 응답 지원
 });
 
 // 상품 정보 파싱 공통 함수
-function parseProductData() {
+async function parseProductData() {
   let productData = null;
   const currentUrl = window.location.href;
 
@@ -25,7 +26,7 @@ function parseProductData() {
       const parser = window.EgaoParsers[parserKey];
       if (parser.canParse(currentUrl)) {
         console.log(`[EgaoSell] ${parser.name} 파서로 파싱을 시작합니다.`);
-        productData = parser.parse();
+        productData = await parser.parse();
         break;
       }
     }
@@ -41,8 +42,7 @@ function parseProductData() {
 // ---------------------------------------------------------
 
 const FLOATING_BTN_ID = "egao-floating-collect-btn";
-let readyCheckInterval = null; // SPA 렌더링 감지 타이머
-let lastExtractedData = null; // 이전 상품의 데이터 캐싱 (SPA 지연 검증용)
+let readyCheckTimeout = null; // SPA 렌더링 감지 타이머 (재귀적)
 
 // URL이 스마트스토어 상품 상세 페이지인지 검사
 function isSmartstoreProductPage(url) {
@@ -90,7 +90,7 @@ function injectFloatingButton() {
     // 클릭 이벤트
     btn.addEventListener("click", () => {
       // 먼저 로그인 상태를 확인합니다.
-      chrome.runtime.sendMessage({ action: "CHECK_LOGIN_STATUS" }, (response) => {
+      chrome.runtime.sendMessage({ action: "CHECK_LOGIN_STATUS" }, async (response) => {
         if (!response || !response.isLoggedIn || !response.accessToken) {
           alert("EgaoSell에 로그인되어 있지 않습니다! 브라우저 우측 상단의 확장 프로그램(팝업) 아이콘을 눌러 로그인해 주세요.");
           return;
@@ -99,7 +99,7 @@ function injectFloatingButton() {
         btn.innerText = "수집 중...";
         btn.disabled = true;
         
-        const productData = parseProductData();
+        const productData = await parseProductData();
         if (!productData) {
           alert("상품 정보를 파싱할 수 없습니다.");
           resetButton(btn);
@@ -153,41 +153,31 @@ function startReadyCheck() {
   const btn = document.getElementById(FLOATING_BTN_ID);
   if (!btn) return;
   
-  if (readyCheckInterval) clearInterval(readyCheckInterval);
+  if (readyCheckTimeout) {
+    clearTimeout(readyCheckTimeout);
+    readyCheckTimeout = null;
+  }
   
   btn.style.display = "none";
   
-  // 0.5초마다 파서를 돌려봐서 에러 없이 정상 추출되는지 확인
-  readyCheckInterval = setInterval(() => {
+  // API Fetch 폭격 방지를 위해 재귀적 setTimeout 사용 (서버 원본 파싱 모드)
+  const check = async () => {
     try {
-      const productData = parseProductData();
+      const productData = await parseProductData();
       if (productData) {
-        
-        // --- SPA 렌더링 딜레이 궁극의 방어 로직 ---
-        // 다른 상품 페이지로 넘어왔는데, 이미지나 설명이 이전 상품과 '완전히' 똑같다면? 
-        // 십중팔구 다이소몰의 DOM 업데이트 지연으로 낡은 데이터를 긁은 것이다!
-        if (lastExtractedData && lastExtractedData.productId && lastExtractedData.productId !== productData.productId) {
-          const isStaleImage = (lastExtractedData.imageUrl === productData.imageUrl) && productData.imageUrl !== '';
-          const isStaleDesc = (lastExtractedData.description === productData.description) && productData.description !== '';
-          
-          if (isStaleImage || isStaleDesc) {
-            console.log("[EgaoSell] Stale DOM detected! Waiting for new image/description to render...");
-            throw new Error("SPA 렌더링 딜레이: 이전 상품 데이터 잔존");
-          }
-        }
-
-        // 검증을 통과했다면, 이번 데이터를 '마지막 추출 데이터'로 기억한다.
-        lastExtractedData = productData;
-
-        clearInterval(readyCheckInterval);
-        readyCheckInterval = null;
-        btn.style.display = "block"; // 완벽하게 렌더링된 시점에 짠! 하고 나타남
-        console.log("[EgaoSell] 상품 데이터 렌더링 완료 감지! 버튼 활성화.");
+        btn.style.display = "block"; // 완벽하게 추출 가능한 상태일 때 짠! 하고 나타남
+        console.log("[EgaoSell] 서버 기반 파싱(SSR) 준비 완료! 버튼 활성화.");
+        return; // 성공 시 재귀 종료
       }
     } catch (e) {
-      // 파서가 던지는 에러("아직 로딩 중입니다" 또는 "이전 데이터 잔존") 무시하고 계속 대기
+      // 파서가 던지는 에러("상품 페이지 로딩 지연") 무시하고 계속 대기
     }
-  }, 500);
+    
+    // 실패 시 1초 대기 후 다시 시도 (다이소 서버 부담 경감)
+    readyCheckTimeout = setTimeout(check, 1000);
+  };
+
+  check();
 }
 
 function resetButton(btn) {
@@ -196,9 +186,9 @@ function resetButton(btn) {
 }
 
 function removeFloatingButton() {
-  if (readyCheckInterval) {
-    clearInterval(readyCheckInterval);
-    readyCheckInterval = null;
+  if (readyCheckTimeout) {
+    clearTimeout(readyCheckTimeout);
+    readyCheckTimeout = null;
   }
   const btn = document.getElementById(FLOATING_BTN_ID);
   if (btn) btn.remove();
