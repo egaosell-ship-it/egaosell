@@ -88,12 +88,34 @@ window.EgaoParsers.daiso = {
         // 렌더링 지연(SPA)으로 인해 DOM에 이미지가 없을 경우, 문서 전체 소스(Nuxt state)에서 정규식 추출
         if (detailImages.length === 0) {
           const htmlStr = document.documentElement.innerHTML;
-          const imgRegex = /https?:\/\/cdn\.daisomall\.co\.kr\/file\/[a-zA-Z0-9_\-\/]+\.(?:jpg|jpeg|png|gif)/gi;
+          
+          // 1단계: HTML 태그 속성 (src="...") 안에 있는 이미지 우선 추출 (JSON 내 상세설명 HTML 타겟팅)
+          // <img src="..."> 형태나 이스케이프된 \u003Cimg src=\"...\" 형태를 모두 커버
+          const htmlImgRegex = /(?:<|\\u003C|&lt;)img[^>]*src=\\?["'](https?:\/\/cdn\.daisomall\.co\.kr\/file\/[^"'\\]+\.(?:jpg|jpeg|png|gif))/gi;
           let match;
-          while ((match = imgRegex.exec(htmlStr)) !== null) {
-            const matchUrl = match[0];
+          let htmlTagsFound = false;
+          while ((match = htmlImgRegex.exec(htmlStr)) !== null) {
+            const matchUrl = match[1]; // 캡처 그룹 1
             if (!matchUrl.includes('icon') && !matchUrl.includes('logo') && !matchUrl.includes('banner')) {
               detailImages.push(matchUrl);
+              htmlTagsFound = true;
+            }
+          }
+
+          // 2단계: 태그 구조를 못 찾았다면 전체 URL 매칭하되 연관상품(썸네일) 강력 제외
+          if (!htmlTagsFound) {
+            const rawImgRegex = /https?:\/\/cdn\.daisomall\.co\.kr\/file\/[a-zA-Z0-9_\-\/]+\.(?:jpg|jpeg|png|gif)/gi;
+            while ((match = rawImgRegex.exec(htmlStr)) !== null) {
+              const matchUrl = match[0];
+              if (!matchUrl.includes('icon') && !matchUrl.includes('logo') && !matchUrl.includes('banner') 
+                  && !matchUrl.includes('thumbnail') && !matchUrl.includes('thumb')) {
+                // 확실한 상세 이미지 경로
+                if (matchUrl.includes('/PD/') || matchUrl.includes('/editor/') || matchUrl.includes('/detail/')) {
+                  detailImages.push(matchUrl);
+                } else if (!matchUrl.includes('/goods/')) { // 썸네일 확률이 높은 /goods/ 제외
+                  detailImages.push(matchUrl);
+                }
+              }
             }
           }
         }
