@@ -28,24 +28,7 @@ window.EgaoParsers.daiso = {
       let description = '';
       let productId = targetProductId; // 기본적으로 주소창의 ID를 사용
 
-      // 1. 화면 렌더링 요소 추출 (SPA 갱신 지연 시 엉뚱한 요소가 잡히는 것을 막기 위해 제한적 사용)
-      const titleElem = document.querySelector('.goods-title') || document.querySelector('.pd-name') || document.querySelector('.title-box .title') || document.querySelector('p.title') || document.querySelector('.pd-info .title');
-      if (titleElem) {
-        title = titleElem.innerText.trim();
-      }
-
-      const imgElem = document.querySelector('.swiper-slide-active img') || document.querySelector('.pd-img img') || document.querySelector('.main-img img');
-      if (imgElem) {
-        imageUrl = imgElem.getAttribute('src') || imgElem.getAttribute('data-src') || '';
-      }
-
-      // 1.5 Meta Description 태그 (Fallback용)
-      const metaDesc = document.querySelector('meta[property="og:description"]');
-      if (metaDesc && metaDesc.getAttribute('content')) {
-        description = metaDesc.getAttribute('content').trim();
-      }
-
-      // JSON-LD 파싱 (가장 정확한 데이터, 다만 description은 위에서 뽑은걸 우선시함)
+      // 1. JSON-LD 파싱 최우선 (가장 정확하고, sku 검증을 통해 SPA 캐시를 피할 수 있음)
       const scripts = document.querySelectorAll('script[type="application/ld+json"]');
       for (const script of scripts) {
         try {
@@ -79,15 +62,32 @@ window.EgaoParsers.daiso = {
         }
       }
 
-      // Fallback: JSON-LD가 없거나 일부 누락된 경우 og 태그 활용
+      // 2. Fallback: JSON-LD가 없거나 누락된 경우 DOM 및 og 태그 활용
       if (!title) {
-        const ogTitle = document.querySelector('meta[property="og:title"]');
-        title = ogTitle ? ogTitle.getAttribute('content') : '다이소몰 상품 (제목 파싱 실패)';
+        const titleElem = document.querySelector('.goods-title') || document.querySelector('.pd-name') || document.querySelector('.title-box .title') || document.querySelector('p.title') || document.querySelector('.pd-info .title');
+        if (titleElem) {
+          title = titleElem.innerText.trim();
+        } else {
+          const ogTitle = document.querySelector('meta[property="og:title"]');
+          title = ogTitle ? ogTitle.getAttribute('content') : '다이소몰 상품 (제목 파싱 실패)';
+        }
       }
       
       if (!imageUrl) {
-        const ogImage = document.querySelector('meta[property="og:image"]');
-        imageUrl = ogImage ? ogImage.getAttribute('content') : '';
+        const imgElem = document.querySelector('.swiper-slide-active img') || document.querySelector('.pd-img img') || document.querySelector('.main-img img');
+        if (imgElem) {
+          imageUrl = imgElem.getAttribute('src') || imgElem.getAttribute('data-src') || '';
+        } else {
+          const ogImage = document.querySelector('meta[property="og:image"]');
+          imageUrl = ogImage ? ogImage.getAttribute('content') : '';
+        }
+      }
+
+      if (!description) {
+        const metaDesc = document.querySelector('meta[property="og:description"]');
+        if (metaDesc && metaDesc.getAttribute('content')) {
+          description = metaDesc.getAttribute('content').trim();
+        }
       }
 
       // 3. SPA 렌더링 지연으로 인한 파싱 실패 검증 (강력한 방어 로직)
