@@ -101,7 +101,9 @@ window.EgaoParsers.daiso = {
               }
             });
           });
-          descriptionDetail = detailTexts.join('\n\n').trim();
+          // 중복되는 텍스트 블럭을 제거하기 위해 Set 사용
+          const uniqueTexts = Array.from(new Set(detailTexts));
+          descriptionDetail = uniqueTexts.join('\n\n').trim();
           console.log('[SellerSuite] Extracted descriptionDetail from .editor-area (Text+Alt Length):', descriptionDetail.length);
         } else {
           // editor-area가 없을 경우 fallback으로 정규식 방식 사용
