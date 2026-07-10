@@ -8,6 +8,7 @@ export interface CollectedProductProps {
   imageUrl: string | null;
   detailImages: string[];
   description: string | null;
+  descriptionDetail: string | null;
   reviews: string[];
   createdAt: string;
 }
@@ -33,6 +34,7 @@ export class CollectedProduct {
   get imageUrl(): string | null { return this.props.imageUrl; }
   get detailImages(): string[] { return this.props.detailImages; }
   get description(): string | null { return this.props.description; }
+  get descriptionDetail(): string | null { return this.props.descriptionDetail; }
   get reviews(): string[] { return this.props.reviews; }
   get createdAt(): string { return this.props.createdAt; }
 

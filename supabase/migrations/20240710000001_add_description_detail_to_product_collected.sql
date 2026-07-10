@@ -1,0 +1,1 @@
+ALTER TABLE product_collected ADD COLUMN description_detail TEXT;

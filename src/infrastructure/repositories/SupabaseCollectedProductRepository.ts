@@ -25,6 +25,7 @@ export class SupabaseCollectedProductRepository implements ICollectedProductRepo
       imageUrl: row.image_url,
       detailImages: row.detail_images || [],
       description: row.description,
+      descriptionDetail: row.description_detail,
       reviews: row.reviews || [],
       createdAt: row.created_at
     }));
@@ -55,6 +56,7 @@ export class SupabaseCollectedProductRepository implements ICollectedProductRepo
       imageUrl: data.image_url,
       detailImages: data.detail_images || [],
       description: data.description,
+      descriptionDetail: data.description_detail,
       reviews: data.reviews || [],
       createdAt: data.created_at
     });

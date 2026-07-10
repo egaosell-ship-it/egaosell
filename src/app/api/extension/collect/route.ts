@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
             image_url: productData.imageUrl || null,
             detail_images: productData.detailImages || [],
             description: productData.description || null,
+            description_detail: productData.descriptionDetail || null,
             reviews: productData.reviews || [],
             updated_at: new Date().toISOString()
           })
@@ -96,6 +97,7 @@ export async function POST(req: NextRequest) {
           image_url: productData.imageUrl || null,
           detail_images: productData.detailImages || [],
           description: productData.description || null,
+          description_detail: productData.descriptionDetail || null,
           reviews: productData.reviews || []
         }
       ]);

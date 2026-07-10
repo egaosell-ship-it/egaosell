@@ -54,12 +54,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       <div className="flex-1 overflow-auto p-6">
         <div className="max-w-4xl mx-auto space-y-8">
           
-          {/* 상품 설명 */}
+          {/* 상품 요약 설명 */}
           {product.description && (
             <section className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
-              <h2 className="text-title-md font-title-md text-on-surface mb-4">상품 설명</h2>
+              <h2 className="text-title-md font-title-md text-on-surface mb-4">상품 요약 설명</h2>
               <div className="text-body-md text-on-surface whitespace-pre-wrap leading-relaxed">
                 {product.description}
+              </div>
+            </section>
+          )}
+
+          {/* 본문 텍스트 (순수 자연어) */}
+          {product.descriptionDetail && (
+            <section className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+              <h2 className="text-title-md font-title-md text-on-surface mb-4">상품 상세 설명 (텍스트)</h2>
+              <div className="text-body-md text-on-surface whitespace-pre-wrap leading-relaxed">
+                {product.descriptionDetail}
               </div>
             </section>
           )}

@@ -53,14 +53,33 @@ window.EgaoParsers.daiso = {
         productId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo');
       }
 
-      // 3. 상세 이미지 추출 (본문 영역)
+      // 2.5 Meta Description 태그 파싱 (우선순위 높음)
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && metaDesc.getAttribute('content')) {
+        description = metaDesc.getAttribute('content');
+      }
+
+      let descriptionDetail = null;
+
+      // 3. 상세 이미지 및 본문 텍스트 추출 (본문 영역)
       const detailContainer = document.querySelector('.detail-tab-cont .tab-cont.detail') || document.querySelector('.editor-area') || document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view') || document.querySelector('.detail-area') || document.querySelector('.goods-detail');
       
       if (detailContainer) {
-        // 본문 텍스트 추출 (JSON-LD보다 우선 혹은 병합)
-        const innerText = detailContainer.innerText.trim();
-        if (innerText.length > 50) {
-          description = innerText.substring(0, 5000); // 최대 5000자 제한
+        // 본문 텍스트 추출 (순수 자연어 상세 설명)
+        let innerText = detailContainer.innerText.trim();
+        // 불필요한 UI 텍스트(버튼, 리뷰 안내 등) 정규식 제거
+        innerText = innerText.replace(/상품설명 더보기/g, '');
+        innerText = innerText.replace(/상품정보에 문제가 있나요\?[\s\S]*?신고/g, '');
+        innerText = innerText.replace(/상품정보 제공 고시[\s\S]*/, ''); // 고시 정보 이하는 날림 (본문만)
+        innerText = innerText.trim();
+        
+        if (innerText.length > 30) {
+          descriptionDetail = innerText.substring(0, 10000); // 최대 1만자 제한
+        }
+
+        // 만약 기존에 description(요약)이 없었다면 본문의 앞부분을 대신 사용
+        if (!description && innerText.length > 50) {
+          description = innerText.substring(0, 5000);
         }
 
         // 본문 내 모든 이미지 추출
@@ -135,6 +154,7 @@ window.EgaoParsers.daiso = {
         imageUrl: imageUrl,
         detailImages: detailImages,
         description: description,
+        descriptionDetail: descriptionDetail,
         reviews: reviews,
         productUrl: currentUrl
       };
