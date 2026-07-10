@@ -33,7 +33,9 @@ window.EgaoParsers.daiso = {
           if (jsonData['@type'] === 'Product') {
             title = jsonData.name || '';
             imageUrl = jsonData.image || '';
-            productId = jsonData.sku || '';
+            if (!productId) {
+              productId = jsonData.sku || '';
+            }
             if (jsonData.offers && jsonData.offers.price) {
               price = parseInt(jsonData.offers.price, 10);
             }
@@ -55,9 +57,13 @@ window.EgaoParsers.daiso = {
         imageUrl = ogImage ? ogImage.getAttribute('content') : '';
       }
 
-      if (!productId) {
+      // 3. Product ID 추출 (URL 파라미터를 최우선으로 하여 중복/빈값 방지)
+      const hrefMatch = window.location.href.match(/[?&](?:pdNo|goodsNo|p_pdId)=([^&#]+)/);
+      if (hrefMatch && hrefMatch[1]) {
+        productId = hrefMatch[1];
+      } else if (!productId) {
         const urlParams = new URLSearchParams(window.location.search);
-        productId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo');
+        productId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo') || '';
       }
 
       let descriptionDetail = null;
