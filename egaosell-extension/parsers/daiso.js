@@ -83,6 +83,22 @@ window.EgaoParsers.daiso = {
         }
       }
 
+      if (!price || price === 0) {
+        const priceElem = document.querySelector('.price-info .price') || 
+                          document.querySelector('.pd-price') || 
+                          document.querySelector('.sell_price') ||
+                          document.querySelector('.goods-price') ||
+                          document.querySelector('.info-price strong') ||
+                          document.querySelector('.price strong');
+                          
+        if (priceElem) {
+          const priceText = priceElem.innerText.replace(/[^0-9]/g, '');
+          if (priceText) {
+            price = parseInt(priceText, 10);
+          }
+        }
+      }
+
       if (!description) {
         const metaDesc = document.querySelector('meta[property="og:description"]');
         if (metaDesc && metaDesc.getAttribute('content')) {
@@ -91,7 +107,7 @@ window.EgaoParsers.daiso = {
       }
 
       // 3. SPA 렌더링 지연으로 인한 파싱 실패 검증 (강력한 방어 로직)
-      if (!title || !imageUrl || (title.includes('파싱 실패'))) {
+      if (!title || !imageUrl || title.includes('파싱 실패') || !price || price === 0) {
         throw new Error("상품 페이지가 아직 로딩 중이거나 화면이 갱신되지 않았습니다.\n(SPA 렌더링 딜레이)\n1~2초 후 다시 [상품 수집]을 클릭해 주세요!");
       }
 
