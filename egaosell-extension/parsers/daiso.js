@@ -54,7 +54,7 @@ window.EgaoParsers.daiso = {
       }
 
       // 3. 상세 이미지 추출 (본문 영역)
-      const detailContainer = document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view') || document.querySelector('.detail-area') || document.querySelector('.goods-detail');
+      const detailContainer = document.querySelector('.detail-tab-cont .tab-cont.detail') || document.querySelector('.editor-area') || document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view') || document.querySelector('.detail-area') || document.querySelector('.goods-detail');
       
       if (detailContainer) {
         // 본문 텍스트 추출 (JSON-LD보다 우선 혹은 병합)
@@ -67,7 +67,7 @@ window.EgaoParsers.daiso = {
         const imgs = detailContainer.querySelectorAll('img');
         imgs.forEach(img => {
           const src = img.getAttribute('src') || img.getAttribute('data-src');
-          if (src && !src.includes('icon') && !src.includes('blank')) {
+          if (src && !src.includes('icon') && !src.includes('blank') && !src.includes('banner') && !src.includes('review') && !src.includes('capture')) {
             detailImages.push(src);
           }
         });
@@ -79,7 +79,7 @@ window.EgaoParsers.daiso = {
         allImgs.forEach(img => {
           const src = img.getAttribute('src') || img.getAttribute('data-src') || '';
           if (src.includes('/detail/') || src.includes('/content/') || src.includes('/PD/') || src.includes('cdn.daisomall.co.kr/file/')) {
-            if (!src.includes('icon') && !src.includes('logo') && !src.includes('banner')) {
+            if (!src.includes('icon') && !src.includes('logo') && !src.includes('banner') && !src.includes('review') && !src.includes('capture') && !src.includes('thumbnail')) {
               detailImages.push(src);
             }
           }
@@ -96,7 +96,7 @@ window.EgaoParsers.daiso = {
           let htmlTagsFound = false;
           while ((match = htmlImgRegex.exec(htmlStr)) !== null) {
             const matchUrl = match[1]; // 캡처 그룹 1
-            if (!matchUrl.includes('icon') && !matchUrl.includes('logo') && !matchUrl.includes('banner')) {
+            if (!matchUrl.includes('icon') && !matchUrl.includes('logo') && !matchUrl.includes('banner') && !matchUrl.includes('review') && !matchUrl.includes('capture') && !matchUrl.includes('thumbnail')) {
               detailImages.push(matchUrl);
               htmlTagsFound = true;
             }
