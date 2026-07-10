@@ -8,6 +8,7 @@ window.EgaoParsers.daiso = {
   },
   parse: () => {
     try {
+      console.log('[SellerSuite] DaisoMall Parser v2.1 running...');
       const currentUrl = window.location.href;
       
       let title = '';
@@ -18,9 +19,10 @@ window.EgaoParsers.daiso = {
       let productId = '';
 
       // 2.5 Meta Description 태그 파싱 (우선순위 제일 높음)
-      const metaDesc = document.querySelector('meta[name="description"]');
+      const metaDesc = document.querySelector('meta[data-hid="description"]') || document.querySelector('meta[name="description"]');
       if (metaDesc && metaDesc.getAttribute('content')) {
-        description = metaDesc.getAttribute('content');
+        description = metaDesc.getAttribute('content').trim();
+        console.log('[SellerSuite] Extracted Meta Description:', description);
       }
 
       // JSON-LD 파싱 (가장 정확한 데이터, 다만 description은 위에서 뽑은걸 우선시함)
@@ -31,8 +33,9 @@ window.EgaoParsers.daiso = {
           if (jsonData['@type'] === 'Product') {
             title = jsonData.name || '';
             imageUrl = jsonData.image || '';
-            if (!description) {
-              description = jsonData.description || '';
+            // description은 이미 위에서 최우선(메타 태그)으로 가져왔다면 절대 덮어쓰지 않음
+            if (!description && jsonData.description) {
+              description = jsonData.description;
             }
             productId = jsonData.sku || '';
             if (jsonData.offers && jsonData.offers.price) {
@@ -73,10 +76,25 @@ window.EgaoParsers.daiso = {
         
         if (editorAreas.length > 0) {
           editorAreas.forEach(area => {
+            // 1. 화면에 보이는 텍스트 노드 추출
             const text = area.innerText.trim();
             if (text) detailTexts.push(text);
+            
+            // 2. 다이소몰 특성상 '이미지의 alt 속성'에 전체 설명 텍스트를 숨겨두는 경우가 많음
+            const imgs = area.querySelectorAll('img');
+            imgs.forEach(img => {
+              const alt = img.getAttribute('alt');
+              if (alt) {
+                const cleanAlt = alt.trim();
+                // 짧은 아이콘 이름이나 쓰레기 값 제외, 의미 있는 길이의 텍스트만 본문으로 취급
+                if (cleanAlt.length > 10 && !cleanAlt.includes('revw') && !cleanAlt.includes('TQC')) {
+                  detailTexts.push(cleanAlt);
+                }
+              }
+            });
           });
           descriptionDetail = detailTexts.join('\n\n').trim();
+          console.log('[SellerSuite] Extracted descriptionDetail from .editor-area (Text+Alt Length):', descriptionDetail.length);
         } else {
           // editor-area가 없을 경우 fallback으로 정규식 방식 사용
           let innerText = detailContainer.innerText.trim();
@@ -84,6 +102,7 @@ window.EgaoParsers.daiso = {
           innerText = innerText.replace(/상품정보에 문제가 있나요\?[\s\S]*?신고/g, '');
           innerText = innerText.replace(/상품정보 제공 고시[\s\S]*/, ''); 
           descriptionDetail = innerText.trim();
+          console.log('[SellerSuite] Extracted descriptionDetail using fallback regex (Length):', descriptionDetail.length);
         }
         
         if (descriptionDetail && descriptionDetail.length > 10000) {
