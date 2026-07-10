@@ -163,7 +163,7 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                       </div>
                     )}
                     {product.detailImages && product.detailImages.length > 0 && (
-                      <Link href={`/collected-products/${product.id}`} className="block text-[10px] text-primary mt-1 text-center font-medium hover:underline">
+                      <Link href={`/collected-products/${product.id}`} target="_blank" rel="noopener noreferrer" className="block text-[10px] text-primary mt-1 text-center font-medium hover:underline">
                         상세 {product.detailImages.length}장
                       </Link>
                     )}
@@ -199,7 +199,7 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                           {product.productName}
                         </div>
                         {product.description && (
-                          <Link href={`/collected-products/${product.id}`} className="block mt-1">
+                          <Link href={`/collected-products/${product.id}`} target="_blank" rel="noopener noreferrer" className="block mt-1">
                             <div className="line-clamp-2 text-xs text-on-surface-variant hover:text-primary transition-colors cursor-pointer" title={product.description}>
                               {product.description}
                             </div>
