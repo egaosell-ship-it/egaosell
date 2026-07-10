@@ -33,10 +33,6 @@ window.EgaoParsers.daiso = {
           if (jsonData['@type'] === 'Product') {
             title = jsonData.name || '';
             imageUrl = jsonData.image || '';
-            // description은 이미 위에서 최우선(메타 태그)으로 가져왔다면 절대 덮어쓰지 않음
-            if (!description && jsonData.description) {
-              description = jsonData.description;
-            }
             productId = jsonData.sku || '';
             if (jsonData.offers && jsonData.offers.price) {
               price = parseInt(jsonData.offers.price, 10);
@@ -107,11 +103,6 @@ window.EgaoParsers.daiso = {
         
         if (descriptionDetail && descriptionDetail.length > 10000) {
           descriptionDetail = descriptionDetail.substring(0, 10000); // 최대 1만자 제한
-        }
-
-        // 만약 기존에 description(요약)이 없었다면 본문의 앞부분을 대신 사용
-        if (!description && descriptionDetail && descriptionDetail.length > 50) {
-          description = descriptionDetail.substring(0, 5000);
         }
 
         // 본문 내 모든 이미지 추출
