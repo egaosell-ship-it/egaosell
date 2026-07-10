@@ -17,7 +17,13 @@ window.EgaoParsers.daiso = {
       let description = '';
       let productId = '';
 
-      // 1. JSON-LD 파싱 (가장 정확한 데이터)
+      // 2.5 Meta Description 태그 파싱 (우선순위 제일 높음)
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && metaDesc.getAttribute('content')) {
+        description = metaDesc.getAttribute('content');
+      }
+
+      // JSON-LD 파싱 (가장 정확한 데이터, 다만 description은 위에서 뽑은걸 우선시함)
       const scripts = document.querySelectorAll('script[type="application/ld+json"]');
       for (const script of scripts) {
         try {
@@ -25,7 +31,9 @@ window.EgaoParsers.daiso = {
           if (jsonData['@type'] === 'Product') {
             title = jsonData.name || '';
             imageUrl = jsonData.image || '';
-            description = jsonData.description || '';
+            if (!description) {
+              description = jsonData.description || '';
+            }
             productId = jsonData.sku || '';
             if (jsonData.offers && jsonData.offers.price) {
               price = parseInt(jsonData.offers.price, 10);
@@ -37,7 +45,7 @@ window.EgaoParsers.daiso = {
         }
       }
 
-      // 2. Fallback: JSON-LD가 없거나 일부 누락된 경우 og 태그 활용
+      // Fallback: JSON-LD가 없거나 일부 누락된 경우 og 태그 활용
       if (!title) {
         const ogTitle = document.querySelector('meta[property="og:title"]');
         title = ogTitle ? ogTitle.getAttribute('content') : '다이소몰 상품 (제목 파싱 실패)';
@@ -53,33 +61,38 @@ window.EgaoParsers.daiso = {
         productId = urlParams.get('p_pdId') || urlParams.get('pdNo') || urlParams.get('goodsNo');
       }
 
-      // 2.5 Meta Description 태그 파싱 (우선순위 높음)
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc && metaDesc.getAttribute('content')) {
-        description = metaDesc.getAttribute('content');
-      }
-
       let descriptionDetail = null;
 
       // 3. 상세 이미지 및 본문 텍스트 추출 (본문 영역)
       const detailContainer = document.querySelector('.detail-tab-cont .tab-cont.detail') || document.querySelector('.editor-area') || document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view') || document.querySelector('.detail-area') || document.querySelector('.goods-detail');
       
       if (detailContainer) {
-        // 본문 텍스트 추출 (순수 자연어 상세 설명)
-        let innerText = detailContainer.innerText.trim();
-        // 불필요한 UI 텍스트(버튼, 리뷰 안내 등) 정규식 제거
-        innerText = innerText.replace(/상품설명 더보기/g, '');
-        innerText = innerText.replace(/상품정보에 문제가 있나요\?[\s\S]*?신고/g, '');
-        innerText = innerText.replace(/상품정보 제공 고시[\s\S]*/, ''); // 고시 정보 이하는 날림 (본문만)
-        innerText = innerText.trim();
+        // 본문 텍스트 추출 (순수 자연어 상세 설명 - .editor-area 내부만 긁어옴)
+        let detailTexts = [];
+        const editorAreas = detailContainer.querySelectorAll('.editor-area');
         
-        if (innerText.length > 30) {
-          descriptionDetail = innerText.substring(0, 10000); // 최대 1만자 제한
+        if (editorAreas.length > 0) {
+          editorAreas.forEach(area => {
+            const text = area.innerText.trim();
+            if (text) detailTexts.push(text);
+          });
+          descriptionDetail = detailTexts.join('\n\n').trim();
+        } else {
+          // editor-area가 없을 경우 fallback으로 정규식 방식 사용
+          let innerText = detailContainer.innerText.trim();
+          innerText = innerText.replace(/상품설명 더보기/g, '');
+          innerText = innerText.replace(/상품정보에 문제가 있나요\?[\s\S]*?신고/g, '');
+          innerText = innerText.replace(/상품정보 제공 고시[\s\S]*/, ''); 
+          descriptionDetail = innerText.trim();
+        }
+        
+        if (descriptionDetail && descriptionDetail.length > 10000) {
+          descriptionDetail = descriptionDetail.substring(0, 10000); // 최대 1만자 제한
         }
 
         // 만약 기존에 description(요약)이 없었다면 본문의 앞부분을 대신 사용
-        if (!description && innerText.length > 50) {
-          description = innerText.substring(0, 5000);
+        if (!description && descriptionDetail && descriptionDetail.length > 50) {
+          description = descriptionDetail.substring(0, 5000);
         }
 
         // 본문 내 모든 이미지 추출
