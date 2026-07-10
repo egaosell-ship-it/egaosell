@@ -54,8 +54,7 @@ window.EgaoParsers.daiso = {
       }
 
       // 3. 상세 이미지 추출 (본문 영역)
-      // 다이소몰의 상세페이지가 위치하는 영역(추정 클래스: .detail-content, .detail-view, #detail 등)을 탐색
-      const detailContainer = document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view');
+      const detailContainer = document.querySelector('.detail-content') || document.querySelector('.product-detail') || document.querySelector('#detail') || document.querySelector('.detail-view') || document.querySelector('.detail-area') || document.querySelector('.goods-detail');
       
       if (detailContainer) {
         // 본문 텍스트 추출 (JSON-LD보다 우선 혹은 병합)
@@ -72,18 +71,32 @@ window.EgaoParsers.daiso = {
             detailImages.push(src);
           }
         });
-      } else {
-        // 특정 컨테이너를 못 찾을 경우, 페이지 내 큰 이미지들을 수집해본다 (휴리스틱)
-        // 보통 썸네일은 크기가 작고 상세이미지는 크므로, 로딩된 이미지 중 width 속성이나 자연크기가 큰 것.
-        // 또는 src에 'detail', 'content' 가 들어간 것.
+      }
+
+      // 특정 컨테이너를 못 찾았거나 컨테이너 내 이미지가 없는 경우 휴리스틱 및 HTML 정규식 탐색
+      if (detailImages.length === 0) {
         const allImgs = document.querySelectorAll('img');
         allImgs.forEach(img => {
-          const src = img.getAttribute('src') || '';
-          // 다이소 특정 패턴이나 단순 width 필터링 적용 (여기선 패턴 필터링 예시)
-          if (src.includes('/detail/') || src.includes('/content/')) {
-            detailImages.push(src);
+          const src = img.getAttribute('src') || img.getAttribute('data-src') || '';
+          if (src.includes('/detail/') || src.includes('/content/') || src.includes('/PD/') || src.includes('cdn.daisomall.co.kr/file/')) {
+            if (!src.includes('icon') && !src.includes('logo') && !src.includes('banner')) {
+              detailImages.push(src);
+            }
           }
         });
+
+        // 렌더링 지연(SPA)으로 인해 DOM에 이미지가 없을 경우, 문서 전체 소스(Nuxt state)에서 정규식 추출
+        if (detailImages.length === 0) {
+          const htmlStr = document.documentElement.innerHTML;
+          const imgRegex = /https?:\/\/cdn\.daisomall\.co\.kr\/file\/[a-zA-Z0-9_\-\/]+\.(?:jpg|jpeg|png|gif)/gi;
+          let match;
+          while ((match = imgRegex.exec(htmlStr)) !== null) {
+            const matchUrl = match[0];
+            if (!matchUrl.includes('icon') && !matchUrl.includes('logo') && !matchUrl.includes('banner')) {
+              detailImages.push(matchUrl);
+            }
+          }
+        }
       }
 
       // 중복 제거
