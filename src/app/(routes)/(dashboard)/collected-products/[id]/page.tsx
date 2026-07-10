@@ -3,15 +3,28 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const result = await getCollectedProductByIdAction(params.id);
+  const resolvedParams = await params;
+  const result = await getCollectedProductByIdAction(resolvedParams.id);
 
-  if (!result.success || !result.data) {
+  if (!result.success) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-error mb-2">데이터를 불러오는 중 오류가 발생했습니다.</h2>
+          <p className="text-on-surface-variant">{result.error}</p>
+          <Link href="/collected-products" className="mt-4 inline-block text-primary hover:underline">목록으로 돌아가기</Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!result.data) {
     notFound();
   }
 
