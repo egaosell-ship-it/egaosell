@@ -23,6 +23,7 @@ export class SupabaseCollectedProductRepository implements ICollectedProductRepo
       productName: row.product_name,
       price: row.price,
       imageUrl: row.image_url,
+      detailImages: row.detail_images || [],
       description: row.description,
       reviews: row.reviews || [],
       createdAt: row.created_at
@@ -52,6 +53,7 @@ export class SupabaseCollectedProductRepository implements ICollectedProductRepo
       productName: data.product_name,
       price: data.price,
       imageUrl: data.image_url,
+      detailImages: data.detail_images || [],
       description: data.description,
       reviews: data.reviews || [],
       createdAt: data.created_at

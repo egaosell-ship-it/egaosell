@@ -129,6 +129,11 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                         No Img
                       </div>
                     )}
+                    {product.detailImages && product.detailImages.length > 0 && (
+                      <div className="text-[10px] text-on-surface-variant mt-1 text-center font-medium">
+                        상세 {product.detailImages.length}장
+                      </div>
+                    )}
                   </td>
                   
                   {/* 상품명 & 가격 Editing 상태 처리 */}

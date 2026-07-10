@@ -6,6 +6,7 @@ export interface CollectedProductProps {
   productName: string;
   price: number;
   imageUrl: string | null;
+  detailImages: string[];
   description: string | null;
   reviews: string[];
   createdAt: string;
@@ -30,6 +31,7 @@ export class CollectedProduct {
   get productName(): string { return this.props.productName; }
   get price(): number { return this.props.price; }
   get imageUrl(): string | null { return this.props.imageUrl; }
+  get detailImages(): string[] { return this.props.detailImages; }
   get description(): string | null { return this.props.description; }
   get reviews(): string[] { return this.props.reviews; }
   get createdAt(): string { return this.props.createdAt; }

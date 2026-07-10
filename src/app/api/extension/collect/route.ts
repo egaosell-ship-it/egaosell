@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
           product_name: productData.productName,
           price: productData.price,
           image_url: productData.imageUrl || null,
+          detail_images: productData.detailImages || [],
           description: productData.description || null,
           reviews: productData.reviews || []
         }
