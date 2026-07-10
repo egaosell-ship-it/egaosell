@@ -18,7 +18,18 @@ window.EgaoParsers.daiso = {
       let description = '';
       let productId = '';
 
-      // 1. Meta Description 태그 (Fallback용)
+      // 1. 화면 렌더링 요소 추출 최우선 (SPA 캐싱/지연 갱신 방지)
+      const titleElem = document.querySelector('.goods-title') || document.querySelector('.pd-name') || document.querySelector('.title-box .title') || document.querySelector('p.title') || document.querySelector('.pd-info .title');
+      if (titleElem) {
+        title = titleElem.innerText.trim();
+      }
+
+      const imgElem = document.querySelector('.swiper-slide-active img') || document.querySelector('.pd-img img') || document.querySelector('.main-img img');
+      if (imgElem) {
+        imageUrl = imgElem.getAttribute('src') || imgElem.getAttribute('data-src') || '';
+      }
+
+      // 1.5 Meta Description 태그 (Fallback용)
       const metaDesc = document.querySelector('meta[property="og:description"]');
       if (metaDesc && metaDesc.getAttribute('content')) {
         description = metaDesc.getAttribute('content').trim();
@@ -30,8 +41,8 @@ window.EgaoParsers.daiso = {
         try {
           const jsonData = JSON.parse(script.innerText);
           if (jsonData['@type'] === 'Product') {
-            title = jsonData.name || '';
-            imageUrl = jsonData.image || '';
+            if (!title) title = jsonData.name || '';
+            if (!imageUrl) imageUrl = jsonData.image || '';
             
             // 사용자 요청: description 값을 JSON-LD의 description에서 추출
             if (jsonData.description) {
