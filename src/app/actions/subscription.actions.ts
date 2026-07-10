@@ -99,7 +99,7 @@ export async function checkSubscriptionAction(): Promise<boolean> {
       .eq('user_id', user.id)
       .maybeSingle();
 
-    return data?.status === 'active';
+    return data?.status?.toUpperCase() === 'ACTIVE';
   } catch (err) {
     console.error("checkSubscriptionAction Error:", err);
     return false;
