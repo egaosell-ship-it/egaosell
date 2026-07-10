@@ -45,6 +45,13 @@ function isSmartstoreProductPage(url) {
   return /smartstore\.naver\.com\/[^\/]+\/products\/\d+/.test(url) || /brand\.naver\.com\/[^\/]+\/products\/\d+/.test(url);
 }
 
+// URL이 다이소몰 상품 상세 페이지인지 검사
+function isDaisoProductPage(url) {
+  // 예: https://www.daisomall.co.kr/pd/p_pdId=... 또는 /product/... 
+  // 다이소몰은 주로 daisomall.co.kr 도메인 하위에 상품 관련 식별자가 붙음 (답변 오기 전 범용적으로 매칭)
+  return url.includes('daisomall.co.kr/pd/') || url.includes('daisomall.co.kr/product/');
+}
+
 // 화면에 플로팅 버튼 주입 (로그인 상태를 인자로 받지 않음)
 function injectFloatingButton() {
   if (document.getElementById(FLOATING_BTN_ID)) return; // 이미 존재하면 무시
@@ -128,7 +135,7 @@ function removeFloatingButton() {
 function checkAndRenderButton() {
   const currentUrl = window.location.href;
   
-  if (isSmartstoreProductPage(currentUrl)) {
+  if (isSmartstoreProductPage(currentUrl) || isDaisoProductPage(currentUrl)) {
     // 상품 페이지라면 무조건 버튼을 그립니다. (로그인은 클릭 시 검사)
     injectFloatingButton();
   } else {

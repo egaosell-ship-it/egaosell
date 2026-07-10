@@ -15,7 +15,8 @@
     "http://localhost:3000/*",
     "http://127.0.0.1:3000/*",
     "https://egaosell.vercel.app/*",
-    "https://wbfreqorkvntlboynxbp.supabase.co/*"
+    "https://wbfreqorkvntlboynxbp.supabase.co/*",
+    "*://*.daisomall.co.kr/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -28,11 +29,13 @@
       "matches": [
         "*://*.coupang.com/*",
         "*://smartstore.naver.com/*",
-        "*://brand.naver.com/*"
+        "*://brand.naver.com/*",
+        "*://*.daisomall.co.kr/*"
       ],
       "js": [
         "parsers/coupang.js",
         "parsers/smartstore.js",
+        "parsers/daiso.js",
         "content.js"
       ],
       "run_at": "document_idle"
