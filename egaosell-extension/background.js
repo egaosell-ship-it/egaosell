@@ -25,7 +25,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify(productData)
+      body: JSON.stringify({
+        ...productData,
+        overwrite: request.payload.overwrite // 추가된 덮어쓰기 플래그
+      })
     })
     .then(async (res) => {
       const contentType = res.headers.get("content-type");

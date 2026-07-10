@@ -100,21 +100,36 @@ function injectFloatingButton() {
         return;
       }
 
-      // Background로 데이터 전송 위임
-      chrome.runtime.sendMessage({
-        action: "SEND_TO_EGAOSELL",
-        payload: {
-          token: response.accessToken,
-          productData: productData
-        }
-      }, (apiResponse) => {
-        if (apiResponse && apiResponse.success) {
-          alert("EgaoSell로 상품 수집이 완료되었습니다!");
-        } else {
-          alert(`전송 실패: ${apiResponse?.error || '알 수 없는 오류'}`);
-        }
-        resetButton(btn);
-      });
+      // 전송을 수행하는 내부 함수
+      const sendData = (overwrite = false) => {
+        chrome.runtime.sendMessage({
+          action: "SEND_TO_EGAOSELL",
+          payload: {
+            token: response.accessToken,
+            productData: productData,
+            overwrite: overwrite
+          }
+        }, (apiResponse) => {
+          if (apiResponse && apiResponse.success) {
+            alert(overwrite ? "상품이 성공적으로 덮어씌워졌습니다!" : "EgaoSell로 상품 수집이 완료되었습니다!");
+            resetButton(btn);
+          } else if (apiResponse && apiResponse.isDuplicate) {
+            // 중복 상품 알림 및 덮어쓰기 여부 묻기
+            if (confirm("이미 동일한 상품이 수집되어 있습니다. 새로운 정보로 덮어씌우시겠습니까?")) {
+              btn.innerText = "업데이트 중...";
+              sendData(true); // overwrite 옵션을 켜서 재귀 호출
+            } else {
+              resetButton(btn); // 취소 시 초기화
+            }
+          } else {
+            alert(`전송 실패: ${apiResponse?.error || '알 수 없는 오류'}`);
+            resetButton(btn);
+          }
+        });
+      };
+
+      // 첫 번째 전송 시작
+      sendData(false);
     });
   });
 
