@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { CollectedProductProps } from '@/core/domain/entities/CollectedProduct';
 import { deleteCollectedProductAction, updateCollectedProductAction } from '@/app/actions/collected-product.actions';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface CollectedProductListClientProps {
   initialData: CollectedProductProps[];
@@ -74,6 +75,24 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   };
 
+  const getPlatformHomeUrl = (platform: string) => {
+    switch (platform) {
+      case 'DaisoMall': return 'https://www.daisomall.co.kr';
+      case 'SmartStore': return 'https://smartstore.naver.com';
+      case 'Coupang': return 'https://www.coupang.com';
+      default: return '#';
+    }
+  };
+
+  const getProductOriginalUrl = (platform: string, productId: string) => {
+    switch (platform) {
+      case 'DaisoMall': return `https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=${productId}`;
+      case 'SmartStore': return `https://smartstore.naver.com/main/products/${productId}`;
+      case 'Coupang': return `https://www.coupang.com/vp/products/${productId}`;
+      default: return '#';
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col relative">
       {isPending && (
@@ -107,11 +126,25 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                 <tr key={product.id} className="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
                   <td className="p-4 text-center text-on-surface-variant">{index + 1}</td>
                   <td className="p-4">
-                    <span className="px-2 py-1 bg-primary/10 text-primary text-label-sm font-label-sm rounded-full">
+                    <a 
+                      href={getPlatformHomeUrl(product.platform)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2 py-1 bg-primary/10 text-primary text-label-sm font-label-sm rounded-full hover:bg-primary/20 transition-colors inline-block cursor-pointer"
+                    >
                       {product.platform}
-                    </span>
+                    </a>
                   </td>
-                  <td className="p-4 font-mono text-xs">{product.productId}</td>
+                  <td className="p-4 font-mono text-xs">
+                    <a 
+                      href={getProductOriginalUrl(product.platform, product.productId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary hover:underline transition-colors"
+                    >
+                      {product.productId}
+                    </a>
+                  </td>
                   <td className="p-4">
                     {product.imageUrl ? (
                       <div className="relative w-12 h-12 rounded-md overflow-hidden border border-outline-variant">
@@ -130,9 +163,9 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                       </div>
                     )}
                     {product.detailImages && product.detailImages.length > 0 && (
-                      <div className="text-[10px] text-on-surface-variant mt-1 text-center font-medium">
+                      <Link href={`/collected-products/${product.id}`} className="block text-[10px] text-primary mt-1 text-center font-medium hover:underline">
                         상세 {product.detailImages.length}장
-                      </div>
+                      </Link>
                     )}
                   </td>
                   
@@ -162,9 +195,16 @@ export default function CollectedProductListClient({ initialData }: CollectedPro
                   ) : (
                     <>
                       <td className="p-4">
-                        <div className="line-clamp-2" title={product.productName}>
+                        <div className="line-clamp-2 font-medium" title={product.productName}>
                           {product.productName}
                         </div>
+                        {product.description && (
+                          <Link href={`/collected-products/${product.id}`} className="block mt-1">
+                            <div className="line-clamp-2 text-xs text-on-surface-variant hover:text-primary transition-colors cursor-pointer" title={product.description}>
+                              {product.description}
+                            </div>
+                          </Link>
+                        )}
                       </td>
                       <td className="p-4 text-right tabular-nums whitespace-nowrap">
                         {product.price.toLocaleString()}원
