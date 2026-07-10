@@ -18,11 +18,10 @@ window.EgaoParsers.daiso = {
       let description = '';
       let productId = '';
 
-      // 2.5 Meta Description 태그 파싱 (사용자 요청에 따라 og:description 사용)
+      // 1. Meta Description 태그 (Fallback용)
       const metaDesc = document.querySelector('meta[property="og:description"]');
       if (metaDesc && metaDesc.getAttribute('content')) {
         description = metaDesc.getAttribute('content').trim();
-        console.log('[egaosell-extension] Extracted og:description:', description);
       }
 
       // JSON-LD 파싱 (가장 정확한 데이터, 다만 description은 위에서 뽑은걸 우선시함)
@@ -33,6 +32,13 @@ window.EgaoParsers.daiso = {
           if (jsonData['@type'] === 'Product') {
             title = jsonData.name || '';
             imageUrl = jsonData.image || '';
+            
+            // 사용자 요청: description 값을 JSON-LD의 description에서 추출
+            if (jsonData.description) {
+              description = jsonData.description.trim();
+              console.log('[egaosell-extension] Extracted description from JSON-LD:', description);
+            }
+            
             if (!productId) {
               productId = jsonData.sku || '';
             }
