@@ -36,11 +36,13 @@ function parseProductData() {
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
+// ---------------------------------------------------------
 // 2. 스마트스토어 전용: 플로팅 버튼 및 SPA 라우팅 감지 로직
 // ---------------------------------------------------------
 
 const FLOATING_BTN_ID = "egao-floating-collect-btn";
 let readyCheckInterval = null; // SPA 렌더링 감지 타이머
+let lastExtractedData = null; // 이전 상품의 데이터 캐싱 (SPA 지연 검증용)
 
 // URL이 스마트스토어 상품 상세 페이지인지 검사
 function isSmartstoreProductPage(url) {
@@ -160,13 +162,30 @@ function startReadyCheck() {
     try {
       const productData = parseProductData();
       if (productData) {
+        
+        // --- SPA 렌더링 딜레이 궁극의 방어 로직 ---
+        // 다른 상품 페이지로 넘어왔는데, 이미지나 설명이 이전 상품과 '완전히' 똑같다면? 
+        // 십중팔구 다이소몰의 DOM 업데이트 지연으로 낡은 데이터를 긁은 것이다!
+        if (lastExtractedData && lastExtractedData.productId && lastExtractedData.productId !== productData.productId) {
+          const isStaleImage = (lastExtractedData.imageUrl === productData.imageUrl) && productData.imageUrl !== '';
+          const isStaleDesc = (lastExtractedData.description === productData.description) && productData.description !== '';
+          
+          if (isStaleImage || isStaleDesc) {
+            console.log("[EgaoSell] Stale DOM detected! Waiting for new image/description to render...");
+            throw new Error("SPA 렌더링 딜레이: 이전 상품 데이터 잔존");
+          }
+        }
+
+        // 검증을 통과했다면, 이번 데이터를 '마지막 추출 데이터'로 기억한다.
+        lastExtractedData = productData;
+
         clearInterval(readyCheckInterval);
         readyCheckInterval = null;
         btn.style.display = "block"; // 완벽하게 렌더링된 시점에 짠! 하고 나타남
         console.log("[EgaoSell] 상품 데이터 렌더링 완료 감지! 버튼 활성화.");
       }
     } catch (e) {
-      // 파서가 던지는 에러("아직 로딩 중입니다") 무시하고 계속 대기
+      // 파서가 던지는 에러("아직 로딩 중입니다" 또는 "이전 데이터 잔존") 무시하고 계속 대기
     }
   }, 500);
 }
