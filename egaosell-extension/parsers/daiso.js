@@ -18,11 +18,11 @@ window.EgaoParsers.daiso = {
       let description = '';
       let productId = '';
 
-      // 2.5 Meta Description 태그 파싱 (우선순위 제일 높음)
-      const metaDesc = document.querySelector('meta[data-hid="description"]') || document.querySelector('meta[name="description"]');
+      // 2.5 Meta Description 태그 파싱 (사용자 요청에 따라 og:description 사용)
+      const metaDesc = document.querySelector('meta[property="og:description"]');
       if (metaDesc && metaDesc.getAttribute('content')) {
         description = metaDesc.getAttribute('content').trim();
-        console.log('[SellerSuite] Extracted Meta Description:', description);
+        console.log('[egaosell-extension] Extracted og:description:', description);
       }
 
       // JSON-LD 파싱 (가장 정확한 데이터, 다만 description은 위에서 뽑은걸 우선시함)
